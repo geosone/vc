@@ -41,8 +41,10 @@ Originalzeile. Hier bleiben Leerzeichen und Norton-Guides-Steuerfolgen
 wie `^b` und `^u` erhalten. DOS-Steuerzeichen, die XML nicht erlaubt,
 stehen als `<char code="07"/>` im Text. Diese Seiten können ebenfalls
 bearbeitet werden; für eine vollständige Neufassung ist `layout="prose"`
-mit Absätzen einfacher. Die ursprünglichen Binärdateien bleiben unter
-`original/` zum Vergleichen erhalten.
+mit Absätzen einfacher. Die Herkunft der importierten Texte und Prüfsummen der ursprünglichen
+Binärdateien sind in den XML-Quellen und in `SOURCES.TXT` dokumentiert.
+Die alten HLP-Binärdateien werden zum Build nicht benötigt und liegen
+nicht mehr im Repository.
 
 Jedes Thema braucht eine eindeutige, stabile `id`. In allen fünf Sprachen
 müssen dieselben IDs in derselben Reihenfolge vorkommen. Neue Kapitel
@@ -103,7 +105,7 @@ Import kann man so erzeugen (Ausgabe unter `help/src/`, damit DTD und CSS
 über die relativen Pfade erreichbar sind):
 
 ```sh
-python3 tools/hlp.py import help/original/VC-GER.HLP help/src/import-de.xml \
+python3 tools/hlp.py import build/reference/VC-GER.HLP help/src/import-de.xml \
   --language de --codepage cp850
 ```
 

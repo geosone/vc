@@ -1,0 +1,15 @@
+<!ELEMENT charsets (table+)>
+<!ATTLIST charsets format CDATA #FIXED "vc-tbl-v1" origin CDATA #REQUIRED
+          archive-url CDATA #REQUIRED archive-sha256 CDATA #REQUIRED>
+<!ELEMENT table (unicode | (to-external, to-dos))>
+<!ATTLIST table file CDATA #REQUIRED title CDATA #REQUIRED
+          kind (unicode | single-byte) #REQUIRED dos-codepage CDATA #REQUIRED
+          original-sha256 CDATA #REQUIRED>
+<!ELEMENT unicode (override*)>
+<!ATTLIST unicode codec CDATA #REQUIRED>
+<!ELEMENT override EMPTY>
+<!ATTLIST override byte CDATA #REQUIRED codepoint CDATA #REQUIRED reason CDATA #REQUIRED>
+<!ELEMENT to-external (row+)>
+<!ELEMENT to-dos (row+)>
+<!ELEMENT row (#PCDATA)>
+<!ATTLIST row first CDATA #REQUIRED>

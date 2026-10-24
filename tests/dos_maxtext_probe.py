@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Probe the existing VC display with an externally supplied MAXTEXT driver.
 
-This is a compatibility experiment, not a native MAXTEXT client in VC.
 Requires a DOS image, built VC, QEMU, mtools and MAXTEXT.SYS/MAXTEXT.COM.
 All changes are confined to a fresh copy of the supplied DOS image.
 """
@@ -46,7 +45,7 @@ def command(*args):
 
 
 def run_case(args, requested):
-    out = args.output.resolve() / (str(requested) if requested else "no-driver")
+    out = args.output.resolve() / (args.fault or (str(requested) if requested else "no-driver"))
     out.mkdir(parents=True, exist_ok=True)
     disk = out / "disk.img"
     if disk.exists():
@@ -65,7 +64,28 @@ def run_case(args, requested):
 
     config = "FILES=40\nBUFFERS=20\nSHELL=C:\\COMMAND.COM C:\\ /P\n"
     before = ""
-    if requested:
+    if args.fault == "plain-file":
+        put("MAXTEXT$", "ordinary file must remain unchanged\n")
+        command("mcopy", "-o", "-i", image, str(out / "MAXTEXT$"), "::/VC/")
+    elif args.fault:
+        definitions = {
+            "old-api": ["-DMXT_VERSION=0100h"],
+            "future-api": ["-DMXT_VERSION=0201h"],
+            "bad-signature": ["-DMXT_BADSIG=1"],
+            "short-read": ["-DMXT_COUNT=23"],
+            "bad-size": ["-DMXT_SIZE=22"],
+            "no-modes": ["-DMXT_MODES=0"],
+            "unknown-modes": ["-DMXT_MODES=8000h"],
+            "only-43": ["-DMXT_MODES=8002h"],
+            "only-25": ["-DMXT_MODES=1"],
+            "reject-set": [],
+        }[args.fault]
+        fake = out / "MAXTFAKE.SYS"
+        command("jwasm", "-q", "-bin", *definitions, "-Fo=" + str(fake),
+                str(ROOT / "tests/dos/MAXTFAKE.ASM"))
+        command("mcopy", "-o", "-i", image, str(fake), "::/")
+        config += "DEVICE=C:\\MAXTFAKE.SYS\n"
+    elif requested:
         for name in ("MAXTEXT.SYS", "MAXTEXT.COM"):
             command("mcopy", "-o", "-i", image, str(args.maxtext / name), "::/")
         config += "DEVICE=C:\\MAXTEXT.SYS\n"
@@ -79,12 +99,12 @@ def run_case(args, requested):
     put("CONFIG.SYS", config)
     put("AUTOEXEC.BAT", "@ECHO OFF\nSET PATH=C:\\\nSET TEMP=C:\\\n" + before +
         "CD \\VC\nC:\\VC\\VC\nECHO DONE > C:\\DONE.TXT\n" +
-        ("C:\\MAXTEXT /STATUS > C:\\AFTER.TXT\n" if requested else "") +
+        ("C:\\MAXTEXT /STATUS > C:\\AFTER.TXT\n" if requested and not args.fault else "") +
         "C:\\QEXIT.COM\n")
     (out / "QEXIT.COM").write_bytes(bytes.fromhex("baf400b000eecd20"))
     command("mcopy", "-o", "-i", image, str(out / "QEXIT.COM"), "::/")
     sock = out / "qmp.sock"
-    if requested:
+    if requested and not args.fault:
         menu = ""
         for key, rows in enumerate((25, 43, 50), 1):
             menu += f"F{key}: MAXTEXT 80x{rows}\n    C:\\MAXTEXT /MODE:80x{rows}\n"
@@ -108,7 +128,14 @@ def run_case(args, requested):
             qmp = Display(sock)
             deadline = time.monotonic() + 45
             while True:
-                screen = qmp.screen(out, "startup")
+                try:
+                    screen = qmp.screen(out, "startup")
+                except ValueError:
+                    # QMP can accept connections before the BIOS initialized BDA.
+                    if time.monotonic() > deadline:
+                        raise
+                    time.sleep(0.2)
+                    continue
                 if "Volkov Commander" in screen and "Help" in screen.splitlines()[-1]:
                     break
                 if time.monotonic() > deadline:
@@ -116,7 +143,8 @@ def run_case(args, requested):
                 time.sleep(1)
             report["startup"] = dict(qmp.geometry)
             assert qmp.geometry["columns"] == 80
-            assert qmp.geometry["rows"] == (requested or 25), report
+            expected_rows = 25 if args.fault else (50 if requested and args.auto else (requested or 25))
+            assert qmp.geometry["rows"] == expected_rows, report
             time.sleep(0.5)
             qmp.key("f1")
             time.sleep(0.5)
@@ -129,7 +157,7 @@ def run_case(args, requested):
             time.sleep(0.5)
             assert "General options" in qmp.screen(out, "help-general")
             qmp.key("esc", "esc")
-            if requested:
+            if requested and not args.fault:
                 for rows in (25, 43, 50):
                     qmp.text(f"c:\\to{rows}")
                     qmp.key("ret")
@@ -144,6 +172,16 @@ def run_case(args, requested):
                     assert "Help" in screen.splitlines()[-1], screen
                     assert qmp.geometry["rows"] == rows, qmp.geometry
                     report["menu_returns"].append({"menu_requested": rows, **qmp.geometry})
+            if args.fault and args.fault != "plain-file":
+                memory = out / "fixture-memory.bin"
+                qmp.call("human-monitor-command", command_line=f'pmemsave 0 655360 "{memory}"')
+                raw = memory.read_bytes()
+                marker = raw.index(b"VCMXTFIX") + 8
+                target, count = struct.unpack_from("<HH", raw, marker + 18)
+                report["fixture_control"] = {"target": target, "count": count}
+                expected_target = {"only-43": 43, "reject-set": 50}.get(args.fault, 0)
+                assert target == expected_target, report
+                assert count == bool(expected_target), report
             qmp.key("f10", "ret")
             proc.wait(timeout=15)
         finally:
@@ -154,7 +192,9 @@ def run_case(args, requested):
     names = command("mdir", "-b", "-i", image, "::/")
     if b"FAIL.TXT" in names.upper():
         assert not command("mtype", "-i", image, "::/FAIL.TXT").strip()
-    if requested:
+    if args.fault == "plain-file":
+        assert command("mtype", "-i", image, "::/VC/MAXTEXT$") == (out / "MAXTEXT$").read_bytes()
+    if requested and not args.fault:
         for name in ["BEFORE.TXT", "AFTER.TXT"] + [f"CHILD{r}.TXT" for r in (25, 43, 50)]:
             (out / name).write_bytes(command("mtype", "-i", image, "::/" + name))
     (out / "report.json").write_text(json.dumps(report, indent=2) + "\n")
@@ -170,6 +210,11 @@ def main():
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--rows", type=int, nargs="+", choices=(0, 25, 43, 50),
                         default=(0, 25, 43, 50), help="boot cases; 0 means no driver")
+    parser.add_argument("--auto", action="store_true",
+                        help="expect VC's automatic best mode instead of the preset mode")
+    parser.add_argument("--fault", choices=("plain-file", "old-api", "future-api", "bad-signature",
+                        "short-read", "bad-size", "no-modes", "unknown-modes", "only-43",
+                        "only-25", "reject-set"), help="boot a rejecting test device, not MAXTEXT")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     binaries = [ROOT / "build/VC.COM", ROOT / "build/VC.OVL"]
@@ -177,7 +222,7 @@ def main():
     (args.output / "inputs.sha256").write_text("".join(
         hashlib.sha256(path.read_bytes()).hexdigest() + "  " + str(path) + "\n"
         for path in binaries))
-    for requested in args.rows:
+    for requested in ([0] if args.fault else args.rows):
         run_case(args, requested or None)
 
 

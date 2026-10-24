@@ -1,4 +1,4 @@
-# vc - the Volkov Commander 4.99.10 alpha, built with JWasm and JWlink
+# Volkov Commander with JWasm and JWlink
 
 The [Volkov Commander](https://vc.vvv.kyiv.ua/) is a two-panel file manager
 for DOS in the style of the Norton Commander, by Vsevolod V. Volkov. Its
@@ -12,8 +12,9 @@ alpha.
 | Directory | Content |
 |---|---|
 | `src/` | the sources of `vc49909.zip`, changed so that [JWasm](https://github.com/Baron-von-Riedesel/JWasm) and JWlink build them (the author used Borland TASM and LINK) |
-| `files/` | the other files of the 4.99.08 alpha package: menus, extension files, code page tables, texts, the icon |
-| `help/` | editable XML help in five languages, DTD/CSS for XMLmind, and original VC 4.05 guides; [editing instructions](help/README.md) |
+| `files/` | text files: menus, extension associations and documentation |
+| `assets/` | XML character mappings and the SVG icon, compiled by `make assets` |
+| `help/` | editable XML help in five languages, DTD/CSS for XMLmind, and provenance for the imported VC 4.05 text; [editing instructions](help/README.md) |
 | `install/` | `INSTALL.INI` for the [GeosOne Dual Installer](https://github.com/geosone/gdi) |
 | `tools/` | source converter, DOS help compiler and pinned packer downloads |
 | `addons/` | independently written DOS helpers and [German instructions](addons/README.de.md) for the ZIP/ARJ/ACE menus, file lists and batch commands |
@@ -22,6 +23,7 @@ alpha.
 ## Building
 
     make                    # build/VC.COM, build/VC.OVL
+    make assets             # generate TBL files and VC.ICO from XML/SVG
     make help               # compile XML sources to five DOS HLP guides
     make release            # build/release/ and build/vc49910a.zip
     make disk               # build/vc49910a.img, a 1.44 MB disk
@@ -62,6 +64,11 @@ The 1.44 MB image made by `make disk` is the core Commander distribution,
 without downloaded third-party packers. The full directory/ZIP release
 includes the larger packer collection and corresponding source archives.
 
+The repository contains text sources for its own binary assets. `make assets`
+builds 15 character translation tables and the icon without binary inputs or
+network access. HLP files are built from XML. See [assets/README.md](assets/README.md)
+for formats, provenance and the three historical Unicode mapping overrides.
+
 ## From TASM to JWasm
 
 `tools/tasm2jwasm.py` converted the published sources; `make port` downloads
@@ -99,10 +106,12 @@ Tested in QEMU under MS-DOS 7.1: setup from the disk (`INSTALL /S`), start
 (only 1.9 KB stay resident), the pull-down menus, Memory Info, the viewer
 (F3), copying a file (F5) and quitting (F10, `VC.INI` is written).
 
-The [MAXTEXT API and integration review](docs/maxtext-integration.md)
-describes optional Open386MAX text-mode support and includes a reproducible
-DOS compatibility probe for 80x25, 80x43 and 80x50. VC currently uses its
-existing BIOS display path; no MAXTEXT driver is bundled.
+With a compatible Open386MAX MAXTEXT driver loaded, VC automatically
+chooses its highest advertised text mode at startup (80x50, then 80x43,
+then 80x25). Without the driver or if selection fails, normal BIOS display
+support remains available. No driver is bundled or installed by VC.
+The [MAXTEXT integration notes](docs/maxtext-integration.md) explain the
+startup client and reproducible DOS tests.
 
 ## Help (F1)
 

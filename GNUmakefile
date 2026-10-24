@@ -30,6 +30,9 @@ HELP_NAMES := VC.HLP VC-GER.HLP VCR.HLP VC-PL.HLP VC-SK.HLP
 HELPS   := $(addprefix $(B)/help/,$(HELP_NAMES))
 HELP_MAP := $(B)/help/VCHELPMAP.INC
 HELP_SOURCES := help/project.xml help/project.dtd help/guide.dtd $(wildcard help/src/*.xml)
+ASSET_NAMES := $(shell $(PYTHON) tools/assets.py list)
+ASSETS := $(addprefix $(B)/assets/,$(ASSET_NAMES))
+ASSET_SOURCES := $(wildcard assets/*.xml assets/*.svg assets/*.dtd) tools/assets.py
 
 # the published sources (the converter's input) and the LOOP/JCXZ lines
 # TASM's JUMPS had to extend there (tools/tasm2jwasm.py -x)
@@ -38,9 +41,9 @@ SRCSHA  := b70fda9f9c94a321681dc49828f99ff4abe2c2f741e85c5bffab7ab6310b9f93
 FAR     := VCARC2.INC:1188 VCDIALOG.INC:1921 VCMEM.INC:536 VCMENU.INC:631 \
            VCPANELS.INC:1601 VCPANELS.INC:1865 VCPANELS.INC:2123 VCVIEW.INC:1728
 
-.PHONY: all release disk check test help addons packers port clean
+.PHONY: all release disk check test help assets addons packers port clean
 
-all: $(B)/VC.COM $(B)/VC.OVL addons
+all: $(B)/VC.COM $(B)/VC.OVL addons assets
 
 help: $(HELPS) $(HELP_MAP) $(B)/help/manifest.xml
 
@@ -48,6 +51,11 @@ help: $(HELPS) $(HELP_MAP) $(B)/help/manifest.xml
 # Grouped targets also regenerate the set if one output is removed.
 $(HELPS) $(HELP_MAP) $(B)/help/manifest.xml &: $(HELP_SOURCES) src/VCDATA.INC tools/hlp.py | $(B)
 	$(PYTHON) tools/hlp.py build --output $(B)/help
+
+assets: $(ASSETS) $(B)/assets/manifest.xml
+
+$(ASSETS) $(B)/assets/manifest.xml &: $(ASSET_SOURCES) | $(B)
+	$(PYTHON) tools/assets.py build --output $(B)/assets
 
 addons: $(B)/VCTOOLS.EXE $(B)/VC7Z.EXE
 
@@ -66,7 +74,7 @@ $(B)/vc7z-host: addons/vc7z.c | $(B)
 $(B)/ADDONS.TXT: addons/README.de.md | $(B)
 	$(PYTHON) -c 'from pathlib import Path; p=Path("$<"); s=p.read_text().replace("„", "\"").replace("“", "\"").replace("…", "..."); Path("$@").write_bytes(s.replace("\n", "\r\n").encode("cp850"))'
 
-test: help $(B)/vctools-host $(B)/vc7z-host
+test: help assets $(B)/vctools-host $(B)/vc7z-host
 	VCTOOLS=$(CURDIR)/$(B)/vctools-host VC7Z=$(CURDIR)/$(B)/vc7z-host $(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
 
 $(B):
@@ -91,11 +99,12 @@ packers: downloads.txt tools/packers.py install/INSTALL.INI | $(B)
 define stage_core
 	mkdir -p $(1)
 	cp -r files/. $(1)/
+	cd $(B)/assets && cp --parents $(ASSET_NAMES) $(abspath $(1))/
 	cp $(HELPS) $(1)/
 	cp $(B)/VC.COM $(B)/VC.OVL $(B)/VCTOOLS.EXE $(B)/VC7Z.EXE $(B)/ADDONS.TXT src/LICENSE.TXT install/INSTALL.INI $(GDI)/INSTALL.EXE $(1)/
 endef
 
-$(B)/$(NAME).zip: all packers $(B)/ADDONS.TXT install/INSTALL.INI src/LICENSE.TXT $(addprefix files/,$(FILES)) $(HELPS)
+$(B)/$(NAME).zip: all packers $(B)/ADDONS.TXT install/INSTALL.INI src/LICENSE.TXT $(addprefix files/,$(FILES)) $(HELPS) $(ASSETS)
 	rm -rf $(REL) $@
 	$(call stage_core,$(REL))
 	cp -r $(B)/packers/. $(REL)/
@@ -108,7 +117,7 @@ disk: $(B)/$(NAME).img
 
 # Keep the 1.44 MB floppy usable on older machines; the full download bundle
 # (including Retro7Zip source) belongs to the ZIP/directory release.
-$(B)/$(NAME).img: all $(B)/ADDONS.TXT install/INSTALL.INI src/LICENSE.TXT $(addprefix files/,$(FILES)) $(HELPS)
+$(B)/$(NAME).img: all $(B)/ADDONS.TXT install/INSTALL.INI src/LICENSE.TXT $(addprefix files/,$(FILES)) $(HELPS) $(ASSETS)
 	rm -rf $(B)/floppy
 	$(call stage_core,$(B)/floppy)
 	rm -f $@

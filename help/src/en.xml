@@ -15,7 +15,7 @@
     <p>F1 opens help for the current dialog, viewer or menu. In the panels it opens the index. Enter opens a topic. Next and Previous change topics; Index returns to the list. Escape closes help.</p>
     <p>F2, then F3 opens the extensions. They include archive menus, file lists, commands for selected files, format detection and a hex dump.</p>
     <p>The directory/ZIP release includes downloaded DOS archivers. The 1.44 MB floppy contains VC and its own helpers, without those external archivers. The installer offers English, German, Russian, Polish and Slovak help.</p>
-    <p>The reference includes updated 4.99.10 menus, viewer keys, filters and settings. Unchanged operation descriptions are retained from the translated help; original binaries are preserved separately.</p>
+    <p>The reference includes updated 4.99.10 menus, viewer keys, filters and settings. Unchanged operation descriptions are retained from the translated help; source provenance is recorded in SOURCES.TXT.</p>
   </topic>
   <topic id="menus" layout="prose">
     <title>User menus and new macros</title>
@@ -78,6 +78,7 @@ VCTOOLS run FILES.LST "ECHO {}" --dry-run</pre>
     <p>Descriptions can be displayed in file panels. VC's existing description support is used; no separate FILES_NC or RESINFO TSR is required. Colors are also configured in VC; a separate VC-COLOR tool is unnecessary.</p>
     <p>Use F9, Options for the current settings dialogs and Shift-F9 to save the configuration. The following reference chapters document the working settings dialogs and identify unfinished menu actions.</p>
     <p>The translated keyboard, copy, move, search, viewer and editor reference pages are preserved after the new chapters in this help index.</p>
+    <p>When MAXTEXT is loaded, VC automatically selects its highest advertised text mode at startup: 80x50, then 80x43, then 80x25. This happens once per VC start. Without a compatible driver, sufficient startup workspace or an accepted switch, VC keeps its ordinary display. MAXTEXT is optional and is not installed or bundled by VC.</p>
   </topic>
   <topic id="names" layout="prose">
     <title>Long filenames and DOS paths</title>
@@ -88,7 +89,7 @@ VCTOOLS run FILES.LST "ECHO {}" --dry-run</pre>
   <topic id="helpbuild" layout="prose">
     <title>Building and editing this help</title>
     <p>The .HLP files use VC's Norton Guides format. They are not Windows WinHelp files. The repository includes its own compiler, tools/hlp.py. No proprietary help compiler is needed.</p>
-    <p>All editable UTF-8 topics are in help/src/en.xml. Open the XML files in XMLmind; guide.dtd defines the structure and guide.css provides an editing stylesheet. Original binaries are retained under help/original.</p>
+    <p>All editable UTF-8 topics are in help/src/en.xml. Open the XML files in XMLmind; guide.dtd defines the structure and guide.css provides an editing stylesheet. SOURCES.TXT records the upstream help packages.</p>
     <pre>make help
 make release</pre>
     <p>make help creates all five language files and the context map in build/help. The version comes from VcVersion in src/VCDATA.INC. For a help-only preview of the planned 5.0 text:</p>
@@ -534,6 +535,7 @@ make release</pre>
     <title>EGA lines and Video mode</title>
     <p>Alt-F9 switches between 25 lines and the higher EGA/VGA text-line count supported by the adapter. Ctrl-F9 opens Video Mode and lets you choose among available text modes.</p>
     <p>The mode list depends on the BIOS and video hardware. VESA modes require VESA BIOS support and sufficient memory; an unsupported mode can fail. These are text display settings, not a graphical desktop.</p>
+    <p>When MAXTEXT is loaded, VC automatically selects its highest advertised text mode at startup: 80x50, then 80x43, then 80x25. This happens once per VC start. Without a compatible driver, sufficient startup workspace or an accepted switch, VC keeps its ordinary display. MAXTEXT is optional and is not installed or bundled by VC.</p>
   </topic>
   <topic id="legacy_35" layout="ng">
     <title>      Swap panels</title>

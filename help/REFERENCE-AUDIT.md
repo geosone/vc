@@ -1,8 +1,9 @@
 # Abgleich der Referenz mit VC 4.99.10
 
 Stand: 24. Oktober 2026. Die veröffentlichte Hilfe enthält 73 Themen je
-Sprache: elf neue Kapitel und 62 Referenzthemen. Die ursprünglichen
-4.05-Binärdateien liegen unverändert unter `original/`.
+Sprache: elf neue Kapitel und 62 Referenzthemen. Die Herkunft der ursprünglichen
+4.05-Hilfe ist in `SOURCES.TXT` und den XML-Metadaten festgehalten.
+Die ursprünglichen HLP-Binärdateien sind keine Build-Eingaben mehr.
 
 44 der übernommenen Referenzthemen wurden in allen fünf Sprachen neu
 gefasst. Dazu gehören Tastatur, Betrachter, Editor, Fensterarten, Filter,

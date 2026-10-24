@@ -398,6 +398,12 @@ IF ERRORLEVEL 1 ECHO HEX FAILED >> FAIL.TXT
     assert b"ZIP archive" in home, home
     installed_help = command("mtype", "-i", image, "::/VC/VC.HLP")
     assert installed_help == (ROOT / "build/help" / help_names[args.help_language]).read_bytes()
+    assets = ET.parse(ROOT / "build/assets/manifest.xml").getroot()
+    for asset in assets:
+        name = asset.attrib["name"]
+        installed = command("mtype", "-i", image, "::/VC/" + name)
+        assert installed == (ROOT / "build/assets" / name).read_bytes(), name
+    print("PASS: all generated XML/SVG assets installed byte for byte")
     print("PASS: generated F1 index, release, Next, user-menu, Copy and General contexts:", args.help_language)
     if args.full:
         for folder in ("AROUT", "ZOUT", "COUT", "ROUT", "SOUT", "LHOUT", "ARCOUT", "PKOUT"):

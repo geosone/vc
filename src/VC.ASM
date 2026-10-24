@@ -1688,7 +1688,8 @@ Init18::		STC
 Init15		ENDP
 
 ;----------------------- Output Report -------------------------
-Init20:		MOV	BX,0FF10h		; Check text mode
+Init20:		CALL	MaxTextStartup		; Optional best MAXTEXT mode
+		MOV	BX,0FF10h		; Check text mode
 		MOV	AH,12h
 		INT	10h
 		MOV	DL,25
@@ -3451,6 +3452,8 @@ CmpLines	PROC	NEAR
 		POP	DI
 		RET
 CmpLines	ENDP
+
+		INCLUDE VCMAXTXT.INC
 
 		END
 

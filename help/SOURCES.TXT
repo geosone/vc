@@ -1,4 +1,4 @@
-Original files retained under original/:
+Provenance of the imported help text (original binaries are not in Git):
 
 The help files (F1) of VC 4.05 and its language packages, from
 https://vc.vvv.kyiv.ua/download/ (Norton Guides format):
@@ -14,3 +14,6 @@ Setup installs the one of the chosen language as VC.HLP.
 Editable UTF-8 XML sources: src/*.xml; see README.md.
 New chapters and compiler: Copyright 2026 Mario Fetka, BSD-2-Clause.
 make help generates the current guides; setup installs the chosen one.
+
+The original file names and SHA-256 digests are retained in src/*.xml.
+No original HLP input or help download is needed to build the current help.

@@ -67,6 +67,7 @@ VCTOOLS run FILES.LST "ECHO {}" --dry-run</pre>
     <title>Panele i ustawienia</title>
     <p>Program używa paneli wersji 4.99. Quick View pokazuje plik drugiego panelu i różni się od pełnego podglądu F3. Bieżące tryby wyświetlania i ustawienia znajdują się w menu F9 samego VC.</p>
     <p>Opisy plików obsługuje VC; oddzielne TSR FILES_NC lub RESINFO nie są potrzebne. Kolory także ustawia się w VC bez narzędzia VC-COLOR. F9, Options otwiera ustawienia, Shift-F9 je zapisuje. Rozdziały referencyjne opisują działające ustawienia i oznaczają nieukończone punkty menu. Przetłumaczone opisy klawiszy, kopiowania, wyszukiwania, podglądu i edytora zachowano za nowymi rozdziałami.</p>
+    <p>Przy załadowanym MAXTEXT VC raz przy starcie wybiera najlepszy zgłoszony tryb tekstowy: 80x50, potem 80x43, potem 80x25. Bez zgodnego sterownika, dostatecznej pamięci roboczej lub zaakceptowanej zmiany pozostaje zwykły ekran. MAXTEXT jest opcjonalny i nie jest instalowany wraz z VC.</p>
   </topic>
   <topic id="names" layout="prose">
     <title>Długie nazwy i ścieżki DOS</title>
@@ -75,7 +76,7 @@ VCTOOLS run FILES.LST "ECHO {}" --dry-run</pre>
   </topic>
   <topic id="helpbuild" layout="prose">
     <title>Budowanie własnej pomocy</title>
-    <p>Źródła UTF-8: help/src/pl.xml. XMLmind używa guide.dtd i guide.css. Oryginały: help/original.</p>
+    <p>Źródła UTF-8: help/src/pl.xml. XMLmind używa guide.dtd i guide.css. Pochodzenie: help/SOURCES.TXT.</p>
     <pre>make help
 make release</pre>
     <p>make help tworzy pięć plików językowych i mapę kontekstu w build/help. Wersja pochodzi z VcVersion w src/VCDATA.INC. Podgląd planowanej 5.0:</p>
@@ -510,6 +511,7 @@ make release</pre>
     <title>Linie EGA i tryb wideo</title>
     <p>Alt-F9 przełącza 25 linii i większą liczbę EGA/VGA. Ctrl-F9 otwiera Video Mode z dostępnymi trybami tekstowymi.</p>
     <p>Lista zależy od BIOS i karty. VESA wymaga obsługi BIOS i pamięci; nieobsługiwany tryb może się nie włączyć.</p>
+    <p>Przy załadowanym MAXTEXT VC raz przy starcie wybiera najlepszy zgłoszony tryb tekstowy: 80x50, potem 80x43, potem 80x25. Bez zgodnego sterownika, dostatecznej pamięci roboczej lub zaakceptowanej zmiany pozostaje zwykły ekran. MAXTEXT jest opcjonalny i nie jest instalowany wraz z VC.</p>
   </topic>
   <topic id="legacy_35" layout="ng">
     <title>      Swap panels</title>

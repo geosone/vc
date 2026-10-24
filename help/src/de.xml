@@ -15,7 +15,7 @@
     <p>F1 zeigt Hilfe zum aktuellen Dialog, Betrachter oder Menü. Im Dateifenster öffnet es den Index. Enter öffnet ein Thema. Next und Previous wechseln das Thema, Index führt zur Übersicht zurück. Escape schließt die Hilfe.</p>
     <p>F2, dann F3 öffnet die Erweiterungen: Archivmenüs, Dateilisten, Befehle für markierte Dateien, Formaterkennung und Hexansicht.</p>
     <p>Die ZIP-/Verzeichnis-Release enthält heruntergeladene DOS-Packer. Auf der 1,44-MB-Diskette liegen VC und die eigenen Helfer ohne diese Packer. Der Installer bietet Hilfe auf Deutsch, Englisch, Russisch, Polnisch und Slowakisch an.</p>
-    <p>Die Referenz enthält aktualisierte Menüs, Betrachter-Tasten, Filter und Einstellungen für 4.99.10. Weiter gültige Bedienbeschreibungen bleiben aus der übersetzten Hilfe erhalten; die Originaldateien werden separat aufbewahrt.</p>
+    <p>Die Referenz enthält aktualisierte Menüs, Betrachter-Tasten, Filter und Einstellungen für 4.99.10. Weiter gültige Bedienbeschreibungen bleiben aus der übersetzten Hilfe erhalten; die Herkunft ist in SOURCES.TXT dokumentiert.</p>
   </topic>
   <topic id="menus" layout="prose">
     <title>Benutzermenüs und neue Makros</title>
@@ -78,6 +78,7 @@ VCTOOLS run DATEIEN.LST "ECHO {}" --dry-run</pre>
     <p>Dateibeschreibungen können in den Dateifenstern angezeigt werden. Dafür wird die vorhandene Unterstützung von VC genutzt; ein zusätzlicher TSR wie FILES_NC oder RESINFO ist nicht nötig. Auch Farben lassen sich in VC einstellen; ein separates VC-COLOR-Programm wird dafür nicht gebraucht.</p>
     <p>F9, Options führt zu den aktuellen Einstellungsdialogen. Shift-F9 speichert die Konfiguration. Die folgenden Referenzkapitel beschreiben die funktionierenden Dialoge und kennzeichnen unfertige Menüaktionen.</p>
     <p>Die übersetzten Referenzseiten für Tastatur, Kopieren, Verschieben, Suchen, Betrachter und Editor folgen im Index nach den neuen Kapiteln.</p>
+    <p>Ist MAXTEXT geladen, wählt VC beim Start automatisch dessen höchsten angebotenen Textmodus: 80x50, danach 80x43, danach 80x25. Das geschieht einmal pro VC-Start. Ohne passenden Treiber, genügend Start-Arbeitsbereich oder akzeptierten Wechsel bleibt VC bei der normalen Anzeige. MAXTEXT ist optional und wird von VC weder installiert noch mitgeliefert.</p>
   </topic>
   <topic id="names" layout="prose">
     <title>Lange Dateinamen und DOS-Pfade</title>
@@ -88,7 +89,7 @@ VCTOOLS run DATEIEN.LST "ECHO {}" --dry-run</pre>
   <topic id="helpbuild" layout="prose">
     <title>Hilfe selbst erstellen und ändern</title>
     <p>Die .HLP-Dateien verwenden die Norton-Guides-Variante von VC. Es sind keine Windows-WinHelp-Dateien. Im Repo liegt ein eigener Compiler: tools/hlp.py. Ein proprietärer Hilfe-Compiler wird nicht benötigt.</p>
-    <p>Alle bearbeitbaren UTF-8-Texte stehen in help/src/de.xml. Die XML-Dateien lassen sich in XMLmind öffnen; guide.dtd beschreibt die Struktur, guide.css die Darstellung beim Bearbeiten. Originaldateien bleiben unter help/original erhalten.</p>
+    <p>Alle bearbeitbaren UTF-8-Texte stehen in help/src/de.xml. Die XML-Dateien lassen sich in XMLmind öffnen; guide.dtd beschreibt die Struktur, guide.css die Darstellung beim Bearbeiten. SOURCES.TXT dokumentiert die ursprünglichen Hilfepakete.</p>
     <pre>make help
 make release</pre>
     <p>make help erzeugt alle fünf Sprachdateien und die Kontexttabelle unter build/help. Die Version kommt aus VcVersion in src/VCDATA.INC. Eine reine Hilfe-Vorschau für die geplante 5.0 lässt sich so bauen:</p>
@@ -580,6 +581,7 @@ make release</pre>
     <title>EGA-Zeilen und Videomodus</title>
     <p>Alt-F9 wechselt zwischen 25 Zeilen und der vom EGA-/VGA-Adapter unterstützten höheren Textzeilenzahl. Strg-F9 öffnet Video Mode zur Auswahl verfügbarer Textmodi.</p>
     <p>Die Liste hängt von BIOS und Grafikhardware ab. VESA-Modi benötigen VESA-BIOS-Unterstützung und genügend Speicher; ein nicht unterstützter Modus kann scheitern. Es sind Einstellungen der Textanzeige.</p>
+    <p>Ist MAXTEXT geladen, wählt VC beim Start automatisch dessen höchsten angebotenen Textmodus: 80x50, danach 80x43, danach 80x25. Das geschieht einmal pro VC-Start. Ohne passenden Treiber, genügend Start-Arbeitsbereich oder akzeptierten Wechsel bleibt VC bei der normalen Anzeige. MAXTEXT ist optional und wird von VC weder installiert noch mitgeliefert.</p>
   </topic>
   <topic id="legacy_35" layout="ng">
     <title>   Swap panels</title>

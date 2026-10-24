@@ -67,6 +67,7 @@ VCTOOLS run FILES.LST "ECHO {}" --dry-run</pre>
     <title>Panely a nastavenia</title>
     <p>Program používa panely verzie 4.99. Quick View ukazuje súbor druhého panela a odlišuje sa od úplného prehliadača F3. Aktuálne režimy zobrazenia a nastavenia sú priamo v menu F9 programu VC.</p>
     <p>Popisy súborov spracúva VC, samostatné TSR FILES_NC alebo RESINFO nie sú potrebné. Farby sa tiež nastavujú vo VC bez programu VC-COLOR. F9, Options otvorí nastavenia, Shift-F9 ich uloží. Referenčné kapitoly opisujú funkčné nastavenia a označujú nedokončené body menu. Preložené referenčné stránky ku klávesom, kopírovaniu, hľadaniu, prehliadaču a editoru zostali za novými.</p>
+    <p>Pri načítanom MAXTEXT VC raz pri štarte vyberie najlepší oznámený textový režim: 80x50, potom 80x43, potom 80x25. Bez kompatibilného ovládača, dostatočnej pracovnej pamäte alebo povoleného prepnutia zostáva bežná obrazovka. MAXTEXT je voliteľný a neinštaluje sa s VC.</p>
   </topic>
   <topic id="names" layout="prose">
     <title>Dlhé názvy a cesty DOS</title>
@@ -75,7 +76,7 @@ VCTOOLS run FILES.LST "ECHO {}" --dry-run</pre>
   </topic>
   <topic id="helpbuild" layout="prose">
     <title>Ako zostaviť vlastnú pomoc</title>
-    <p>Zdroje UTF-8: help/src/sk.xml. XMLmind používa guide.dtd a guide.css. Originály: help/original.</p>
+    <p>Zdroje UTF-8: help/src/sk.xml. XMLmind používa guide.dtd a guide.css. Pôvod: help/SOURCES.TXT.</p>
     <pre>make help
 make release</pre>
     <p>make help vytvorí päť jazykových súborov a mapu kontextu v build/help. Verzia pochádza z VcVersion v src/VCDATA.INC. Náhľad pripravovanej 5.0:</p>
@@ -529,6 +530,7 @@ make release</pre>
     <title>Riadky EGA a video režim</title>
     <p>Alt-F9 prepína 25 riadkov a vyšší počet EGA/VGA. Ctrl-F9 otvára Video Mode s dostupnými textovými režimami.</p>
     <p>Zoznam závisí od BIOS a adaptéra. VESA vyžaduje podporu BIOS a pamäť; nepodporovaný režim sa nemusí zapnúť.</p>
+    <p>Pri načítanom MAXTEXT VC raz pri štarte vyberie najlepší oznámený textový režim: 80x50, potom 80x43, potom 80x25. Bez kompatibilného ovládača, dostatočnej pracovnej pamäte alebo povoleného prepnutia zostáva bežná obrazovka. MAXTEXT je voliteľný a neinštaluje sa s VC.</p>
   </topic>
   <topic id="legacy_35" layout="ng">
     <title>      Swap panels</title>

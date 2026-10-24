@@ -24,21 +24,20 @@ class HelpCompiler(unittest.TestCase):
         return [{"id": "first", "title": "First topic", "lines": ["^bTitle^b", "", "Some text."]},
                 {"id": "second", "title": "Second topic", "lines": ["^uSecond^u page"]}]
 
-    def test_all_historical_imports_round_trip_without_losing_text(self):
+    def test_all_languages_reimport_generated_help_without_binary_inputs(self):
         for code, name, cp in LANGUAGES:
             with self.subTest(code=code):
-                original = hlp.decompile((ROOT / "help/original" / name).read_bytes(), cp)
-                source = ET.parse(ROOT / f"help/src/{code}.xml").getroot()
-                self.assertEqual(source.get("original-sha256"), hashlib.sha256(
-                    (ROOT / "help/original" / name).read_bytes()).hexdigest())
-                imported = self.out / "import.xml"
-                hlp.write_guide(original, imported, code, name, source.get("original-sha256"))
-                restored = hlp.read_guide(imported, "test")
-                self.assertEqual(restored["topics"], original["topics"])
-                data = hlp.compile_guide(original["topics"], cp, "test", original["credits"])
+                source = hlp.read_guide(ROOT / f"help/src/{code}.xml", "test")
+                data = hlp.compile_guide(source["topics"], cp, "test", source["credits"])
                 decoded = hlp.decompile(data, cp)
-                self.assertEqual(decoded["topics"], original["topics"])
-                self.assertEqual(decoded["credits"], original["credits"])
+                self.assertEqual([(t["title"], t["lines"]) for t in decoded["topics"]],
+                                 [(t["title"], t["lines"]) for t in source["topics"]])
+                imported = self.out / "import.xml"
+                hlp.write_guide(decoded, imported, code, name, hashlib.sha256(data).hexdigest())
+                restored = hlp.read_guide(imported, "test")
+                self.assertEqual(restored["topics"], decoded["topics"])
+                self.assertEqual(restored["credits"], source["credits"])
+                self.assertEqual(hlp.compile_guide(restored["topics"], cp, "test", restored["credits"]), data)
 
     def test_menu_index_and_topic_offsets_match_the_viewer(self):
         topics = self.sample()

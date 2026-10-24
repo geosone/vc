@@ -14,6 +14,8 @@ Changes in version 4.99.10 alpha (24-Oct-2026)
 + Own help compiler: editable XML, DTD/CSS for XMLmind, make help
 + Updated help on packers, helpers, OS/2, options and installation
 + Revised 4.99 reference in all languages; current dialogs replace VCSETUP
++ Optional MAXTEXT API: automatically choose the best mode at startup
++ Character tables generated from XML and Windows icon generated from SVG
 + Independent ZIP, ARJ and ACE user menus (external DOS packers)
 + VCTOOLS: file lists, batch commands, format detection, ZIP listing,
   and a read-only hex dump; source included in the repository
