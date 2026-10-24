@@ -25,6 +25,7 @@ alpha.
     make release            # build/release/ and build/vc49910a.zip
     make disk               # build/vc49910a.img, a 1.44 MB disk
     make check              # gdicheck of the release
+    make packers            # pinned downloads, verify cache, stage DOS packers
     make JWLINK=/path/to/jwlink
 
 Needs GNU make, JWasm 2.x and JWlink; `release` also needs `zip` and
@@ -43,6 +44,21 @@ it to the Program Manager of Windows. It asks for the language of the help
 and proposes the one of `COUNTRY=` in `CONFIG.SYS`; that help file becomes
 `VC.HLP`. `INSTALL /U` in `C:\VC` removes it
 again; an update keeps `VC.INI` and the menus and extension files.
+
+`make release` automatically downloads DOS ARJ, Info-ZIP Zip/UnZip, ACE,
+RAR/UnRAR, Retro7Zip, LHA, ARC, PKARC/PKXARC and PKZIP/PKUNZIP, plus AUTOINS
+and the OS/2 icons. [downloads.txt](downloads.txt) pins URLs and SHA-256
+digests, following the `win3upd` download/cache model. Downloads stay in
+`build/downloads` (`PACKER_CACHE=` overrides this); the downloaded files are excluded from Git. `curl`, `7z` and Python 3 are needed to download
+and extract the upstream packages. The EXEs are installed next to VC;
+original documentation, licenses, source packages and shareware packages
+are retained in `PACKDOC`. Setup requires acceptance of all bundled terms
+in nine license dialogs, grouping related legacy licenses into one text.
+`INSTALL /S` retains GDI's usual automatic acceptance behavior.
+
+The 1.44 MB image made by `make disk` is the core Commander distribution,
+without downloaded third-party packers. The full directory/ZIP release
+includes the larger packer collection and corresponding source archives.
 
 ## From TASM to JWasm
 
@@ -104,8 +120,8 @@ Commander, and the changes and tools of this repository.
 ## Small extensions
 
 F2, then F3 ("Erweiterungen...") opens the new ZIP, ARJ, ACE and file-list
-menus. Archive creation, testing and extraction use external DOS packers
-in PATH; none of those packers are distributed here. `VCTOOLS.EXE` provides
+menus, plus Retro7Zip, RAR, LHA, ARC, PKZIP and OS/2 helpers. `make release`
+fetches the original DOS packers and installs them next to VC. `VCTOOLS.EXE` provides
 file-list formatting, full short paths, commands for each selected file
 (including dry run), signature recognition, ZIP central-directory listing
 without an external packer, and a read-only hex dump.
@@ -118,6 +134,10 @@ add an `addons.mnu` submenu to your existing VC.MNU to enable them there.
 
 See [the German guide](addons/README.de.md), installed as `ADDONS.TXT`, for
 commands, dependencies and limits. These helpers are independent source
-implementations of a subset of the old add-ons' functionality. Downloaded
-third-party programs, NTFS/LFN drivers and version-specific binary patches
-are not included. ZIP64 and multi-volume ZIP archives are not supported.
+implementations of a subset of the old add-ons' functionality. Third-party
+binary downloads are excluded from Git, with their own licenses retained
+in the assembled release. NTFS/LFN drivers and old binary patches remain
+outside the package. The small VCTOOLS ZIP reader supports classic ZIP;
+Retro7Zip is available for its wider format support. `VC7Z.EXE` normalizes
+its technical listings for VC, including solid archives. VC still uses
+32-bit file-size fields. Retro7Zip needs a 386 or newer processor.

@@ -1,0 +1,20 @@
+# id       SHA-256                                                          URL                                                                      cache filename
+# make release downloads these packages. No downloaded binaries enter Git.
+arj        451c6125bd75faf04c2ee717c33e86d357c2eaa64a532c4d1653c5f013bae2ea https://arj.sourceforge.net/files/arj__278.exe                             arj__278.exe
+arjsrc     589e4c9bccc8669e7b6d8d6fcd64e01f6a2c21fe10aad56a83304ecc3b96a7db https://arj.sourceforge.net/files/arj-3.10.22.tar.gz                        arj-3.10.22.tar.gz
+zip        4bbde6930415e152b14f98503fb0bd23ecdee5ce21ae9815f997d5fa47bab787 https://sta.c64.org/dosprg/zip300x.zip                                     zip300x.zip
+unzip      7b5d9cae8da78fb1a7bedfed1e653f45b8e6c1f50ce8c8e46929059eb00b73bb https://sta.c64.org/dosprg/unz600x.exe                                     unz600x.exe
+ace        9392b5f28cf136f5ab8e0336ec73802c656da4a918092e1580515edc6fe4a809 https://www.sac.sk/download/pack/ace12b.zip                                ace12b.zip
+rar        ce4e5312d694d69c3e1a7a9eb17d926ce3dfdce52084d637a7410868ed14f30c https://files.oldos.org/files/dos/rar206.exe                               rar206.exe
+unrar      b73a6592e508dc7a9f8ecae2d276a6cbc135a0bbe0f2176ff796a166b63e5ed8 https://www.rarlab.com/rar/unrar38b.zip                                    unrar38b.zip
+retro7zip  0a131b215e2e24677ef28ab1f4311f14e44511a0de080ea37b43b6e4a697f32e https://github.com/dajhorn/retro7zip/releases/download/24.09%2B5/7zip-24.09%2B5_dos.zip retro7zip-dos.zip
+autoins    384a9c1005b9da91054697685ce4759197fb61818e94526a05895db0e4b6b929 https://vc.vvv.kyiv.ua/download/utils/autoins.zip                           autoins.zip
+os2icons   75c0be9682be6f53ccee09c48c1a3e3b8cb1b5efaa7eb28ef186eea9aca11918 https://vc.vvv.kyiv.ua/download/icons/vcos2ico.zip                          vcos2ico.zip
+os2icons2  9fa77c87f158bd8e896bb5de13c0694f6a2daf25e39a2f6e4d29f384d6b1ba0c https://vc.vvv.kyiv.ua/download/icons/vcos2icn.zip                          vcos2icn.zip
+lha        fee29c51e1a5b4a84354f44aa96e6f6ad77037d0d00a78affd05d6d897057002 https://files.oldos.org/files/dos/lha213.exe                               lha213.exe
+pkzip      f41ec5cbce7a31b202e33121354cab4c379cd151f1418ed67ffe55fd78221d64 https://files.oldos.org/files/dos/pk250dos.exe                             pk250dos.exe
+pkarc      4359ce0044b9116288b17c070afa861eaaa91deed0a96c504e97085fc21abb71 https://files.oldos.org/files/dos/pkarc36.zip                              pkarc36.zip
+arc        0831e6f795f3aefd6fe3ad50d172ea18d588487d1577a4c84d46844eba20914b https://dose.0wnz.at/Shareware/Pegasus-2.0/PACKER/ARC602.ZIP                  arc602.zip
+# The OldOS SARC self-extractor fails its own integrity check; preserve it,
+# and obtain the ready-to-run ARC 6.02 files from the ZIP distribution above.
+arcorig    2b28a646658ce7d7849c3a6c0e964c5a43ab2217e1c2de168d973486d4c2b6ce https://files.oldos.org/files/dos/arc602.exe                               arc602.exe

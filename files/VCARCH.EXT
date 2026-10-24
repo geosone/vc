@@ -35,13 +35,81 @@
 '   !T - temporary directory
 '   !P - password (not supported yet)
 
+' Retro7Zip DOS requires a 386+. VC7Z normalizes solid-member listings.
+7Z:	"VC7Z" A S C Y "-" M "-" D T N L
+	vc7z.exe !A
+	7za.exe x -scsDOS -sccDOS -spd !A @!@!M
+	7za.exe a -t7z -scsDOS -sccDOS !A @!@!M
+	7za.exe d -scsDOS -sccDOS !A @!@!M
+
+XZ:	"VC7Z" A S C Y "-" M "-" D T N L
+	vc7z.exe !A
+	7za.exe x -scsDOS -sccDOS -spd !A @!@!M
+	7za.exe a -txz -scsDOS -sccDOS !A @!@!M
+
+BZ2:	"VC7Z" A S C Y "-" M "-" D T N L
+	vc7z.exe !A
+	7za.exe x -scsDOS -sccDOS -spd !A @!@!M
+	7za.exe a -tbzip2 -scsDOS -sccDOS !A @!@!M
+
+GZ:
+TGZ:	"VC7Z" A S C Y "-" M "-" D T N L
+	vc7z.exe !A
+	7za.exe x -scsDOS -sccDOS -spd !A @!@!M
+	7za.exe a -tgzip -scsDOS -sccDOS !A @!@!M
+
+TAR:	"VC7Z" A S C Y "-" M "-" D T N L
+	vc7z.exe !A
+	7za.exe x -scsDOS -sccDOS -spd !A @!@!M
+	7za.exe a -ttar -scsDOS -sccDOS !A @!@!M
+	7za.exe d -scsDOS -sccDOS !A @!@!M
+
+RAR:
+R0?:
+R1?:	"VC7Z" A S C Y "-" M "-" D T N L
+	vc7z.exe !A
+	7za.exe x -scsDOS -sccDOS -spd !A @!@!M
+	rar.exe a !A @!@!M
+	rar.exe d !A @!@!M
+
+WIM:	"VC7Z" A S C Y "-" M "-" D T N L
+	vc7z.exe !A
+	7za.exe x -scsDOS -sccDOS -spd !A @!@!M
+	7za.exe a -twim -scsDOS -sccDOS !A @!@!M
+	7za.exe d -scsDOS -sccDOS !A @!@!M
+
+CAB:
+ISO:
+SWM:
+ESD:
+VHD:
+VDI:
+VMDK:
+QCOW:
+DMG:
+IMG:
+CPIO:
+RPM:
+DEB:
+Z:
+LZMA:
+ZST:
+CHM:
+MSI:
+NSIS:
+UDF:
+HFS:
+SQUASHFS:	"VC7Z" A S C Y "-" M "-" D T N L
+	vc7z.exe !A
+	7za.exe x -scsDOS -sccDOS -spd !A @!@!M
+
 'ZIP:	S W C W D T W A N L
 '	pkunzip.exe -v !A
 ZIP:	-
 	-
-	pkunzip.exe -d -Jrhs !A @!@!M
-	pkzip.exe -b!T -ex -P -whs !A @!@!M
-	pkzip.exe -b!T -d !A @!@!M
+	unzip.exe -C !A !M
+	zip.exe -S9 -b !T !A !M
+	zip.exe -d -b !T !A !M
 
 'ZIP:	S W C W D T W N L
 '	unzip.exe -v !A
@@ -84,19 +152,11 @@ A1?:	\ W N L  W W S C W Y "-" M "-" D T W A "D" W; \ W N L  W S C W Y "-" M "-" 
 '	x1.exe a !A !M
 '	x1.exe d !A !M
 
-RAR:
-R0?:
-R1?:	"*" N L  S C W D T A W W W L; N L  S C W D T A W W W L
-	rar.exe v -c- -std !A
-	rar.exe x -c- -std !A @!@!M
-	rar.exe a -c- -std !A @!@!M
-	rar.exe d -c- -std !A @!@!M
-
 LZH:	N L  S C W Y "-" M "-" D T A W W L
 	lha.exe v !A
-	lha.exe x !A @!@!M
-	lha.exe a !A @!@!M
-	lha.exe d !A @!@!M
+	lha.exe x !A !M
+	lha.exe a !A !M
+	lha.exe d !A !M
 
 'LZH:	N S C W Y "-" M "-" D T W A W L
 '	x1.exe l !A
@@ -118,11 +178,11 @@ AIN:	N S M "." D "." Y T L; N L S M "." D "." Y T L
 	ain.exe a -. -.em -.xm -w!T !A @!@!M
 	ain.exe d -. -.em -.xm -w!T !A @!@!M
 
-ARC:	"Total" W W; N S P L
-	pak.exe v /path !A
-	pak.exe e /path !A @!@!M
-	pak.exe a -c !A @!@!M
-	pak.exe d !A @!@!M
+ARC:	N S W W C D M Y T W L
+	arc.exe v !A
+	pkxarc.exe !A !M
+	arc.exe a !A !M
+	arc.exe d !A !M
 
 'ARC:	N S M "/" D "/" Y T W W C W L
 '	pak.exe v !A
@@ -135,11 +195,6 @@ ARC:	"Total" W W; N S P L
 '	pkunpak.exe !A @!@!M
 '	pkpak.exe -a !A @!@!M
 '	pkpak.exe -d !A !M
-
-CAB:	M "-" D "-" Y T A S N
-	extract.exe /d !A
-	extract.exe /e !A !M
-	makecab.exe /d InfFileName=NUL /d RptFileName=NUL /d DiskDirectoryTemplate= /d CabinetName1=!A /f !@
 
 ESP:    S M "/" D "/" Y T N
         unesp.exe vs !A
@@ -191,14 +246,6 @@ SAR:	N S C W W W L
 SQZ:	N L  S C W D T A W L
 	sqz.exe v !A
 	sqz.exe x !A @!@!M
-
-TAR:	A W S M D T Y N L
-	tar.exe -tvf !A
-	tar.exe -xvf !A -T!@!M
-
-TGZ:	S D "-" M Y T N
-	untgz.exe -l !A
-	untgz.exe !A !F
 
 UC2:	"--> Directory of" P L; N S D T
 	uc.exe vs !A

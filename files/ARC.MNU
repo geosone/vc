@@ -1,0 +1,13 @@
+' ARC 6.02 and PKARC/PKXARC 3.6 are installed by the full release.
+C: ARC aus markierten Dateien erstellen
+	"!$VCTOOLS.EXE" run "!~@" "!$ARC.EXE a ![ARC-Archiv (8.3-Name)] {}"
+L: ARC-Inhalt anzeigen
+	"!$ARC.EXE" v "!~.!"
+T: ARC-Archiv pruefen
+	"!$ARC.EXE" t "!~.!"
+X: ARC ins andere Fenster entpacken
+	"!$PKXARC.EXE" "!~.!" "%:%~\.\"
+P: ARC mit PKARC erstellen
+	"!$VCTOOLS.EXE" run "!~@" "!$PKARC.EXE a ![ARC-Archiv (8.3-Name)] {}"
+F10: Erweiterungen
+	addons.mnu

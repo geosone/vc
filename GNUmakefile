@@ -3,8 +3,8 @@
 #   make                 build/VC.COM, build/VC.OVL
 #   make release         build/release/ and build/vc49910a.zip: the program,
 #                        the files of files/, the help files of help/
-#                        and the GeosOne Dual Installer
-#   make disk            build/vc49910a.img, a 1.44 MB disk of the release
+#                        the GeosOne Dual Installer and downloaded DOS packers
+#   make disk            build/vc49910a.img, core-only 1.44 MB installation disk
 #   make port            the published TASM sources converted again by
 #                        tools/tasm2jwasm.py to build/port/, compared to src/
 #   make clean
@@ -13,12 +13,13 @@
 # gdicheck) of https://github.com/geosone/gdi.
 
 JWASM   ?= jwasm
-JWLINK  ?= jwlink
+JWLINK  ?= $(or $(shell command -v jwlink 2>/dev/null),$(firstword $(wildcard ../jwlink-fork/build/jwlinkLR/jwlink)),jwlink)
 GDI     ?= ../gdi/build
 PYTHON  ?= python3
 WATCOM  ?= /opt/watcom
 WCL     ?= $(WATCOM)/binl64/wcl
 CC      ?= cc
+PACKER_CACHE ?= $(B)/downloads
 
 B       := build
 REL     := $(B)/release
@@ -34,23 +35,29 @@ SRCSHA  := b70fda9f9c94a321681dc49828f99ff4abe2c2f741e85c5bffab7ab6310b9f93
 FAR     := VCARC2.INC:1188 VCDIALOG.INC:1921 VCMEM.INC:536 VCMENU.INC:631 \
            VCPANELS.INC:1601 VCPANELS.INC:1865 VCPANELS.INC:2123 VCVIEW.INC:1728
 
-.PHONY: all release disk check test addons port clean
+.PHONY: all release disk check test addons packers port clean
 
 all: $(B)/VC.COM $(B)/VC.OVL addons
 
-addons: $(B)/VCTOOLS.EXE
+addons: $(B)/VCTOOLS.EXE $(B)/VC7Z.EXE
 
 $(B)/VCTOOLS.EXE: addons/vctools.c | $(B)
 	WATCOM="$(WATCOM)" INCLUDE="$(WATCOM)/h" PATH="$(WATCOM)/binl64:$$PATH" $(WCL) -q -bt=dos -0 -ms -os -w4 -we -fe=$@ -fo=$(B)/vctools.obj $<
 
+$(B)/VC7Z.EXE: addons/vc7z.c | $(B)
+	WATCOM="$(WATCOM)" INCLUDE="$(WATCOM)/h" PATH="$(WATCOM)/binl64:$$PATH" $(WCL) -q -bt=dos -0 -ms -os -k8192 -w4 -we -fe=$@ -fo=$(B)/vc7z.obj $<
+
 $(B)/vctools-host: addons/vctools.c | $(B)
+	$(CC) -std=c89 -Wall -Wextra -Werror -O2 -o $@ $<
+
+$(B)/vc7z-host: addons/vc7z.c | $(B)
 	$(CC) -std=c89 -Wall -Wextra -Werror -O2 -o $@ $<
 
 $(B)/ADDONS.TXT: addons/README.de.md | $(B)
 	$(PYTHON) -c 'from pathlib import Path; p=Path("$<"); s=p.read_text().replace("„", "\"").replace("“", "\"").replace("…", "..."); Path("$@").write_bytes(s.replace("\n", "\r\n").encode("cp850"))'
 
-test: $(B)/vctools-host
-	VCTOOLS=$(CURDIR)/$(B)/vctools-host $(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
+test: $(B)/vctools-host $(B)/vc7z-host
+	VCTOOLS=$(CURDIR)/$(B)/vctools-host VC7Z=$(CURDIR)/$(B)/vc7z-host $(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
 
 $(B):
 	mkdir -p $@
@@ -67,14 +74,21 @@ $(B)/VC.OVL: $(B)/VCOVL.obj
 
 release: $(B)/$(NAME).zip
 
-$(B)/$(NAME).zip: all $(B)/ADDONS.TXT install/INSTALL.INI src/LICENSE.TXT $(addprefix files/,$(FILES)) $(HELPS)
+# Verification also runs on a warm cache, so a corrupt download cannot be reused.
+packers: downloads.txt tools/packers.py install/INSTALL.INI | $(B)
+	$(PYTHON) tools/packers.py --cache "$(PACKER_CACHE)" --output $(B)/packers
+
+define stage_core
+	mkdir -p $(1)
+	cp -r files/. $(1)/
+	cp $(HELPS) $(1)/
+	cp $(B)/VC.COM $(B)/VC.OVL $(B)/VCTOOLS.EXE $(B)/VC7Z.EXE $(B)/ADDONS.TXT src/LICENSE.TXT install/INSTALL.INI $(GDI)/INSTALL.EXE $(1)/
+endef
+
+$(B)/$(NAME).zip: all packers $(B)/ADDONS.TXT install/INSTALL.INI src/LICENSE.TXT $(addprefix files/,$(FILES)) $(HELPS)
 	rm -rf $(REL) $@
-	mkdir -p $(REL)
-	cp -r files/. $(REL)/
-	cp $(HELPS) $(REL)/
-	cp $(B)/VC.COM $(B)/VC.OVL src/LICENSE.TXT install/INSTALL.INI $(GDI)/INSTALL.EXE $(REL)/
-	cp $(B)/VCTOOLS.EXE $(REL)/
-	cp $(B)/ADDONS.TXT $(REL)/
+	$(call stage_core,$(REL))
+	cp -r $(B)/packers/. $(REL)/
 	cd $(REL) && zip -q -X -r ../$(NAME).zip .
 
 check: release
@@ -82,10 +96,14 @@ check: release
 
 disk: $(B)/$(NAME).img
 
-$(B)/$(NAME).img: $(B)/$(NAME).zip
+# Keep the 1.44 MB floppy usable on older machines; the full download bundle
+# (including Retro7Zip source) belongs to the ZIP/directory release.
+$(B)/$(NAME).img: all $(B)/ADDONS.TXT install/INSTALL.INI src/LICENSE.TXT $(addprefix files/,$(FILES)) $(HELPS)
+	rm -rf $(B)/floppy
+	$(call stage_core,$(B)/floppy)
 	rm -f $@
 	mformat -C -f 1440 -v VC49910A -i $@ ::
-	cd $(REL) && mcopy -s -i ../$(NAME).img * ::
+	cd $(B)/floppy && mcopy -s -i ../$(NAME).img * ::
 
 $(B)/vc49909.zip: | $(B)
 	curl -sSfL -o $@.tmp $(SRCURL)

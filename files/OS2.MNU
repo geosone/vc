@@ -1,0 +1,7 @@
+' Helpers from the original VC download area; full release only.
+I: AUTOINS einmal pro OS/2-DOS-Sitzung starten
+	"!$AUTOINS.COM"
+D: Hinweise zu OS/2 und Packprogrammen
+	MORE < "!$PACKERS.TXT"
+F10: Erweiterungen
+	addons.mnu

@@ -1,0 +1,25 @@
+' Retro7Zip: DOS, 386 or newer; 7ZA.EXE is installed next to VC.
+C: 7z aus markierten Dateien erstellen
+	"!$7ZA.EXE" a -t7z -scsDOS -mx=5 "![7z-Archiv (8.3-Name)]" @!~@
+Z: ZIP mit Retro7Zip erstellen
+	"!$7ZA.EXE" a -tzip -scsDOS "![ZIP-Archiv (8.3-Name)]" @!~@
+A: TAR aus markierten Dateien erstellen
+	"!$7ZA.EXE" a -ttar -scsDOS "![TAR-Archiv (8.3-Name)]" @!~@
+B: Einzelne Datei mit BZip2 packen
+	"!$7ZA.EXE" a -tbzip2 -mx=1 -scsDOS "![BZ2-Datei (8.3-Name)]" @!~@
+G: Einzelne Datei mit gzip packen
+	"!$7ZA.EXE" a -tgzip -scsDOS "![GZ-Datei (8.3-Name)]" @!~@
+J: Einzelne Datei mit XZ packen
+	"!$7ZA.EXE" a -txz -mx=1 -scsDOS "![XZ-Datei (8.3-Name)]" @!~@
+W: WIM aus markierten Dateien erstellen
+	"!$7ZA.EXE" a -twim -scsDOS "![WIM-Archiv (8.3-Name)]" @!~@
+L: Archivinhalt anzeigen
+	"!$7ZA.EXE" l -sccDOS "!~.!"
+T: Archiv pruefen
+	"!$7ZA.EXE" t "!~.!"
+X: Archiv ins andere Fenster entpacken
+	"!$VC7Z.EXE" x "!~.!" "%:%~\."
+M: 7z pruefen (7ZM fuer wenig Speicher)
+	"!$7ZM.EXE" t "!~.!"
+F10: Erweiterungen
+	addons.mnu

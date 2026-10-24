@@ -4,12 +4,22 @@ F2:	ARJ-Menue...
 	arj.mnu
 F3:	ACE-Menue...
 	ace.mnu
+F4:	Retro7Zip...
+	7zip.mnu
+F5:	RAR-Menue...
+	rar.mnu
+F6:	LHA-/LZH-Menue...
+	lha.mnu
+F7:	ARC-/PKARC-Menue...
+	arc.mnu
+F8:	Original PKZIP...
+	pkzip.mnu
 Z:	Compress with ZIP
-	PKZIP -Pex -whs !~ @!~@
+	"!$ZIP.EXE" -9 -r !~ -@ < !~@
 A:	Compress with ARJ
-	ARJ A !~ !!!~@
+	"!$ARJ.EXE" A !~ !!!~@
 L:	Compress with LHA
-	LHA A -x !~ @!~@
+	"!$VCTOOLS.EXE" run "!~@" "!$LHA.EXE a !~ {}"
 C:	Create the list of files
 	@ECHO The list of files was created in VC.LST file
 	@COPY !~@ VC.LST > nul

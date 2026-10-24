@@ -1,11 +1,11 @@
-' Requires DOS PKZIP/PKUNZIP in PATH. The list command needs no packer.
+' Uses the bundled 16-bit Info-ZIP programs; make release downloads them.
 C: ZIP aus markierten Dateien erstellen
-	PKZIP -Pex -whs "![ZIP-Archiv (8.3-Name)]" @!~@
+	"!$ZIP.EXE" -9 -r "![ZIP-Archiv (8.3-Name)]" -@ < !~@
 L: ZIP-Inhalt anzeigen (eigener Betrachter)
 	"!$VCTOOLS.EXE" zip "!~.!"
 T: ZIP-Archiv pruefen
-	PKUNZIP -t "!~.!"
+	"!$UNZIP.EXE" -t "!~.!"
 X: ZIP ins andere Fenster entpacken
-	PKUNZIP -d "!~.!" "%:%~\"
+	"!$UNZIP.EXE" "!~.!" -d "%:%~\."
 F10: Erweiterungen
 	addons.mnu

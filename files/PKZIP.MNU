@@ -1,0 +1,11 @@
+' Original PKZIP/PKUNZIP 2.50 shareware. Info-ZIP is in ZIP.MNU.
+C: ZIP mit PKZIP erstellen
+	"!$PKZIP.EXE" -Pex -whs "![ZIP-Archiv (8.3-Name)]" @!~@
+L: ZIP-Inhalt anzeigen
+	"!$PKUNZIP.EXE" -v "!~.!"
+T: ZIP-Archiv pruefen
+	"!$PKUNZIP.EXE" -t "!~.!"
+X: ZIP ins andere Fenster entpacken
+	"!$PKUNZIP.EXE" -d "!~.!" "%:%~\.\"
+F10: Erweiterungen
+	addons.mnu

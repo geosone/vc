@@ -1,0 +1,13 @@
+' RAR.EXE 2.06 creates old RAR archives. 7ZA reads modern RAR including RAR5.
+C: RAR2 aus markierten Dateien erstellen
+	"!$RAR.EXE" a "![RAR-Archiv (8.3-Name)]" @!~@
+L: RAR-Inhalt anzeigen (Retro7Zip)
+	"!$7ZA.EXE" l -sccDOS "!~.!"
+T: RAR pruefen (Retro7Zip)
+	"!$7ZA.EXE" t "!~.!"
+X: RAR ins andere Fenster entpacken
+	"!$VC7Z.EXE" x "!~.!" "%:%~\."
+U: RAR entpacken (altes UNRAR, kein RAR5)
+	"!$UNRAR.EXE" x "!~.!" "%:%~\.\"
+F10: Erweiterungen
+	addons.mnu

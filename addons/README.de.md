@@ -2,11 +2,13 @@
 
 Diese Erweiterungen sind neu geschrieben und unter BSD-2-Clause verfügbar.
 Es wurde kein Code aus Heikos Plug-In, PACKMENU, LISTER, Small Executor,
-DET oder LGFV übernommen. Die heruntergeladenen Programme unter `build/down/`
-gehören nicht zur Veröffentlichung.
+DET oder LGFV übernommen. `make release` lädt die unten genannten originalen
+Packprogramme und OS/2-Helfer zusätzlich herunter; ihre Dateien bleiben im
+Build-Verzeichnis und werden nicht in Git eingecheckt.
 
 Im F2-Menü öffnet **F3 „Erweiterungen…“** die Erweiterungen. Dort stehen
-eigene Untermenüs für ZIP, ARJ, ACE und Dateilisten zur Verfügung.
+eigene Untermenüs für ZIP, ARJ, ACE, Retro7Zip, RAR, LHA, ARC, PKZIP,
+OS/2-Helfer und Dateilisten zur Verfügung.
 Menüs und Quellcode können frei angepasst werden.
 
 ## Archivmenüs
@@ -16,12 +18,81 @@ Prüfen und Entpacken. Beim Erstellen werden die markierten Dateien über
 eine temporäre Dateiliste von VC übergeben. Ohne Markierung verwendet VC
 die aktuelle Datei. Entpackt wird in das Verzeichnis des anderen Fensters.
 
-Die Menüs benötigen die **DOS-Versionen** von PKZIP/PKUNZIP, ARJ bzw. ACE
-im `PATH`. Diese Packprogramme werden nicht mitgeliefert und wurden nicht
-nachgebaut. Das entspricht der Funktion der früheren Menü-Erweiterungen.
-Einige neuere oder andere Ausgaben der Packprogramme haben andere Schalter;
-die Menüdateien richten sich nach den DOS-Programmen der VC-4.99-Zeit.
-Rückfragen zum Überschreiben bleiben beim jeweiligen Packprogramm aktiv.
+`make release` lädt die **DOS-Versionen** automatisch herunter, prüft ihre
+SHA-256-Summen und legt die ausführbaren Programme direkt neben VC ab.
+Die Menüs verwenden diesen Installationspfad und benötigen keinen
+zusätzlichen PATH-Eintrag. Rückfragen zum Überschreiben bleiben aktiv. Info-ZIP erwartet für
+UTC-Zeitstempel eine passende DOS-Umgebungsvariable `TZ`; ohne sie kann
+es eine Warnung und Rückgabecode 1 liefern. Das separate PKZIP-Menü
+verwendet die originale PKWARE-Ausgabe.
+
+| Programme im VC-Ordner | Ausgabe und Aufgabe |
+|---|---|
+| ARJ.EXE | ARJ 2.78 Open-Source: erstellen, auflisten, prüfen, entpacken |
+| ZIP.EXE / UNZIP.EXE | Info-ZIP 3.00 / 6.00, 16-Bit-DOS; ZIP-Menü |
+| ACE.EXE | ACE 1.2b für DOS; Shareware, 30 Tage Testzeit |
+| RAR.EXE | RAR 2.06 für DOS; erstellt alte RAR-Archive; 40 Tage Testzeit |
+| UNRAR.EXE | UnRAR 3.80 beta für DOS32; entpackt alte RAR-Formate, kein RAR5 |
+| 7ZA.EXE / 7ZR.EXE / 7ZM.EXE / 7ZDEC.EXE | Retro7Zip 24.09+5 für DOS, 386 oder neuer |
+| LHA.EXE | LHA 2.13 von Haruyasu Yoshizaki, freie Weitergabe mit Dokumentation |
+| ARC.EXE | ARC 6.02, historische Shareware |
+| PKARC.EXE / PKXARC.EXE | PKARC/PKXARC 3.6; zusätzlich speichersparende JR-Ausgaben |
+| PKZIP.EXE / PKUNZIP.EXE | Originale PKZIP/PKUNZIP-2.50-Shareware; separates PKZIP-Menü |
+
+Die originalen Anleitungen, Lizenztexte, Shareware-Pakete und nötigen
+Quellpakete liegen unter `PACKDOC`. Der Installer zeigt die Lizenzen vor
+dem Kopieren zur Bestätigung an: neun Dialoge, mit zusammengefassten
+Texten für Info-ZIP und die alten ARC-/PKWARE-Werkzeuge. Alle angezeigten
+Lizenzen müssen akzeptiert werden. `INSTALL /S` akzeptiert sie wie bei
+GDI üblich automatisch; der interaktive Aufruf fragt ausdrücklich nach.
+Die Fremdprogramme behalten ihre eigenen Lizenzen und Testfristen.
+
+Quellen, Versionsstände und Prüfsummen stehen in `downloads.txt`; die
+Release enthält dieselben Angaben als `PACKERS.TXT`. Downloads landen in
+`build/downloads`, ein weiterer Lauf prüft und verwendet den Cache.
+`make release PACKER_CACHE=/anderer/cache` verwendet einen anderen Cache.
+
+OldOS liefert die historischen PKZIP-, PKARC-, RAR- und LHA-Pakete.
+Bei LHA ist dort der Link mit `.zip` falsch; verwendet wird die vorhandene
+`.exe`. Der ARC-Selbstentpacker von OldOS scheitert an seiner eigenen
+Integritätsprüfung; deshalb stammen die fertigen ARC-6.02-Dateien aus
+einer ebenfalls fest geprüften ZIP-Ausgabe. Das OldOS-Original liegt
+unverändert als `PACKDOC/ARC/ORIGINAL.EXE` bei.
+
+## Retro7Zip im Archivfenster
+
+`VCARCH.EXT` verwendet Retro7Zip für 7z, XZ, BZip2, gzip, TAR, moderne
+RAR-Dateien einschließlich RAR5 sowie viele lesbare Container wie CAB,
+ISO, WIM und Datenträgerabbilder. Die erreichbaren Formate zeigt `7ZA i`.
+Erstellen und Ändern stehen nur für Formate zur Verfügung, die das
+jeweilige Packprogramm schreiben kann. RAR.EXE erzeugt RAR2; Retro7Zip
+erzeugt keine RAR-Archive. TGZ/TBZ/TXZ sind verschachtelte Archive:
+zuerst die Kompressionsschicht, dann die enthaltene TAR-Datei öffnen.
+
+`VC7Z.EXE` übersetzt technische 7-Zip-Listen in ein stabiles Format für
+VC. Das funktioniert auch mit Solid-Archiven, deren einzelne Dateien
+keine eigene komprimierte Größe besitzen. Dort zeigt VC für diese
+Größe 0; Dateiname und ursprüngliche Größe bleiben erhalten. Fehlende
+Zeitstempel werden als 01.01.1980 dargestellt. Größen über 32 Bit werden
+abgewiesen, weil die Dateiverwaltung von VC solche Werte nicht abbildet.
+
+Zum Entpacken ins andere Fenster wechselt VC7Z zunächst in den Zielordner.
+Das umgeht einen Fehler der DOS-Ausgabe von Retro7Zip beim direkten
+Angeben eines bereits vorhandenen Ausgabeordners. Laufwerkswechsel
+werden dabei berücksichtigt. Die 7-Zip-Varianten benötigen einen 386;
+7ZM ist die kleine Variante für einfache 7z-Archive und wenig Speicher,
+7ZA deckt die größte Formatauswahl ab. Speicherbedarf und mögliche
+Dateigrößen bleiben durch DOS und die jeweilige Kompression begrenzt.
+
+## OS/2-Helfer
+
+`AUTOINS.COM` stammt unverändert aus dem VC-Downloadbereich und ermöglicht
+die Wiederholung der Einfügen-Taste in einer DOS-Sitzung unter OS/2.
+Im OS/2-Untermenü kann es einmal je Sitzung gestartet werden; der Installer
+lädt es nicht automatisch. Unter `OS2` liegen die originalen Symbole für
+Fenster- und Vollbildsitzungen (`VC-WN.ICO`, `VC-FS.ICO`) und weitere
+OS/2-Symbole. Die zugehörigen Original-ZIPs liegen unter `PACKDOC/OS2`.
+Das sind Helfer für die DOS-Ausgabe von VC, keine nativen OS/2-Packer.
 
 **ZIP-Inhaltslisten** erzeugt unser `VCTOOLS.EXE` selbst und ohne Packprogramm.
 Unterstützt werden klassische ZIP-Dateien mit einem Datenträger, einschließlich
@@ -101,7 +172,7 @@ Untermenü ergänzt werden. Die neuen Untermenüs werden regulär installiert.
 
 | Historische Erweiterung | Stand in diesem Repo |
 |---|---|
-| Heikos Archivmenüs, PACKMENU | Eigene ZIP-/ARJ-/ACE-Menüs; externe Packer erforderlich |
+| Heikos Archivmenüs, PACKMENU | Eigene Archivmenüs; DOS-Packer lädt `make release` herunter |
 | Heikos Dateilisten-Helfer, LISTER, Small Executor | Eigene Listen, Präfix/Suffix, volle kurze Pfade und Stapelbefehle |
 | DET | Eigene, kleinere Signaturerkennung |
 | LGFV / ARCVIEW | Eigene ZIP-Inhaltsanzeige; andere Archive über externe Packer |
@@ -110,13 +181,18 @@ Untermenü ergänzt werden. Die neuen Untermenüs werden regulär installiert.
 | VC-COLOR | Farben lassen sich bereits im VC-Einstellungsmenü ändern |
 | HA, Swift Editor, Hiew | Keine vollständigen neuen Packer, Editoren oder Disassembler |
 | NTFS-Treiber und LFN-Treiber | Nicht Bestandteil; für lange Namen vorhandenes DOSLFN verwenden |
-| OS/2-Helfer und Patches für VC 4.0x | Nicht für diesen Build übernommen |
+| OS/2-Helfer | Originales AUTOINS und OS/2-Symbole in der vollen Release |
+| Patches für VC 4.0x | Nicht für diesen Build übernommen |
 
 ## Bauen und prüfen
 
-`make addons` baut VCTOOLS als 16-Bit-DOS-EXE für 8086 mit Open Watcom.
+`make addons` baut VCTOOLS und VC7Z als 16-Bit-DOS-EXE mit Open Watcom.
 Voreinstellung: `WATCOM=/opt/watcom`, Compiler `binl64/wcl`; alternativ
-`WATCOM=` und `WCL=` setzen. `make` und `make release` bauen es mit.
+`WATCOM=` und `WCL=` setzen. `make` und `make release` bauen beide mit.
+Zum Herunterladen und Auspacken der Fremdpakete werden `curl`, `7z` und
+Python 3 benötigt. Die 1,44-MB-Diskette (`make disk`) enthält nur VC und
+die eigenen Helfer; die vollständige Sammlung mit Fremdprogrammen und
+Quellpaketen ist deutlich größer und liegt in der ZIP-/Verzeichnis-Release.
 
 `make test` baut denselben C89-Quellcode mit dem Host-C-Compiler und prüft
 Dateilisten, Befehlsersetzung, Fehlerfälle, Formaterkennung, ZIP-Parser und

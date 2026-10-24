@@ -15,6 +15,11 @@ Changes in version 4.99.10 alpha (24-Oct-2026)
 + VCTOOLS: file lists, batch commands, format detection, ZIP listing,
   and a read-only hex dump; source included in the repository
 + !$ and %$ menu macros expand to the VC installation directory
++ make release downloads SHA-256-pinned DOS archivers into the VC directory
++ ARJ, Info-ZIP, ACE, RAR/UnRAR, Retro7Zip, LHA, ARC, PKARC and PKZIP
++ VC7Z: stable listings of solid archives, RAR5 and modern containers
++ OS/2 DOS-session helpers: original AUTOINS and OS/2 icons
++ Installer asks acceptance of all bundled packer licenses
 * Removed the startup test-version message
 
 

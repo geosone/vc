@@ -53,6 +53,10 @@ class QMP:
             else:
                 self.key({" ": "spc", "\\": "backslash", ".": "dot"}.get(c, c))
 
+    def chord(self, *keys):
+        self.call("send-key", keys=[{"type": "qcode", "data": key} for key in keys])
+        time.sleep(0.2)
+
     def screen(self, directory, name):
         self.call("human-monitor-command", command_line=
                   'pmemsave 0xb8000 4000 "' + str(directory / (name+".vram")) + '"')
@@ -69,7 +73,13 @@ def main():
     parser.add_argument("--offset", default=32256, type=int,
                         help="byte offset of the DOS FAT partition")
     parser.add_argument("--output", type=Path, default=ROOT / "build/dos-test")
+    parser.add_argument("--full", action="store_true",
+                        help="install directory release and test the downloaded packers")
+    parser.add_argument("--licenses", action="store_true",
+                        help="show all nine license dialogs and verify that declining aborts")
     args = parser.parse_args()
+    if args.licenses:
+        args.full = True
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=True)
     disk = out / "disk.img"
@@ -92,10 +102,19 @@ def main():
     command("mmd", "-i", image, "::/VCTEST", "::/VCTEST/HOMECHK")
     (out / "QEXIT.COM").write_bytes(bytes.fromhex("baf400b000eecd20"))
     command("mcopy", "-o", "-i", image, str(out / "QEXIT.COM"), "::/")
+    installer = "A:\\INSTALL /S"
+    if args.full:
+        output_disk = out / "destination.img"
+        command("mformat", "-C", "-f", "1440", "-i", str(output_disk), "::")
+        command("mmd", "-i", image, "::/VCDIST")
+        for p in sorted((ROOT / "build/release").iterdir()):
+            command("mcopy", "-s", "-o", "-i", image, str(p), "::/VCDIST/")
+        installer = "C:\\VCDIST\\INSTALL /S"
     dosfile("CONFIG.SYS", "FILES=40\nBUFFERS=20\nLASTDRIVE=Z\nSHELL=C:\\COMMAND.COM C:\\ /P\n")
-    dosfile("AUTOEXEC.BAT", """@ECHO OFF
+    autoexec = """@ECHO OFF
 SET PATH=C:\\
 SET TEMP=C:\\VCTEST
+SET TZ=UTC0
 A:\\INSTALL /S
 IF ERRORLEVEL 1 ECHO INSTALL FAILED > C:\\VCTEST\\FAIL.TXT
 C:
@@ -103,10 +122,14 @@ CD \\VCTEST
 CALL TEST.BAT
 C:\\VC\\VC
 C:\\QEXIT.COM
-""")
+""".replace("A:\\INSTALL /S", installer)
+    if args.licenses:
+        autoexec = ("@ECHO OFF\nC:\\VCDIST\\INSTALL\n"
+                    "IF EXIST C:\\VC\\VC.COM ECHO FILES COPIED > C:\\BAD.TXT\nC:\\QEXIT.COM\n")
+    dosfile("AUTOEXEC.BAT", autoexec)
     dosfile("IN.LST", 'ONE.TXT\n"TWO WORD.TXT"\n', "::/VCTEST/")
     dosfile("BAD.LST", "BAD&NAME\n", "::/VCTEST/")
-    dosfile("TEST.BAT", """@ECHO OFF
+    batch = """@ECHO OFF
 C:\\VC\\VCTOOLS list IN.LST PRE: :END > LIST.TXT
 IF ERRORLEVEL 1 ECHO LIST FAILED >> FAIL.TXT
 C:\\VC\\VCTOOLS list IN.LST --full > FULL.TXT
@@ -123,8 +146,71 @@ C:\\VC\\VCTOOLS zip SAMPLE.ZIP > ZIP.TXT
 IF ERRORLEVEL 1 ECHO ZIP FAILED >> FAIL.TXT
 C:\\VC\\VCTOOLS hex SAMPLE.ZIP 0 4 > HEX.TXT
 IF ERRORLEVEL 1 ECHO HEX FAILED >> FAIL.TXT
-ECHO DONE > DONE.TXT
-""", "::/VCTEST/")
+"""
+    if args.full:
+        dosfile("ORIG.TXT", "Archive test payload\n", "::/VCTEST/")
+        command("mmd", "-i", image, "::/VCTEST/SUB", "::/VCTEST/AROUT",
+                "::/VCTEST/ZOUT", "::/VCTEST/COUT", "::/VCTEST/ROUT", "::/VCTEST/SOUT",
+                "::/VCTEST/LHOUT", "::/VCTEST/ARCOUT", "::/VCTEST/PKOUT",
+                "::/VCTEST/A7", "::/VCTEST/AARC", "::/VCTEST/ALHA", "::/VCTEST/GUIOUT")
+        dosfile("NEST.TXT", "Nested file\n", "::/VCTEST/SUB/")
+        sample = out / "RAR5.RAR"
+        command("rar", "a", "-ma5", str(sample), str(out / "ORIG.TXT"))
+        command("mcopy", "-o", "-i", image, str(sample), "::/VCTEST/")
+        checks = [
+            ('ARJ a -y ATEST.ARJ ORIG.TXT', 'ARJA.TXT'),
+            ('ARJ t ATEST.ARJ', 'ARJT.TXT'),
+            ('ARJ x -y ATEST.ARJ AROUT\\', 'ARJX.TXT'),
+            ('ZIP -9 ZTEST.ZIP ORIG.TXT', 'ZIPA.TXT'),
+            ('UNZIP -t ZTEST.ZIP', 'ZIPT.TXT'),
+            ('UNZIP ZTEST.ZIP -d ZOUT', 'ZIPX.TXT'),
+            ('ACE a -y CTEST.ACE ORIG.TXT', 'ACEA.TXT'),
+            ('ACE t CTEST.ACE', 'ACET.TXT'),
+            ('ACE x -y CTEST.ACE COUT\\', 'ACEX.TXT'),
+            ('RAR a -y RTEST.RAR ORIG.TXT', 'RARA.TXT'),
+            ('UNRAR t RTEST.RAR', 'RART.TXT'),
+            ('UNRAR x -y RTEST.RAR ROUT\\', 'RARX.TXT'),
+            ('7ZA i', '7ZI.TXT'),
+            ('7ZA a -t7z -mx=1 -md=1m -mmt=off STEST.7Z ORIG.TXT SUB', '7ZA.TXT'),
+            ('7ZA t STEST.7Z', '7ZT.TXT'),
+            ('VC7Z x STEST.7Z SOUT', '7ZX.TXT'),
+            ('VC7Z x STEST.7Z A:\\', '7ZXDRV.TXT'),
+            ('VC7Z STEST.7Z', '7ZLIST.TXT'),
+            ('7ZA t RAR5.RAR', 'RAR5T.TXT'),
+            ('VC7Z RAR5.RAR', 'RAR5L.TXT'),
+            ('LHA a LTEST.LZH ORIG.TXT', 'LHAA.TXT'),
+            ('LHA v LTEST.LZH', 'LHAL.TXT'),
+            ('LHA t LTEST.LZH', 'LHAT.TXT'),
+            ('LHA x LTEST.LZH LHOUT\\', 'LHAX.TXT'),
+            ('ARC a ATEST.ARC ORIG.TXT', 'ARCA.TXT'),
+            ('ARC v ATEST.ARC', 'ARCL.TXT'),
+            ('ARC t ATEST.ARC', 'ARCT.TXT'),
+            ('PKXARC ATEST.ARC ARCOUT\\', 'ARCX.TXT'),
+            ('PKARC a PTEST.ARC ORIG.TXT', 'PKARCA.TXT'),
+            ('PKXARC -t PTEST.ARC', 'PKARCT.TXT'),
+            ('PKZIP -ex PTEST.ZIP ORIG.TXT', 'PKZIPA.TXT'),
+            ('PKUNZIP -t PTEST.ZIP', 'PKZIPT.TXT'),
+            ('PKUNZIP -d PTEST.ZIP PKOUT\\', 'PKZIPX.TXT'),
+            ('7ZA a -ttar STEST.TAR ORIG.TXT SUB', 'TARA.TXT'),
+            ('7ZA t STEST.TAR', 'TART.TXT'),
+            ('7ZA a -tgzip STEST.GZ ORIG.TXT', 'GZA.TXT'),
+            ('7ZA t STEST.GZ', 'GZT.TXT'),
+            ('7ZA a -tbzip2 -mx=1 STEST.BZ2 ORIG.TXT', 'BZ2A.TXT'),
+            ('7ZA t STEST.BZ2', 'BZ2T.TXT'),
+            ('7ZA a -txz -mx=1 STEST.XZ ORIG.TXT', 'XZA.TXT'),
+            ('7ZA t STEST.XZ', 'XZT.TXT'),
+            ('7ZA a -twim STEST.WIM ORIG.TXT', 'WIMA.TXT'),
+            ('7ZA t STEST.WIM', 'WIMT.TXT'),
+        ]
+        for cmd, logname in checks:
+            exe, tail = cmd.split(" ", 1)
+            batch += (f'C:\\VC\\{exe} {tail} > {logname}\n'
+                      f'IF ERRORLEVEL 1 ECHO {logname} FAILED >> FAIL.TXT\n')
+        batch += "COPY STEST.7Z A7\\ONLY.7Z > NUL\n"
+        batch += "COPY ATEST.ARC AARC\\ONLY.ARC > NUL\n"
+        batch += "COPY LTEST.LZH ALHA\\ONLY.LZH > NUL\n"
+    batch += "ECHO DONE > DONE.TXT\n"
+    dosfile("TEST.BAT", batch, "::/VCTEST/")
     dosfile("VC.MNU", """T: Helper home macro
     "!$VCTOOLS.EXE" type C:\\VCTEST\\SAMPLE.ZIP > HOME.TXT
 """, "::/VCTEST/HOMECHK/")
@@ -137,9 +223,10 @@ ECHO DONE > DONE.TXT
     with (out / "qemu.log").open("wb") as log:
         proc = subprocess.Popen([
             "qemu-system-i386", "-machine", "pc", "-accel", "tcg", "-cpu", "486",
-            "-m", "32", "-display", "none", "-monitor", "none", "-serial", "none",
+            "-m", "64", "-display", "none", "-monitor", "none", "-serial", "none",
             "-drive", "if=ide,index=0,format=raw,file=" + str(disk),
-            "-drive", "if=floppy,index=0,format=raw,readonly=on,file=" + str(ROOT / "build/vc49910a.img"),
+            "-drive", "if=floppy,index=0,format=raw,file=" +
+            str(output_disk if args.full else ROOT / "build/vc49910a.img"),
             "-boot", "c", "-nic", "none", "-no-reboot",
             "-device", "isa-debug-exit,iobase=0xf4,iosize=1",
             "-qmp", "unix:" + str(sock) + ",server=on,wait=off"],
@@ -151,7 +238,39 @@ ECHO DONE > DONE.TXT
                     raise RuntimeError("QEMU did not start; see qemu.log")
                 time.sleep(0.1)
             qmp = QMP(sock)
-            deadline = time.monotonic() + 50
+            if args.licenses:
+                deadline = time.monotonic() + 30
+                while "Welcome" not in qmp.screen(out, "welcome"):
+                    if time.monotonic() > deadline:
+                        raise RuntimeError("installer welcome dialog not reached")
+                    time.sleep(0.5)
+                qmp.key("ret")
+                titles = ["Volkov Commander", "ARJ Open-Source", "Info-ZIP Zip / UnZip",
+                          "ACE 1.2b shareware", "RAR 2.06 shareware", "UnRAR",
+                          "Retro7Zip / 7-Zip", "LHA", "PKZIP / PKARC / ARC"]
+                for i, title in enumerate(titles, 1):
+                    deadline = time.monotonic() + 10
+                    while True:
+                        screen = qmp.screen(out, f"license-{i}")
+                        if title in screen and "accept" in screen.lower():
+                            break
+                        if time.monotonic() > deadline:
+                            raise RuntimeError("license not shown: " + title)
+                        time.sleep(0.3)
+                    if i == len(titles):
+                        qmp.key("d")
+                    else:
+                        qmp.key("i")
+                time.sleep(0.5)
+                qmp.screen(out, "declined")
+                qmp.key("ret")
+                proc.wait(timeout=10)
+                check = subprocess.run(["mdir", "-i", image, "::/VC/VC.COM"], capture_output=True)
+                assert check.returncode != 0, "files copied despite declined license"
+                print("PASS: all nine licenses displayed; decline prevents installation")
+                print("Results:", out)
+                return
+            deadline = time.monotonic() + (120 if args.full else 50)
             while True:
                 screen = qmp.screen(out, "startup")
                 if "Volkov Commander" in screen and "SAMPLE" in screen.upper():
@@ -169,6 +288,35 @@ ECHO DONE > DONE.TXT
             time.sleep(0.5)
             assert "ARJ-Archiv pruefen" in qmp.screen(out, "arj-menu")
             qmp.key("esc")
+            if args.full:
+                qmp.text("cd c:\\vctest\\a7")
+                qmp.key("ret")
+                time.sleep(0.5)
+                qmp.key("down", "ret")
+                time.sleep(3)
+                archive_screen = qmp.screen(out, "7z-panel")
+                assert "ORIG" in archive_screen.upper(), archive_screen
+                assert "SUB" in archive_screen.upper(), archive_screen
+                qmp.key("down", "f5")
+                time.sleep(0.5)
+                qmp.chord("ctrl", "y")
+                qmp.text("c:\\vctest\\guiout\\")
+                qmp.key("ret")
+                time.sleep(3)
+                qmp.screen(out, "7z-copy")
+                # Return to the regular directory before testing the local menu.
+                qmp.key("home", "ret")
+                time.sleep(0.5)
+                for folder, label in (("aarc", "arc-panel"), ("alha", "lha-panel")):
+                    qmp.text("cd c:\\vctest\\" + folder)
+                    qmp.key("ret")
+                    time.sleep(0.5)
+                    qmp.key("down", "ret")
+                    time.sleep(2)
+                    screen = qmp.screen(out, label)
+                    assert "ORIG" in screen.upper(), screen
+                    qmp.key("home", "ret")
+                    time.sleep(0.5)
             qmp.text("cd c:\\vctest\\homechk")
             qmp.key("ret")
             time.sleep(0.5)
@@ -196,6 +344,15 @@ ECHO DONE > DONE.TXT
     assert b"50 4B 03 04" in read("HEX.TXT")
     home = command("mtype", "-i", image, "::/VCTEST/HOMECHK/HOME.TXT")
     assert b"ZIP archive" in home, home
+    if args.full:
+        for folder in ("AROUT", "ZOUT", "COUT", "ROUT", "SOUT", "LHOUT", "ARCOUT", "PKOUT"):
+            assert b"Archive test payload" in read(folder + "/ORIG.TXT"), folder
+        assert b"SUB\\NEST.TXT" in read("7ZLIST.TXT"), read("7ZLIST.TXT")
+        assert b"VC7Z" in read("RAR5L.TXT"), read("RAR5L.TXT")
+        assert b"Archive test payload" in read("GUIOUT/ORIG.TXT")
+        cross_drive = command("mtype", "-i", str(output_disk), "::/ORIG.TXT")
+        assert b"Archive test payload" in cross_drive
+        print("PASS: ARJ, ZIP, ACE, RAR, LHA, ARC, PKARC and Retro7Zip pack/test/extract; RAR5 read")
     print("PASS: DOS install, lists, batch commands, detection, ZIP, hex, F2 menus and !$ macro")
     print("Results:", out)
 
