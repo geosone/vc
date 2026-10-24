@@ -1,3 +1,5 @@
+Original files retained under original/:
+
 The help files (F1) of VC 4.05 and its language packages, from
 https://vc.vvv.kyiv.ua/download/ (Norton Guides format):
 
@@ -8,3 +10,7 @@ VC-PL.HLP   Polish     vc405pl.zip   VC.HLP
 VC-SK.HLP   Slovak     vc405sk.zip   LATIN2/VC.HLP (code page 852)
 
 Setup installs the one of the chosen language as VC.HLP.
+
+Editable UTF-8 XML sources: src/*.xml; see README.md.
+New chapters and compiler: Copyright 2026 Mario Fetka, BSD-2-Clause.
+make help generates the current guides; setup installs the chosen one.

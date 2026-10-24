@@ -13,25 +13,27 @@ alpha.
 |---|---|
 | `src/` | the sources of `vc49909.zip`, changed so that [JWasm](https://github.com/Baron-von-Riedesel/JWasm) and JWlink build them (the author used Borland TASM and LINK) |
 | `files/` | the other files of the 4.99.08 alpha package: menus, extension files, code page tables, texts, the icon |
-| `help/` | the help files (F1) of VC 4.05: English, German, Russian, Polish, Slovak (`help/SOURCES.TXT`) |
+| `help/` | editable XML help in five languages, DTD/CSS for XMLmind, and original VC 4.05 guides; [editing instructions](help/README.md) |
 | `install/` | `INSTALL.INI` for the [GeosOne Dual Installer](https://github.com/geosone/gdi) |
-| `tools/` | `tasm2jwasm.py`, the converter that made `src/` |
+| `tools/` | source converter, DOS help compiler and pinned packer downloads |
 | `addons/` | independently written DOS helpers and [German instructions](addons/README.de.md) for the ZIP/ARJ/ACE menus, file lists and batch commands |
 | `tests/` | helper command-line tests and a native DOS/QEMU smoke test |
 
 ## Building
 
     make                    # build/VC.COM, build/VC.OVL
+    make help               # compile XML sources to five DOS HLP guides
     make release            # build/release/ and build/vc49910a.zip
     make disk               # build/vc49910a.img, a 1.44 MB disk
     make check              # gdicheck of the release
     make packers            # pinned downloads, verify cache, stage DOS packers
     make JWLINK=/path/to/jwlink
 
-Needs GNU make, JWasm 2.x and JWlink; `release` also needs `zip` and
+Needs Python 3, GNU make, JWasm 2.x and JWlink; `release` also needs `zip` and
 `INSTALL.EXE` of the GeosOne Dual Installer (`GDI=`, default
 `../gdi/build`), `disk` needs mtools. Under DOS, `src/MAKE.BAT` is meant to build with
 `JWASM.EXE` and `JWLINK.EXE` (`MAKE VC`, `MAKE VCOVL`; not tested yet).
+Generate the help and context map first with `make help` on the host.
 
 The helper `VCTOOLS.EXE` also needs Open Watcom (`WATCOM=/opt/watcom`,
 `WCL=$(WATCOM)/binl64/wcl` by default). It targets 8086 DOS. `make test`
@@ -105,12 +107,24 @@ reads `VC.HLP` (Norton Guides, as in 4.05) from the directory of the
 Commander and shows the index or a topic in a dialog of 4.99 (scroll bar,
 mouse; menu `[ Next ] [ Previous ] [ Index ] [ Cancel ]`). The help page
 of the panel, dialog, viewer or editor selects the topic; `HelpMap` gives
-the topic of 4.05 for each page of 4.99 (new pages such as Quick View
-or the option dialogs get the nearest one).
+the topic by stable XML ID for each help context. New pages cover archives,
+Retro7Zip, menus, helpers, OS/2, installation, current options, long names
+and building the help. 44 reference chapters have been revised for
+4.99.10 in all five languages,
+including replacements for the old VCSETUP instructions. Unfinished menu
+actions are identified in the help. See [the reference audit](help/REFERENCE-AUDIT.md).
 
-Tested in QEMU: F1 in the panels (the index), in the copy dialog (Copy), in
-the viewer (keyboard reference), Next, Index, Esc; setup with `COUNTRY=049`
-installs and shows the German help.
+`make help` compiles `help/src/*.xml` using our own Python compiler into
+five DOS HLP files and an assembly context map under `build/help`.
+`make release` includes these generated files. XMLmind can use the supplied
+DTD and stylesheet to edit the sources. See [help/README.md](help/README.md)
+for source elements, limits, imports and a 5.0 help preview. The current
+program version remains 4.99.10 alpha.
+
+Tests cover the original text imports, generated offsets, encodings,
+record limits, context mapping, XML formatting and version substitution.
+The native DOS smoke test also exercises the F1 index, new chapters,
+Next and context help using the installed language.
 
 ## License
 

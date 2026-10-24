@@ -1,0 +1,807 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="../guide.css"?>
+<!DOCTYPE guide SYSTEM "../guide.dtd">
+<guide language="en" codepage="cp437" original="VC.HLP" original-sha256="aa3751043baf39eacb1e835959fd429b1143e08673de3e63657157d1d1824ece">
+  <credits>
+    <credit>Copyright (C) 1991-2000 by Vsevolod V. Volkov</credit>
+    <credit />
+    <credit />
+    <credit />
+    <credit />
+  </credits>
+  <topic id="release" layout="prose">
+    <title>Current version and new features</title>
+    <p>This help describes Volkov Commander {{version}}. The program is based on Volkov's published 4.99.09 sources and adds F1 help, a modern build and small extensions. A final 5.0 release is being prepared; this development build is not that final release.</p>
+    <p>F1 opens help for the current dialog, viewer or menu. In the panels it opens the index. Enter opens a topic. Next and Previous change topics; Index returns to the list. Escape closes help.</p>
+    <p>F2, then F3 opens the extensions. They include archive menus, file lists, commands for selected files, format detection and a hex dump.</p>
+    <p>The directory/ZIP release includes downloaded DOS archivers. The 1.44 MB floppy contains VC and its own helpers, without those external archivers. The installer offers English, German, Russian, Polish and Slovak help.</p>
+    <p>The reference includes updated 4.99.10 menus, viewer keys, filters and settings. Unchanged operation descriptions are retained from the translated help; original binaries are preserved separately.</p>
+  </topic>
+  <topic id="menus" layout="prose">
+    <title>User menus and new macros</title>
+    <p>Press F2 for the user menu, then F3 for the extensions. F1 in the user menu opens the archive menu. Shift-F2 opens the main user menu when a directory has its own VC.MNU. Escape closes a menu; F10 inside an extension menu returns to the main or extensions menu as indicated.</p>
+    <p>VC.MNU and the other .MNU files are text files. Each item has a key and caption, followed by indented command lines or another .MNU filename. Installed user menus are preserved on updates. Add an addons.mnu item to an older VC.MNU to make the new extensions accessible.</p>
+    <p>! and !.! refer to the current filename without/with its extension. !@ names a temporary list of selected files. Without selection, VC uses the current file. The % forms refer to the other panel. !~.! and !~@ use short DOS names. ![Prompt] asks for input; !0 to !9 reuse answers.</p>
+    <p>New: !$ and %$ expand to VC's installation directory, with a trailing backslash. Use them to find helpers even when VC is not in PATH:</p>
+    <pre>"!$VCTOOLS.EXE" type "!~.!"</pre>
+  </topic>
+  <topic id="archives" layout="prose">
+    <title>Included archive programs</title>
+    <p>The full release downloads and installs the DOS archivers beside VC. The menus use their installation paths. There is no need to find each program separately or add VC to PATH for the extension menus.</p>
+    <p>ZIP: ZIP.EXE / UNZIP.EXE are 16-bit Info-ZIP. A separate PKZIP menu uses the original PKZIP / PKUNZIP 2.50 shareware programs. ARJ: ARJ 2.78 Open-Source creates, lists, tests and extracts ARJ archives. ACE: ACE 1.2b is original shareware with a 30-day evaluation period. RAR: RAR 2.06 creates old RAR2 archives; evaluation is limited to 40 days. UNRAR 3.80 beta reads older RAR formats. Use Retro7Zip for RAR5 reading. LHA 2.13 handles LZH archives. ARC 6.02 and PKARC / PKXARC handle ARC.</p>
+    <p>Choose Create to pack selected files, List to inspect an archive, Test to check it, or Extract to copy its contents to the other panel's directory. Overwrite questions are still handled by the archiver.</p>
+    <p>Third-party licenses, manuals, complete original packages and required source archives are in PACKDOC. PACKERS.TXT lists versions and origins. These programs keep their own licenses; they do not inherit VC's BSD license.</p>
+  </topic>
+  <topic id="retro7zip" layout="prose">
+    <title>Retro7Zip and archive panels</title>
+    <p>Retro7Zip 24.09+5 runs under DOS on a 386 or newer processor. 7ZA has the widest format support, 7ZR is smaller, 7ZM is for basic 7z files and low memory, and 7ZDEC is a minimal 7z extractor. Memory needs depend on the archive, compression dictionary and program variant.</p>
+    <p>The Retro7Zip menu creates 7z, ZIP, TAR and WIM files. gzip, BZip2 and XZ compress one input file; select only that file. Retro7Zip reads modern RAR, including RAR5, but cannot create RAR archives.</p>
+    <p>VCARCH.EXT connects archive panels to the appropriate programs. Enter opens a supported archive as a directory. F3 views a member, F5 extracts selected members, and copying files into a writable archive adds them. TAR.GZ and similar files have two layers: compression, then TAR.</p>
+    <p>VC7Z translates technical listings into VC's format, including solid archives. A solid member with no separate packed size shows 0 in that column. Missing dates use 01-01-1980. VC uses 32-bit file-size fields.</p>
+    <p>VC7Z also handles extraction to an existing folder and switches drives when necessary. It works around the DOS release's output-folder bug. Run 7ZA i for the complete list of readable formats and codecs.</p>
+  </topic>
+  <topic id="lists" layout="prose">
+    <title>File lists and batch commands</title>
+    <p>Open F2, F3, F4 for file lists and commands on selected files. N writes short names to VC.LST; L writes long names to VCLONG.LST; P writes full short paths to VCPATH.LST. B creates VCLIST.BAT with an ECHO line for each selected file. Existing output files are overwritten.</p>
+    <p>D previews a command for each file. R runs it. In the command, {} means the filename. The helper quotes each replacement. Example:</p>
+    <pre>ATTRIB +R {}</pre>
+    <p>The preview executes nothing. Execution stops at the first failed command; earlier commands are not undone. Expanded commands may not exceed 126 bytes. Filenames containing shell control characters are rejected.</p>
+    <p>The lists are processed line by line. No extra recursive directory scan is performed by VCTOOLS. Relative names use the current directory. Use short-name lists for DOS file access; long-name lists are text output.</p>
+    <pre>VCTOOLS list FILES.LST --full
+VCTOOLS run FILES.LST "ECHO {}" --dry-run</pre>
+  </topic>
+  <topic id="helpers" layout="prose">
+    <title>Format detection and hex view</title>
+    <p>In the extensions menu, T identifies a file by its starting bytes, not just its extension. It recognizes common archives, DOS/Windows and ELF executables, PDF, several image formats and WAV. Empty files and a simple text heuristic are also supported. This is not an integrity check.</p>
+    <p>H displays the first 256 bytes as hex and ASCII. The command line accepts an offset and a length. It is a read-only dump, not a binary editor or a complete Hiew replacement. Example: show 64 bytes at hexadecimal 100:</p>
+    <pre>VCTOOLS hex PROGRAM.EXE 0x100 64</pre>
+    <p>Z in the extensions menu lists a classic ZIP without an external packer. It reads the central directory; it neither extracts nor checks CRCs. ZIP64 and split ZIP files are rejected by this small reader. The Retro7Zip menu is available for its wider format support.</p>
+    <p>Command output can be redirected to a file with &gt;. ADDONS.TXT contains the longer German guide to the extensions.</p>
+  </topic>
+  <topic id="os2" layout="prose">
+    <title>OS/2 DOS-session helpers</title>
+    <p>The full release includes the original AUTOINS.COM from the VC download area. It enables autorepeat of the Insert key in an OS/2 DOS session. Start it once per session from the OS/2 extension menu. The installer does not add it automatically to startup files.</p>
+    <p>OS2 contains the original icons: VC-WN.ICO for a windowed session, VC-FS.ICO for full screen, and additional VC icons. The original ZIPs are kept in PACKDOC/OS2.</p>
+    <p>These are helpers for DOS VC under OS/2, not native OS/2 archivers. VC itself retains its existing OS/2 extended-attribute support. Do not use version-specific patches for VC 4.00/4.01 on this build.</p>
+  </topic>
+  <topic id="install" layout="prose">
+    <title>Installation, updates and licenses</title>
+    <p>Start INSTALL from the release directory. Select the target directory and the help language. Setup proposes a language from COUNTRY= in CONFIG.SYS. The selected help is installed as VC.HLP beside the program.</p>
+    <p>The full release asks you to accept all bundled archiver licenses before copying files. Nine dialogs cover VC and the third-party programs; some related license texts share a dialog. Declining cancels installation. Original terms, manuals and source packages remain in PACKDOC.</p>
+    <p>INSTALL /S uses GDI's unattended defaults and accepts the licenses automatically. Run INSTALL without /S for the interactive questions. The PATH entry and Windows Program Manager item are optional.</p>
+    <p>Updates preserve VC.INI and existing .MNU/.EXT customization. Existing menus may therefore need a new addons.mnu entry. INSTALL /U from the installed directory starts removal.</p>
+    <p>The floppy is the core package. Use the complete ZIP/directory release for the downloaded archivers, OS/2 helpers and their documentation.</p>
+  </topic>
+  <topic id="panels" layout="prose">
+    <title>Current panels and settings</title>
+    <p>The program uses the 4.99 panel system. Quick View previews the file from the other panel; it differs from the full F3 viewer. The current F9 menu offers display modes and settings inside VC itself.</p>
+    <p>Descriptions can be displayed in file panels. VC's existing description support is used; no separate FILES_NC or RESINFO TSR is required. Colors are also configured in VC; a separate VC-COLOR tool is unnecessary.</p>
+    <p>Use F9, Options for the current settings dialogs and Shift-F9 to save the configuration. The following reference chapters document the working settings dialogs and identify unfinished menu actions.</p>
+    <p>The translated keyboard, copy, move, search, viewer and editor reference pages are preserved after the new chapters in this help index.</p>
+  </topic>
+  <topic id="names" layout="prose">
+    <title>Long filenames and DOS paths</title>
+    <p>VC can use long filenames when the operating system or an installed driver provides the LFN interface. Under plain DOS, use an existing DOSLFN installation. No new LFN or NTFS driver is included here.</p>
+    <p>The new menus deliberately pass short names to small DOS helpers: !~.! is a short filename and !~@ is a list of short selected names. !@ can produce a text list of the long names known to VC.</p>
+    <p>Retro7Zip supports LFN through the available DOS interface, but the chosen archiver and filesystem still impose their own limits. A long filename does not remove DOS file-size or memory limits.</p>
+  </topic>
+  <topic id="helpbuild" layout="prose">
+    <title>Building and editing this help</title>
+    <p>The .HLP files use VC's Norton Guides format. They are not Windows WinHelp files. The repository includes its own compiler, tools/hlp.py. No proprietary help compiler is needed.</p>
+    <p>All editable UTF-8 topics are in help/src/en.xml. Open the XML files in XMLmind; guide.dtd defines the structure and guide.css provides an editing stylesheet. Original binaries are retained under help/original.</p>
+    <pre>make help
+make release</pre>
+    <p>make help creates all five language files and the context map in build/help. The version comes from VcVersion in src/VCDATA.INC. For a help-only preview of the planned 5.0 text:</p>
+    <pre>python3 tools/hlp.py build --version 5.0 --output build/help50</pre>
+    <p>Use topic with a stable id, title, p, heading and pre. Inline b, u and code provide formatting. Keep topic IDs in the same order in all languages; help/project.xml maps contexts to IDs. The compiler wraps prose at 64 columns and checks DOS encodings and record sizes. Rebuild VC with its help after changing topic order or context mappings.</p>
+  </topic>
+  <topic id="legacy_01" layout="prose">
+    <title>About Volkov Commander</title>
+    <p>Volkov Commander {{version}} is based on Vsevolod V. Volkov's published 4.99.09 sources. This repository adds a DOS F1 viewer, editable XML help, archive menus, helpers and a reproducible release build. The planned final version is 5.0.</p>
+    <p>VC and our source changes use the BSD 2-clause license. Downloaded archivers retain their own licenses. Read PACKERS.TXT and PACKDOC in the full release. Original help authors remain credited in the source guides.</p>
+    <p>Project: https://github.com/geosone/vc</p>
+  </topic>
+  <topic id="legacy_02" layout="prose">
+    <title>Keyboard reference</title>
+    <p>Tab switches panels. Ins selects a file. Gray + selects a group, Gray - unselects, Gray * inverts selection and Ctrl-M restores it. Shift with the group keys also selects directories.</p>
+    <p>Ctrl-O: panels on/off; Ctrl-P: inactive panel on/off; Ctrl-U: swap; Ctrl-L: Info; Ctrl-Z: Tree; Ctrl-Q: Quick View; Ctrl-N: long names; Ctrl-R: reread; Ctrl-F: filter; Ctrl-A: attributes; Ctrl-B: key bar; Ctrl-Backslash: root directory.</p>
+    <p>F1 Help, F2 user menu, F3 View, F4 Edit, F5 Copy, F6 Move, F7 Make directory, F8 Delete, F9 menus, F10 Quit. Alt-F1/F2 changes drives. Alt-F7 searches; Alt-F8 opens history.</p>
+    <p>Ctrl-I inserts selected names in the command line. Ctrl-[ and Ctrl-] insert the left/right path. Ctrl-E/Ctrl-X recall commands; Ctrl-Enter completes a history prefix. These commands depend on the current panel and command-line state.</p>
+  </topic>
+  <topic id="legacy_03" layout="prose">
+    <title>Viewer keys</title>
+    <p>Arrows scroll, PgUp/PgDn move a page, Home/End reach the beginning/end. Ctrl-Left/Right scroll horizontally by a larger step.</p>
+    <p>F2 toggles text wrapping; F4 or Enter switches text/hex. F5 goes to a hexadecimal byte offset in hex mode. F7 searches, Shift-F7 finds the next match, Ctrl-F7 the previous match.</p>
+    <p>F8 chooses a character translation table. Shift-F8, or Tab in the full viewer, shifts a DBCS character boundary. Esc, F3 or F10 closes the full viewer. F1 opens context help. Quick View uses a smaller viewer inside a panel.</p>
+  </topic>
+  <topic id="legacy_04" layout="prose">
+    <title>Viewer status</title>
+    <p>The viewer status identifies the file and shows the column, byte position and percentage. Values change as you scroll. Hex mode displays byte offsets; its F5 Go to offset dialog expects a hexadecimal number.</p>
+    <p>F8 selects a character translation table for display. It does not convert or rewrite the file. The viewer is read-only; use F4 from a file panel to edit.</p>
+  </topic>
+  <topic id="legacy_05" layout="prose">
+    <title>Editor keys</title>
+    <p>Arrows move the cursor, Ctrl-Left/Right move by words. Home/End reach line start/end; Ctrl-Home/End or Ctrl-PgUp/PgDn reach file start/end. PgUp/PgDn move a page.</p>
+    <p>Backspace deletes left; Del deletes under the cursor; Ctrl-Backspace deletes left by word. Ctrl-T deletes a word right, Ctrl-K to line end, Ctrl-Y a line; Ctrl-U restores deleted text. Ctrl-Q quotes the next character.</p>
+    <p>F2 saves; Shift-F2 saves under another name. F4 switches text/hex; Tab switches the hex/ASCII field in hex mode. F7 searches; Shift-F7 continues. F10 or Esc exits with a save question for changed files. Shift-F10 saves and exits. F1 opens help.</p>
+  </topic>
+  <topic id="legacy_06" layout="ng">
+    <title> Edit -- Status line</title>
+    <line>^bEdit (2/2) -- Status line^b</line>
+    <line>^uStatus Line^u</line>
+    <line />
+    <line>        File modified ──┐</line>
+    <line>                        <char code="1F" /></line>
+    <line>  ^rEdit: filename.ext    *" Line 2   Col 3   449,268 Free   ^r</line>
+    <line>                         <char code="1E" />                     <char code="1E" /></line>
+    <line>      Quote next char ───┘      Memory free ───┘</line>
+  </topic>
+  <topic id="legacy_07" layout="prose">
+    <title>Left and Right menus</title>
+    <p>F9 opens the pull-down menus. Left and Right configure their respective panels. Choose Brief, Full or Description for file lists, Info for disk information, Tree for directories, or Quick view for a preview.</p>
+    <p>Long names (Ctrl-N) toggles long filename display when LFN services are available. Sort by Name, Extension, Time or Size, choose Unsorted, or toggle Reverse. Re-read, Filter and Drive apply to that panel. Ctrl-F1/Ctrl-F2 toggles the left/right panel.</p>
+  </topic>
+  <topic id="legacy_08" layout="prose">
+    <title>Brief, Full and Description</title>
+    <p>Brief uses several filename columns. Full adds file size, date and time. Description shows descriptions read from the configured description files. Column layout depends on panel size and long filename display.</p>
+    <p>Hold Alt and type the start of a filename for quick search. Continue typing, use Ctrl-Enter for another match, or Esc to close search. Long names require an available LFN interface; Ctrl-N toggles their display.</p>
+    <p>Short-name case is controlled by Options, General, Show short names in lower case. Letter case alone does not reliably distinguish files and directories. Hidden-file indicators use the configured character set.</p>
+  </topic>
+  <topic id="legacy_09" layout="prose">
+    <title>Info panel</title>
+    <p>Ctrl-L toggles the inactive panel to Info. It shows memory, drive capacity and free space, plus information about the directory in the other file panel. The values describe the running system, not fixed example numbers.</p>
+    <p>Directory text comes from the files listed in Options, Descriptions, Directory information files. Defaults include dirinfo, file_id.diz and readme variants. F4 in the directory-information area edits that text. Ctrl-R refreshes the panel.</p>
+  </topic>
+  <topic id="legacy_10" layout="prose">
+    <title>Tree panel</title>
+    <p>Ctrl-Z toggles the inactive panel to Tree. Arrows select a directory; Enter changes to it. Alt and the start of its name open quick search.</p>
+    <p>Options, Panels controls Auto change directory and its delay, hidden subdirectories, and saving TREEINFO in the drive root or home directory. Ctrl-R rescans the tree. Use it after another program changes directories on disk.</p>
+  </topic>
+  <topic id="legacy_11" layout="ng">
+    <title>      On/Off</title>
+    <line>^bOn/Off -- Toggle panel on/off^b                 ^uCtrl-F1^u, ^uCtrl-F2^u</line>
+    <line> ^uCtrl-F1^u -- Toggle left               ^uCtrl-F2^u -- Toggle right</line>
+    <line />
+    <line> This command toggles the left or right panel on and off:</line>
+    <line />
+    <line>  ┌─────────────────────┐           ┌─────────────────────┐</line>
+    <line>  │ ╔═ Tree ═╗╔═^r C:\ ^r═╗ │           │           ╔═^r C:\ ^r═╗ │</line>
+    <line>  │ ║        ║║       ║ │           │           ║       ║ │</line>
+    <line>  │ ║        ║║       ║ │  Ctrl-F1  │           ║       ║ │</line>
+    <line>  │ ║        ║║       ║ │   <char code="11" />───<char code="10" />   │           ║       ║ │</line>
+    <line>  │ ║        ║║       ║ │           │           ║       ║ │</line>
+    <line>  │ ╟────────╢╟───────╢ │           │           ╟───────╢ │</line>
+    <line>  │ ╚════════╝╚═══════╝ │           │           ╚═══════╝ │</line>
+    <line>  │ C&gt;_                 │           │ C&gt;_                 │</line>
+    <line>  └─────────────────────┘           └─────────────────────┘</line>
+  </topic>
+  <topic id="legacy_12" layout="prose">
+    <title>Sorting files</title>
+    <p>Use Left/Right to sort by Name, Extension, Time or Size, or choose Unsorted. Reverse changes the direction. Sorting applies to that file panel.</p>
+    <p>Short names can be displayed in lower case through Options, General. With long names enabled, preserve the spelling supplied by the filesystem; do not infer the file type from letter case.</p>
+  </topic>
+  <topic id="legacy_13" layout="prose">
+    <title>Re-read a panel</title>
+    <p>Ctrl-R refreshes the active panel. In a file panel it rereads the directory; in Info it refreshes drive and directory information; in Tree it rescans the directory tree.</p>
+    <p>Use this after changing removable media or modifying files with another program. TREEINFO storage in the drive root or home directory is controlled by Options, Panels.</p>
+  </topic>
+  <topic id="legacy_14" layout="prose">
+    <title>Filter</title>
+    <p>Ctrl-F opens the panel filter. Select a predefined filter or enter a Custom filename mask. The Attributes area offers Archive, System, Hidden, Directory and Absent. Space changes an option; Ok applies it, Cancel leaves the dialog.</p>
+    <p>Filters control which entries are shown; they do not delete files. Predefined masks are read from VCFILTER.EXT. Use the long-name support chapter for LFN requirements instead of assuming every name is limited to 8.3.</p>
+  </topic>
+  <topic id="legacy_15" layout="prose">
+    <title>Choose drive</title>
+    <p>Alt-F1 opens the left drive list; Alt-F2 the right. Choose a drive letter with the keyboard or mouse. For an unreadable disk, retry, choose another drive or cancel.</p>
+    <p>Show logical drive B: is in Options, General. It controls the logical second drive on a single-floppy system. This release does not require VCSETUP to change it.</p>
+  </topic>
+  <topic id="legacy_16" layout="ng">
+    <title> Files menu</title>
+    <line>^bFiles menu^b</line>
+    <line> The ^uFiles^u menu  provides  access  to  the  commands  on  the</line>
+    <line> function  key  bar (in  case you turned it off with ^uCtrl-B^u),</line>
+    <line> as well as  some  other  commands  that  act  on  files  and</line>
+    <line> directories, or that allow you to select groups of files and</line>
+    <line> directories.</line>
+    <line />
+    <line>   ^bNotes:^b</line>
+    <line>     <char code="07" />  Some functions (View, Edit, Copy, Rename or move, and</line>
+    <line>        Delete) have  more  general  versions  that  you  can</line>
+    <line>        access with the shifted function keys. See  help  for</line>
+    <line>        each command for details.</line>
+    <line />
+    <line>     <char code="07" />  You  can get the shifted versions of commands in this</line>
+    <line>        menu by holding down the ^uShift^u key  when  you  select</line>
+    <line>        the  menu  item (with  the keyboard or the mouse), or</line>
+    <line>        using the shifted function key.</line>
+  </topic>
+  <topic id="legacy_17" layout="prose">
+    <title>User menu</title>
+    <p>F2 opens the local VC.MNU if present; Shift-F2 opens the main user menu. Select an item with its key, Enter or the mouse. Commands can run programs or open another .MNU submenu.</p>
+    <p>The supplied main menu has archives on F1 and extensions on F3. A bound F1 executes that menu item; in a submenu without an F1 item it opens context help. Extensions include packers, lists and file inspection.</p>
+    <p>Edit menu files directly as text. Commands, Menu file edit is inactive in this build. See User menus and new macros for syntax and new !$ / %$ installation-directory macros.</p>
+  </topic>
+  <topic id="legacy_18" layout="prose">
+    <title>View a file</title>
+    <p>F3 views the file under the cursor; Shift-F3 asks for a filename. F3/Alt-F3 internal/external behavior follows Alternative viewer in Options, General. Associations are read from VCVIEW.EXT, which can be edited directly as text.</p>
+    <p>The internal viewer supports text and hex, wrapping, character tables, byte offsets and searching. Esc, F3 or F10 closes it. The Viewer keys chapter lists the current keys. Quick View previews the other panel's file inside a panel (Ctrl-Q).</p>
+  </topic>
+  <topic id="legacy_19" layout="prose">
+    <title>Edit a file</title>
+    <p>F4 edits the current file; Shift-F4 asks for a filename and can create a new file after confirmation. F4/Alt-F4 internal/external behavior follows Alternative editor in Options, General. External editors are configured in VCEDIT.EXT as text.</p>
+    <p>In the built-in editor F2 saves, Shift-F2 saves as, F4 changes text/hex and Shift-F10 saves and exits. F10 or Esc asks about unsaved changes. See Editor keys for navigation, deletion and searching. Large files may exceed the DOS editor's available memory.</p>
+  </topic>
+  <topic id="legacy_20" layout="ng">
+    <title>      Copy</title>
+    <line>^bCopy^b                                     ^uF5^u, ^uShift-F5^u, ^uCtrl-F5^u</line>
+    <line> The Copy command allows you to copy files and subdirectories.</line>
+    <line> There are four ways you can use this command:</line>
+    <line />
+    <line>     <char code="07" />  You can copy the file or directory under  the  cursor</line>
+    <line>        bar in a file panel.</line>
+    <line />
+    <line>     <char code="07" />  You can copy a group of files  and  directories  that</line>
+    <line>        you've marked  with  the  ^uIns^u  key  or  ^uSelect group^u,</line>
+    <line>        ^uUnselect group^u and ^uInvert group^u.</line>
+    <line />
+    <line>     <char code="07" />  You can type in the name of the file  to  copy (or  a</line>
+    <line>        group of files if you use  DOS  wildcard characters).</line>
+    <line>        Press  ^uShift-F5^u  or hold down ^uShift^u when  you  select</line>
+    <line>        ^uCopy^u from the ^uFiles^u menu.</line>
+    <line />
+    <line>     <char code="07" />  You can copy one file or directory under  the  cursor</line>
+    <line>        bar even if some files and directories  were  marked.</line>
+    <line>        Press  ^uCtrl-F5^u or hold down ^uCtrl^u when you select ^uCopy^u</line>
+    <line>        from the ^uFiles^u menu.</line>
+    <line />
+    <line> Pressing ^uF5^u (or selecting ^uCopy^u) brings up a dialog box like:</line>
+    <line />
+    <line>      ╔═════════════════════ Copy ═════════════════════╗</line>
+    <line>      ║ Copy "somefile.ext" to                         ║</line>
+    <line>      ║ ^r_                                             ^r ║</line>
+    <line>      ╟────────────────────────────────────────────────╢</line>
+    <line>      ║       [ Copy ]  [ F10-Tree ]  [ Cancel ]       ║</line>
+    <line>      ╚════════════════════════════════════════════════╝</line>
+    <line />
+    <line> There  are  three  ways  you  can  select  where to copy the</line>
+    <line> file(s) to:</line>
+    <line />
+    <line>     <char code="07" />  Type the name of the directory where you want to copy</line>
+    <line>        the file or directory to (or  the name of a new  file</line>
+    <line>        if you're copying one file).</line>
+    <line />
+    <line>     <char code="07" />  Press ^uF10^u to bring  up a pop-up directory tree of the</line>
+    <line>        target disk and select a directory  from  this  tree.</line>
+    <line>        ^uAlt-F10^u brings up directory tree of the current disk.</line>
+    <line />
+    <line>     <char code="07" />  Set up the Commander so there are  two  file  panels,</line>
+    <line>        with the inactive  panel  showing  the  directory  to</line>
+    <line>        which you want to copy the files.</line>
+    <line />
+    <line>   ^bCanceling Copy:^b</line>
+    <line>        Press ^uEsc^u at any time to stop copying files.</line>
+    <line />
+    <line>   ^bOverwriting or Appending Files:^b</line>
+    <line>        If the target file already exists, you'll be asked to</line>
+    <line>        choose overwriting or appending.</line>
+    <line />
+    <line>   ^bNote:^b  File  ^uTREEINFO^u  will be rescaned automatically</line>
+    <line>          after copying directories.</line>
+  </topic>
+  <topic id="legacy_21" layout="ng">
+    <title>      Rename or move</title>
+    <line>^bRename or Move^b                           ^uF6^u, ^uShift-F6^u, ^uCtrl-F6^u</line>
+    <line> This command  allows you to rename files and directories, or</line>
+    <line> to move  files and subdirectories  to  other  directories or</line>
+    <line> disk drives. There are four ways you can use this command:</line>
+    <line />
+    <line>     <char code="07" />  You can rename or move the file or subdirectory under</line>
+    <line>        the  cursor  bar in a file panel, or you can rename a</line>
+    <line>        directory in a tree panel.</line>
+    <line />
+    <line>     <char code="07" />  You  can  rename  or  move  a  group  of  files   and</line>
+    <line>        directories that you've marked with the  ^uIns^u  key  or</line>
+    <line>        ^uSelect group^u, ^uUnselect group^u and ^uInvert group^u.</line>
+    <line />
+    <line>     <char code="07" />  You can type in the name of the  file  to  rename  or</line>
+    <line>        move (or a group of files if  you  use  DOS  wildcard</line>
+    <line>        characters). Press ^uShift-F6^u or hold down  ^uShift^u  when</line>
+    <line>        you select ^uRename or move^u from the ^uFiles^u menu.</line>
+    <line />
+    <line>     <char code="07" />  You can rename or move one file or subdirectory under</line>
+    <line>        the cursor bar  even if some  files  and  directories</line>
+    <line>        were marked. Press ^uCtrl-F6^u or hold down ^uCtrl^u when you</line>
+    <line>        select ^uRename or move^u from the ^uFiles^u menu.</line>
+    <line />
+    <line> Pressing ^uF6^u (or selecting ^uRename or move^u) brings up a dialog</line>
+    <line> box like:</line>
+    <line />
+    <line>      ╔════════════════════ Rename ════════════════════╗</line>
+    <line>      ║ Rename or move "somefile.ext" to               ║</line>
+    <line>      ║ ^r_                                             ^r ║</line>
+    <line>      ╟────────────────────────────────────────────────╢</line>
+    <line>      ║       [ Move ]  [ F10-Tree ]  [ Cancel ]       ║</line>
+    <line>      ╚════════════════════════════════════════════════╝</line>
+    <line />
+    <line> There  are  three  ways  you  can  select  where to move the</line>
+    <line> file(s) to:</line>
+    <line />
+    <line>     <char code="07" />  Type the name of the directory where you want to move</line>
+    <line>        the file or directory to (or  the name of a new  file</line>
+    <line>        if you're renaming a file).</line>
+    <line />
+    <line>     <char code="07" />  Press ^uF10^u to bring  up a pop-up directory tree of the</line>
+    <line>        target disk and select a directory  from  this  tree.</line>
+    <line>        ^uAlt-F10^u brings up directory tree of the current disk.</line>
+    <line />
+    <line>     <char code="07" />  Set up the Commander so there are  two  file  panels,</line>
+    <line>        with the inactive  panel  showing  the  directory  to</line>
+    <line>        which you want to move the files.</line>
+    <line />
+    <line>   ^bCancelling Rename or Move:^b</line>
+    <line>        Press  ^uEsc^u  at  any  time  to stop renaming or moving</line>
+    <line>        files and directories.</line>
+    <line />
+    <line>   ^bOverwriting Files:^b</line>
+    <line>        If  the  target  file(s) exist, you'll  be  asked for</line>
+    <line>        confirmation.  You can choose between overwriting and</line>
+    <line>        appending to files.</line>
+    <line />
+    <line>   ^bNote:^b  File  ^uTREEINFO^u  will be rescaned automatically</line>
+    <line>          after renaming or moving directories.</line>
+  </topic>
+  <topic id="legacy_22" layout="prose">
+    <title>Make directory</title>
+    <p>F7 creates a subdirectory of the current location, or a directory at the entered path. A drive letter and full path can choose another location.</p>
+    <p>Plain DOS names use 8.3 limits. Long names require working LFN services and a supporting filesystem; see Long filenames and DOS paths. VC updates its tree information after creating directories.</p>
+  </topic>
+  <topic id="legacy_23" layout="ng">
+    <title>      Delete</title>
+    <line>^bDelete^b                                   ^uF8^u, ^uShift-F8^u, ^uCtrl-F8^u</line>
+    <line> This command  allows you to delete  files  and  directories.</line>
+    <line> There are four ways you can use this command:</line>
+    <line />
+    <line>     <char code="07" />  You can delete the file or directory under the cursor</line>
+    <line>        bar  in a file  panel, or  the  directory  under  the</line>
+    <line>        cursor in a tree panel.</line>
+    <line />
+    <line>     <char code="07" />  You can delete a group of files and directories  that</line>
+    <line>        you've marked  with  the  ^uIns^u  key  or  ^uSelect group^u,</line>
+    <line>        ^uUnselect group^u and ^uInvert group^u.</line>
+    <line />
+    <line>     <char code="07" />  You can type in  the name of the file to delete (or a</line>
+    <line>        group of files if you  use DOS wildcard  characters).</line>
+    <line>        Press ^uShift-F8^u or hold down  ^uShift^u  when  you  select</line>
+    <line>        ^uDelete^u  from  the  ^uFiles^u menu. Be careful, though, as</line>
+    <line>        you can delete a lot of files when you use  the DOS *</line>
+    <line>        wildcard character.</line>
+    <line />
+    <line>     <char code="07" />  You can delete one file or directory under the cursor</line>
+    <line>        bar even if some files and directories  were  marked.</line>
+    <line>        Press  ^uCtrl-F8^u  or  hold  down  ^uCtrl^u  when you select</line>
+    <line>        ^uDelete^u from the ^uFiles^u menu.</line>
+    <line />
+    <line>   ^bRead-only files:^b</line>
+    <line>        If a file is marked as read-only, you'll be asked for</line>
+    <line>        confirmation before the Commander deletes the file.</line>
+    <line>        ^bHint:^b if you want to delete a group of files that are</line>
+    <line>        marked read-only, use the ^uFile attributes^u  command in</line>
+    <line>        the  ^uFiles^u  menu  to  clear  the  read-only attribute</line>
+    <line>        beforehand.</line>
+    <line />
+    <line>   ^bNon-empty directories:^b</line>
+    <line>        If a directory is  not  empty, you'll  be  asked  for</line>
+    <line>        confirmation before  the Commander  deletes  it.  All</line>
+    <line>        files and subdirectories in this  directory  will  be</line>
+    <line>        deleted then.</line>
+    <line />
+    <line>   ^bNote:^b  File  ^uTREEINFO^u  will be rescaned automatically</line>
+    <line>          after deleting directories.</line>
+  </topic>
+  <topic id="legacy_24" layout="prose">
+    <title>File attributes</title>
+    <p>Ctrl-A changes Read only, Archive, Hidden and System attributes, plus date and time. For a single file, Space toggles an attribute. For groups, Set turns a bit on and Clear turns it off; leave both unchecked to preserve it.</p>
+    <p>Enter a date or time only when it should change. For directories, review the operation before confirming because contained files may be affected. The date and time format follows the DOS country settings.</p>
+    <p>Read only restricts normal writes; Archive is used by backup programs. Hidden and System also affect visibility according to the panel filter.</p>
+  </topic>
+  <topic id="legacy_25" layout="prose">
+    <title>Select groups</title>
+    <p>Ins toggles the current item. Gray + selects by mask, Gray - removes selection, Gray * inverts selection, and Ctrl-M restores the previous selection. Group keys act on the file panel when the command-line state permits.</p>
+    <p>Use Shift with the group keys to include directories. A filename mask such as *.TXT limits a group. The exact match rules depend on short/long name handling; the old claim that all names are limited to 8.3 does not apply with LFN.</p>
+    <p>With Unselect during group operations under Options, Panels, completed items are unselected. This helps distinguish the remaining files after an interrupted operation.</p>
+  </topic>
+  <topic id="legacy_26" layout="prose">
+    <title>Quit</title>
+    <p>F10 quits VC. Options, Interface, Confirmation on quit controls the confirmation question. Save manually with Shift-F9 or enable Auto save setup under Options, General.</p>
+    <p>Esc closes a dialog or viewer. Its behavior in the panels depends on Esc toggles screen on/off under Interface. A separate VCSETUP Exit command is not used by this release.</p>
+  </topic>
+  <topic id="legacy_27" layout="prose">
+    <title>Commands menu</title>
+    <p>F9, Commands offers Tree (Alt-F10), Volume label (Ctrl-F4), Memory info (Alt-F5), Directory sizes (Alt-F6), Find file (Alt-F7), History (Alt-F8), EGA lines (Alt-F9) and Video mode (Ctrl-F9).</p>
+    <p>Ctrl-U swaps panels, Ctrl-O toggles them and Ctrl-C compares directories. Menu file edit is displayed but has no handler in this build. Edit VC.MNU and submenu files as ordinary text with F4 instead; see User menus and new macros.</p>
+  </topic>
+  <topic id="legacy_28" layout="prose">
+    <title>Change directory using Tree</title>
+    <p>Alt-F10 opens the directory tree. Arrows, Home, End and PgUp/PgDn move through it; typing finds a directory. Enter selects it; Esc cancels. F2 rescans if the tree is out of date.</p>
+    <p>Options, Panels controls where TREEINFO is saved and whether hidden directories are included. VC updates its tree information for its own directory operations; rescan after changes made by another program.</p>
+  </topic>
+  <topic id="legacy_29" layout="ng">
+    <title>      Volume label</title>
+    <line>^bVolume label^b                                           ^uCtrl-F4^u</line>
+    <line> This command changes the disk volume label.  The disk volume</line>
+    <line> label is displayed on the ^uInfo^u panel and when you use  DOS's</line>
+    <line> DIR command.</line>
+    <line />
+    <line> Input  up  to  11  characters.   You   can  use  spaces  and</line>
+    <line> interesting  "high  bit"  ASCII  characters.  For  instance,</line>
+    <line> you can set a volume label to:</line>
+    <line />
+    <line>                  ^bSTARTUP 1^b or ^bHARD DISK^b</line>
+    <line />
+    <line> Press  ^uEnter^u  to confirm your input or press  ^uEsc^u to cancel.</line>
+    <line> Input "empty" volume label to remove it from the disk.</line>
+  </topic>
+  <topic id="legacy_30" layout="ng">
+    <title>      Memory info</title>
+    <line>^bMemory info^b                                             ^uAlt-F5^u</line>
+    <line> This command lists the memory-resident  programs  which  are</line>
+    <line> currently occupying system memory.</line>
+    <line />
+    <line> The ^uAddress^u  column  is  the segment address of the start of</line>
+    <line> the program's memory block, in hexadecimal.</line>
+    <line> The ^uBlocks^u  identifies how many blocks of memory are used by</line>
+    <line> the program.</line>
+    <line> The ^uSize^u  column  lists  the  sum of the sizes of all memory</line>
+    <line> blocks allocated by the program.</line>
+    <line> The ^uProgram^u  column  identifies  the  program if its name is</line>
+    <line> available,  or specifies one of the DOS system area, Unknown</line>
+    <line> owner, or Free memory.</line>
+    <line> ^uHooked Vectors^u  lists the interrupt vectors which point into</line>
+    <line> memory owned by this program.</line>
+    <line />
+    <line> The resident programs which can be removed are marked by '<char code="07" />'.</line>
+    <line />
+    <line>    ^bAction        Result^b</line>
+    <line>    ────────      ───────────────────────────────────────────</line>
+    <line>    ^uCursor keys^u   Use the cursor keys to scroll  through  the</line>
+    <line>                  list (use also Home, End, PgUp, PgDn).</line>
+    <line />
+    <line>    ^uIns^u           Select/unselect a program marked by '<char code="07" />'.</line>
+    <line />
+    <line>    ^uGray +, -^u     Select/unselect all programs which  can  be</line>
+    <line>                  removed.</line>
+    <line />
+    <line>    ^uEnter^u         Remove  selected   programs  or  a  program</line>
+    <line>                  currently pointed by the cursor.</line>
+    <line />
+    <line> ────────────────────────────────────────────────────────────</line>
+    <line />
+    <line>   ^bNotes:^b</line>
+    <line>     <char code="07" />  TSR stands for Terminate and Stay Resident. This type</line>
+    <line>        of program leaves all or part  of  itself  in  memory</line>
+    <line>        when it returns control to DOS.</line>
+    <line />
+    <line>     <char code="07" />  Often a TSR with a lower address  controls  interrupt</line>
+    <line>        not listed here, but some other TSR (loaded after the</line>
+    <line>        first) has  seized primary control of that interrupt.</line>
+    <line>        Most  TSRs are  careful enough to pass control to the</line>
+    <line>        previous owner.</line>
+    <line />
+    <line>     <char code="07" />  If a TSR was removed from memory, it often  leaves  a</line>
+    <line>        large block of unused memory in low RAM. That  memory</line>
+    <line>        might be used by a smaller  program, but  it  is  not</line>
+    <line>        available for a larger program. The  solution  is  to</line>
+    <line>        load such a TSR last, and remove  it  before  loading</line>
+    <line>        any other TSR.</line>
+    <line />
+    <line>     <char code="07" />  You can remove TSRs which were loaded  after  loading</line>
+    <line>        the  Commander.  To  install  the  resident  programs</line>
+    <line>        automatically make a batch file, for example auto.bat,</line>
+    <line>        including these TSRs and type it in command line when</line>
+    <line>        the Commander starts:</line>
+    <line />
+    <line>                           VC auto.bat</line>
+  </topic>
+  <topic id="legacy_31" layout="prose">
+    <title>Directory sizes</title>
+    <p>Alt-F6 calculates the total file sizes within subdirectories in the current panel. Values include files in nested subdirectories and may take time to calculate.</p>
+    <p>The sizes can be lost when a panel is reread. Options, Panels, Auto directory sizes enables automatic recalculation; Ins calculates size of directory can calculate a directory when marking it. These are logical sizes, not necessarily allocated disk space.</p>
+  </topic>
+  <topic id="legacy_32" layout="prose">
+    <title>Find file</title>
+    <p>Alt-F7 searches for filenames and optionally text in the Containing field. Set the starting path and filename mask, then choose Find. Table chooses the character translation table used for the text search.</p>
+    <p>Stop stops a running search. New search starts another. Go to moves the file panel to the selected result; View opens it in the viewer; Quit returns to VC.</p>
+    <p>Use a path and mask to limit the search. The prefix *: requests all non-removable drives. Long filename handling depends on available LFN services. A content search reads file bytes and is not a search of compressed archive members.</p>
+  </topic>
+  <topic id="legacy_33" layout="ng">
+    <title>      History</title>
+    <line>^bHistory^b                                                 ^uAlt-F8^u</line>
+    <line> This command brings up a list with  the  last  DOS  commands</line>
+    <line> that  you  have  issued in this Commander  session. Use  the</line>
+    <line> cursor keys (or double click with the mouse) to execute  one</line>
+    <line> of these commands again.</line>
+    <line />
+    <line>    ^bShortcut:^b  To recall a recent command, you can  type  the</line>
+    <line>               first  few  letters of the command  and  press</line>
+    <line>               ^uCtrl-Enter^u. For example, to recall the command</line>
+    <line>               "word somefile.doc",  type  "wo"  followed  by</line>
+    <line>               ^uCtrl-Enter^u.</line>
+    <line />
+    <line>               This shortcut recalls the most recent  command</line>
+    <line>               that starts with the letters you've typed.</line>
+  </topic>
+  <topic id="legacy_34" layout="prose">
+    <title>EGA lines and Video mode</title>
+    <p>Alt-F9 switches between 25 lines and the higher EGA/VGA text-line count supported by the adapter. Ctrl-F9 opens Video Mode and lets you choose among available text modes.</p>
+    <p>The mode list depends on the BIOS and video hardware. VESA modes require VESA BIOS support and sufficient memory; an unsupported mode can fail. These are text display settings, not a graphical desktop.</p>
+  </topic>
+  <topic id="legacy_35" layout="ng">
+    <title>      Swap panels</title>
+    <line>^bSwap panels^b                                             ^uCtrl-U^u</line>
+    <line> This command  changes the position of the two panels so that</line>
+    <line> the left  one appears on the right and the right one appears</line>
+    <line> on the left:</line>
+    <line />
+    <line>     ╔═^r Tree ^r═╗╔═ C:\ ═╗               ╔═ C:\ ═╗╔═^r Tree ^r═╗</line>
+    <line>     ║        ║║       ║               ║       ║║        ║</line>
+    <line>     ║        ║║       ║    Ctrl-U     ║       ║║        ║</line>
+    <line>     ║        ║║       ║    <char code="11" />────<char code="10" />     ║       ║║        ║</line>
+    <line>     ║        ║║       ║               ║       ║║        ║</line>
+    <line>     ╟────────╢╟───────╢               ╟───────╢╟────────╢</line>
+    <line>     ╚════════╝╚═══════╝               ╚═══════╝╚════════╝</line>
+    <line>     C&gt;_                               C&gt;_</line>
+  </topic>
+  <topic id="legacy_36" layout="ng">
+    <title>      Panels on/off</title>
+    <line>^bPanels on/off^b                                           ^uCtrl-O^u</line>
+    <line> This command toggles both panels on or off. When both panels</line>
+    <line> are off, DOS's screen output will become visible.</line>
+    <line />
+    <line>   ┌─────────────────────┐           ┌─────────────────────┐</line>
+    <line>   │ ╔═^r Tree ^r═╗╔═ C:\ ═╗ │           │                     │</line>
+    <line>   │ ║        ║║       ║ │           │                     │</line>
+    <line>   │ ║        ║║       ║ │  Ctrl-O   │                     │</line>
+    <line>   │ ║        ║║       ║ │  <char code="11" />────<char code="10" />   │                     │</line>
+    <line>   │ ║        ║║       ║ │           │                     │</line>
+    <line>   │ ╟────────╢╟───────╢ │           │                     │</line>
+    <line>   │ ╚════════╝╚═══════╝ │           │                     │</line>
+    <line>   │ C&gt;_                 │           │ C&gt;_                 │</line>
+    <line>   └─────────────────────┘           └─────────────────────┘</line>
+  </topic>
+  <topic id="legacy_37" layout="ng">
+    <title>      Compare directories</title>
+    <line>^bCompare directories^b                                     ^uCtrl-C^u</line>
+    <line> This  command  compares  the  contents  of  the  directories</line>
+    <line> displayed in two panels. Files  found in one  directory  but</line>
+    <line> not the other are marked. Files that  have  been  created or</line>
+    <line> changed more recently in one than the other are also marked.</line>
+    <line> If the two directories are identical, the Commander displays</line>
+    <line> a message about this.</line>
+    <line />
+    <line> To  make   two   directories  identical,  use   the  ^uCompare^u</line>
+    <line> ^udirectories^u  command, then  press ^uF5^u, ^uEnter^u in each panel to</line>
+    <line> copy the newer or unique files to the other directory.</line>
+    <line />
+    <line>    ^bMarks:^b</line>
+    <line />
+    <line>      1. Files  that have a more recent date than file in the</line>
+    <line>         other panel.</line>
+    <line />
+    <line>      2. Files that don't exist in the other panel.</line>
+  </topic>
+  <topic id="legacy_38" layout="prose">
+    <title>Editing user menu files</title>
+    <p>Commands, Menu file edit has no handler in this build. Select VC.MNU or another .MNU file and use F4, or open it in an external text editor. Keep indented command lines below each menu caption. A submenu command names a .MNU file.</p>
+    <p>A caption can start with a key and colon, such as T: Detect format. Indent its command, for example "!$VCTOOLS.EXE" type "!~.!". Lines starting with an apostrophe are comments; @ suppresses command echo.</p>
+    <p>F2 uses a local VC.MNU when present; Shift-F2 opens the main menu. The supplied main menu binds F1 to archives, so that key invokes the item. Read User menus and new macros for filename, selected-list and installation-directory macros.</p>
+  </topic>
+  <topic id="legacy_39" layout="prose">
+    <title>Options menu</title>
+    <p>F9, Options configures VC directly. General handles program execution and viewer/editor choices. Interface handles prompt, clock, mouse and display. Characters changes display symbols. Panels handles selection and directory trees; Descriptions controls description files; Copy and Move controls copy behavior.</p>
+    <p>Screen saver and the Extension file edit, Viewers and Editors menu actions are not implemented in this build. Edit the corresponding .EXT files with F4 or an external text editor.</p>
+    <p>Auto menus, Key bar, Full screen, Mini status and Memory allocation are menu switches. Shift-F9 saves settings to VC.INI. A separate VCSETUP program is not part of this release.</p>
+  </topic>
+  <topic id="legacy_40" layout="prose">
+    <title>General options</title>
+    <p>F9, Options, General: Quick execute commands controls direct program execution; Command shell options sets shell arguments. Disable quick execution if it causes problems with a command.</p>
+    <p>Alternative viewer/editor swaps F3/Alt-F3 and F4/Alt-F4 behavior. External programs are configured in VCVIEW.EXT and VCEDIT.EXT; they must be installed separately.</p>
+    <p>Auto save setup preserves settings automatically. Show logical drive B: controls the logical second floppy drive. Show short names in lower case controls short-name display. Space changes options; Ok applies them; Shift-F9 saves manually.</p>
+  </topic>
+  <topic id="legacy_41" layout="prose">
+    <title>Interface options</title>
+    <p>F9, Options, Interface controls Clock, Path prompt, Menu bar always visible, Alt alone selects menu, Esc toggles screen on/off, Clear keyboard buffer, Confirmation on quit and Error sound.</p>
+    <p>Screen colors offers Black &amp; White, Color and Laptop. Screen output offers synchronized, asynchronous or automatic access for older adapters. Left-handed mouse swaps buttons; Fast mouse reset changes mouse initialization.</p>
+    <p>Zooming boxes animates dialogs; Zoom stages accepts 2 through 10. Space changes a switch, Ok accepts, Cancel discards the dialog. Save with Shift-F9.</p>
+  </topic>
+  <topic id="legacy_42" layout="prose">
+    <title>Extension associations</title>
+    <p>Options, Extension file edit has no handler in this build. Edit VC.EXT directly with F4 or another text editor. Existing associations are still read. Keep the supplied syntax: a mask and colon followed by the program or indented command lines; apostrophe starts a comment.</p>
+    <p>Filename macros include !.! and the short-name form !~.!. !$ is the VC installation path; % forms refer to the other panel. External commands must exist on disk. See User menus and new macros for further substitutions.</p>
+  </topic>
+  <topic id="legacy_43" layout="prose">
+    <title>External viewers</title>
+    <p>Options, Viewers has no handler in this build. Edit VCVIEW.EXT directly with F4 or another text editor. Existing associations are still read. Keep the supplied syntax: a mask and colon followed by the program or indented command lines; apostrophe starts a comment.</p>
+    <p>Filename macros include !.! and the short-name form !~.!. !$ is the VC installation path; % forms refer to the other panel. External commands must exist on disk. See User menus and new macros for further substitutions.</p>
+    <p>F3 and Alt-F3 choose internal/external operation according to Alternative viewer/editor in Options, General. The shipped association files refer to optional external programs.</p>
+  </topic>
+  <topic id="legacy_44" layout="prose">
+    <title>External editors</title>
+    <p>Options, Editors has no handler in this build. Edit VCEDIT.EXT directly with F4 or another text editor. Existing associations are still read. Keep the supplied syntax: a mask and colon followed by the program or indented command lines; apostrophe starts a comment.</p>
+    <p>Filename macros include !.! and the short-name form !~.!. !$ is the VC installation path; % forms refer to the other panel. External commands must exist on disk. See User menus and new macros for further substitutions.</p>
+    <p>F4 and Alt-F4 choose internal/external operation according to Alternative viewer/editor in Options, General. The shipped association files refer to optional external programs.</p>
+  </topic>
+  <topic id="legacy_45" layout="ng">
+    <title>      Auto menus</title>
+    <line>^bAuto menus^b</line>
+    <line> When   this   option  is  checked,  the  User  menus  appear</line>
+    <line> automatically when  the  Commander  first  starts. The  User</line>
+    <line> menus will also reappear automatically after you  run a User</line>
+    <line> menu command.</line>
+  </topic>
+  <topic id="legacy_46" layout="prose">
+    <title>Path prompt</title>
+    <p>Set Path prompt in F9, Options, Interface. When enabled the command prompt includes the current directory; otherwise it shows the drive only. Shift-F9 saves the setting.</p>
+  </topic>
+  <topic id="legacy_47" layout="ng">
+    <title>      Key bar</title>
+    <line>^bKey bar^b                                                 ^uCtrl-B^u</line>
+    <line> This  option controls whether or not the function key bar at</line>
+    <line> the bottom of the screen is visible.</line>
+    <line />
+    <line>       √ ^uK^uey bar     ────<char code="10" />     1^rHelp  ^r 2^rMenu  ^r 3^rView  ^r ...</line>
+    <line />
+    <line>         ^uK^uey bar     ────<char code="10" /></line>
+    <line />
+    <line>   ^bNote:^b  With both the key bar and the  panels  turned  off,</line>
+    <line>          the Commander looks remarkably like DOS.</line>
+  </topic>
+  <topic id="legacy_48" layout="ng">
+    <title>      Full screen</title>
+    <line>^bFull screen^b</line>
+    <line> This  option controls the size of the ^uLeft^u and ^uRight^u panels.</line>
+    <line> When  checked, the  panels  will have the height of the full</line>
+    <line> screen:</line>
+    <line />
+    <line>         √ ^uF^uull screen                  ^uF^uull screen</line>
+    <line />
+    <line>        ╔════ C:\ ════╗              ╔════ C:\ ════╗</line>
+    <line>        ║             ║              ║             ║</line>
+    <line>        ║             ║              ║             ║</line>
+    <line>        ║             ║              ╟─────────────╢</line>
+    <line>        ║             ║              ╚═════════════╝</line>
+    <line>        ║             ║</line>
+    <line>        ╟─────────────╢</line>
+    <line>        ╚═════════════╝</line>
+    <line>        C&gt;_                          C&gt;_</line>
+  </topic>
+  <topic id="legacy_49" layout="prose">
+    <title>Automatic directory sizes</title>
+    <p>F9, Options, Panels contains Auto directory sizes and Ins calculates size of directory. Automatic calculation may take time on large directory trees.</p>
+    <p>Alt-F6, or Commands, Directory sizes, requests calculation explicitly. Displayed sizes describe file contents; filesystem allocation and free space are different values.</p>
+  </topic>
+  <topic id="legacy_50" layout="ng">
+    <title>      Mini status</title>
+    <line>^bMini status^b</line>
+    <line> This option  controls whether or not a mini  status  line is</line>
+    <line> visible at the bottom of each panel. The  mini  status  line</line>
+    <line> shows the full directory information for the file  under the</line>
+    <line> cursor:</line>
+    <line />
+    <line>√ ^uM^uini status</line>
+    <line />
+    <line>           ║^rfilename ext^r│filename ext│filename ext║</line>
+    <line>           ╟────────────┴────────────┴────────────╢</line>
+    <line>           ║filename.ext      5728  5-15-91  6:44p║</line>
+    <line>           ╚══════════════════════════════════════╝</line>
+    <line />
+    <line>  ^uM^uini status</line>
+    <line />
+    <line>           ║^rfilename ext^r│filename ext│filename ext║</line>
+    <line>           ║filename ext│filename ext│filename ext║</line>
+    <line>           ║filename ext│filename ext│filename ext║</line>
+    <line>           ╚════════════╧════════════╧════════════╝</line>
+    <line />
+    <line>^bSelected Files^b</line>
+    <line> If  you  select  one or more  files, the  mini  status  line</line>
+    <line> changes to show how many files you've selected, and how many</line>
+    <line> bytes there are in the selected files:</line>
+    <line />
+    <line>           ╟──────────────────────────────────────╢</line>
+    <line>           ║    ^b5,728 bytes in 1 selected file^b    ║</line>
+    <line>           ╚══════════════════════════════════════╝</line>
+  </topic>
+  <topic id="legacy_51" layout="prose">
+    <title>Clock</title>
+    <p>Enable Clock in F9, Options, Interface to display the clock. Its time comes from DOS; correct the system time if necessary. Shift-F9 saves the display setting.</p>
+  </topic>
+  <topic id="legacy_52" layout="ng">
+    <title>      Memory allocation</title>
+    <line>^bMemory allocation^b</line>
+    <line> This  option  selects the full-resident or small mode of the</line>
+    <line> Commander.</line>
+    <line />
+    <line> When  this  option  is  checked, the  Commander  deallocates</line>
+    <line> memory before execution of a program and  loads itself again</line>
+    <line> when the program exits.  It leaves in memory only ^usmall^u part</line>
+    <line> of the Commander.</line>
+    <line />
+    <line> Uncheck this option to set  the Commander  in  ^ufull-resident^u</line>
+    <line> mode. So, you can execute programs quicker without reloading</line>
+    <line> the Commander  each time.  The program will have less memory</line>
+    <line> available to them, though.</line>
+    <line />
+    <line>   ^bNote:^b  If you work in full-resident mode, use  ^uShift-Enter^u</line>
+    <line>          to execute a program in small mode without changing</line>
+    <line>          this  option.  Hold  down  ^uShift^u  when  you  select</line>
+    <line>          command from the History or User menu.</line>
+  </topic>
+  <topic id="legacy_53" layout="prose">
+    <title>Save setup</title>
+    <p>Shift-F9, or Options, Save setup, writes the current configuration to VC.INI. Options, General, Auto save setup enables automatic saving.</p>
+    <p>Settings include panel state and program options. Menu and extension files are separate text files. The VC environment variable can select a home directory for configuration files. Installation updates preserve an existing VC.INI; deleting it is not required for a normal update.</p>
+  </topic>
+  <topic id="legacy_54" layout="prose">
+    <title>Description settings</title>
+    <p>F9, Options, Descriptions chooses whether file descriptions are not updated, updated only when displayed, or always updated during operations. Description files and Directory information files specify the filenames VC reads.</p>
+    <p>Defaults include descript.ion and files.bbs for descriptions, and dirinfo, file_id.diz and readme variants for directory information. Use Left/Right, Description to display file descriptions. Copy and Move has further options for creating and deleting description entries.</p>
+  </topic>
+  <topic id="legacy_55" layout="prose">
+    <title>Screen saver: current status</title>
+    <p>Options, Screen saver is a visible placeholder without a dialog handler in this build. The old VC 4.05 instructions for its screen-blank delay and characters do not describe an available configuration dialog in 4.99.10.</p>
+    <p>Use Options, Interface for the working display and mouse settings. Changing this help text does not enable the missing Screen saver dialog.</p>
+  </topic>
+  <topic id="legacy_56" layout="prose">
+    <title>Characters</title>
+    <p>F9, Options, Characters edits the symbols used for panel/dialog borders and pull-down menus. Other fields control scroll arrows, scroll bars, mouse pointers, progress bars, enabled items and hidden/selected file markers.</p>
+    <p>Choose characters suited to the loaded DOS font and codepage. Ok applies the dialog, Cancel discards it. Shift-F9 saves the configuration. This changes interface symbols, not filename encoding or the help language.</p>
+  </topic>
+  <topic id="legacy_57" layout="prose">
+    <title>Panel options</title>
+    <p>F9, Options, Panels controls Ins moves down, Ins calculates size of directory, Auto directory sizes, Unselect during group operations and Highlight subdirectories for file panels.</p>
+    <p>Tree options include Show hidden subdirectories, Save TREEINFO in root directory, Save TREEINFO in home directory, Auto change directory and its time delay. With automatic change disabled, Enter selects the directory.</p>
+    <p>Space changes a switch; Ok accepts; Shift-F9 saves. Mini status is a separate switch in the Options menu. Rescan a tree with Ctrl-R after changes made outside VC.</p>
+  </topic>
+  <topic id="legacy_58" layout="prose">
+    <title>Choosing screen colors</title>
+    <p>F9, Options, Interface, Screen colors selects Black &amp; White, Color or Laptop. Choose the mode that is readable on your display, accept with Ok and save with Shift-F9.</p>
+    <p>The separate VCSETUP palette editor described by the old 4.05 help is not included in this release. The current Interface dialog selects a color scheme; it does not provide that old per-element palette editor.</p>
+  </topic>
+  <topic id="legacy_59" layout="prose">
+    <title>Copy and Move options</title>
+    <p>F9, Options, Copy and Move controls Auto create descriptions, Delete target description if source without description, and Auto delete empty description files. Description processing itself is configured under Descriptions.</p>
+    <p>Copy extended attributes controls OS/2 extended-attribute handling where supported. Check target file and free space before copying enables advance checks. Clear read-only attribute when copy from CD-ROM prevents copied files from retaining the source read-only flag.</p>
+    <p>These options affect normal VC copy/move operations. External packers and VCTOOLS commands use their own behavior and options. Ok applies changes; Shift-F9 saves them.</p>
+  </topic>
+  <topic id="legacy_60" layout="prose">
+    <title>Country settings and codepages</title>
+    <p>VC uses DOS country information for date/time and number formats. Set COUNTRY in CONFIG.SYS using files supplied by your DOS installation; choose the keyboard and display codepage with the matching DOS tools.</p>
+    <p>The installer uses COUNTRY to suggest a help language, but the selected HLP file has its own encoding: English CP437, German CP850, Russian CP866, Polish/Slovak CP852. A matching screen font is needed to display national characters.</p>
+    <p>Changing a translation table in the viewer changes that display only; it does not change DOS country settings or rewrite the file.</p>
+  </topic>
+  <topic id="legacy_61" layout="prose">
+    <title>Exit and retain settings</title>
+    <p>F10 quits VC. Options, Interface, Confirmation on quit controls the confirmation question. Save manually with Shift-F9 or enable Auto save setup under Options, General.</p>
+    <p>Esc closes a dialog or viewer. Its behavior in the panels depends on Esc toggles screen on/off under Interface. A separate VCSETUP Exit command is not used by this release.</p>
+  </topic>
+  <topic id="legacy_62" layout="ng">
+    <title> VC Environment variable</title>
+    <line>^bVC Environment variable^b</line>
+    <line> Using  the  Commander  with  a  RAM  disk presents a special</line>
+    <line> problem: if  you  save the setup, change the main menu file,</line>
+    <line> or change the main  extension  file, these  changes  will be</line>
+    <line> made to the files on the  RAM disk.  As a result you'll lose</line>
+    <line> your changes as soon as you reboot or turn off your computer.</line>
+    <line />
+    <line> The  Commander  provides a solution to this problem. You can</line>
+    <line> put a line  into  your  ^uautoexec.bat^u  file  that  tells  the</line>
+    <line> Commander where to find these  files, as well as other files</line>
+    <line> it  needs  that  you haven't copied to the RAM disk. Put the</line>
+    <line> following line into your ^uautoexec.bat^u file:</line>
+    <line />
+    <line>               set vc=c:\progs\vc</line>
+    <line>                      └────┬────┘</line>
+    <line>                           │</line>
+    <line>            The path on your hard disk where</line>
+    <line>            the Commander's files are stored.</line>
+  </topic>
+</guide>

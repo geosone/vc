@@ -2,7 +2,7 @@
 #
 #   make                 build/VC.COM, build/VC.OVL
 #   make release         build/release/ and build/vc49910a.zip: the program,
-#                        the files of files/, the help files of help/
+#                        the files of files/, compiled XML help
 #                        the GeosOne Dual Installer and downloaded DOS packers
 #   make disk            build/vc49910a.img, core-only 1.44 MB installation disk
 #   make port            the published TASM sources converted again by
@@ -26,7 +26,10 @@ REL     := $(B)/release
 NAME    := vc49910a
 SOURCES := $(wildcard src/*.ASM src/*.INC)
 FILES   := $(shell cd files && find . -type f | sed 's|^\./||' | sort)
-HELPS   := $(wildcard help/*.HLP)
+HELP_NAMES := VC.HLP VC-GER.HLP VCR.HLP VC-PL.HLP VC-SK.HLP
+HELPS   := $(addprefix $(B)/help/,$(HELP_NAMES))
+HELP_MAP := $(B)/help/VCHELPMAP.INC
+HELP_SOURCES := help/project.xml help/project.dtd help/guide.dtd $(wildcard help/src/*.xml)
 
 # the published sources (the converter's input) and the LOOP/JCXZ lines
 # TASM's JUMPS had to extend there (tools/tasm2jwasm.py -x)
@@ -35,9 +38,16 @@ SRCSHA  := b70fda9f9c94a321681dc49828f99ff4abe2c2f741e85c5bffab7ab6310b9f93
 FAR     := VCARC2.INC:1188 VCDIALOG.INC:1921 VCMEM.INC:536 VCMENU.INC:631 \
            VCPANELS.INC:1601 VCPANELS.INC:1865 VCPANELS.INC:2123 VCVIEW.INC:1728
 
-.PHONY: all release disk check test addons packers port clean
+.PHONY: all release disk check test help addons packers port clean
 
 all: $(B)/VC.COM $(B)/VC.OVL addons
+
+help: $(HELPS) $(HELP_MAP) $(B)/help/manifest.xml
+
+# One invocation produces every language and their shared context table.
+# Grouped targets also regenerate the set if one output is removed.
+$(HELPS) $(HELP_MAP) $(B)/help/manifest.xml &: $(HELP_SOURCES) src/VCDATA.INC tools/hlp.py | $(B)
+	$(PYTHON) tools/hlp.py build --output $(B)/help
 
 addons: $(B)/VCTOOLS.EXE $(B)/VC7Z.EXE
 
@@ -56,13 +66,13 @@ $(B)/vc7z-host: addons/vc7z.c | $(B)
 $(B)/ADDONS.TXT: addons/README.de.md | $(B)
 	$(PYTHON) -c 'from pathlib import Path; p=Path("$<"); s=p.read_text().replace("„", "\"").replace("“", "\"").replace("…", "..."); Path("$@").write_bytes(s.replace("\n", "\r\n").encode("cp850"))'
 
-test: $(B)/vctools-host $(B)/vc7z-host
+test: help $(B)/vctools-host $(B)/vc7z-host
 	VCTOOLS=$(CURDIR)/$(B)/vctools-host VC7Z=$(CURDIR)/$(B)/vc7z-host $(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
 
 $(B):
 	mkdir -p $@
 
-$(B)/%.obj: src/%.ASM $(SOURCES) | $(B)
+$(B)/%.obj: src/%.ASM $(SOURCES) $(HELP_MAP) | $(B)
 	cd src && $(JWASM) -q -c -DOFFICIAL -Fo=../$@ $(notdir $<)
 
 # VC.COM: the resident part (tiny model), VC.OVL: the program (an EXE)

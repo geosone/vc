@@ -9,6 +9,7 @@ The original disk is only read. No DOS files are distributed with this test.
 """
 import argparse
 import json
+import xml.etree.ElementTree as ET
 import os
 from pathlib import Path
 import shutil
@@ -21,7 +22,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class QMP:
-    def __init__(self, path):
+    def __init__(self, path, codepage="cp850"):
+        self.codepage = codepage
         self.sock = socket.socket(socket.AF_UNIX)
         self.sock.settimeout(5)
         self.sock.connect(str(path))
@@ -62,7 +64,7 @@ class QMP:
                   'pmemsave 0xb8000 4000 "' + str(directory / (name+".vram")) + '"')
         self.call("screendump", filename=str(directory / (name+".ppm")))
         chars = (directory / (name+".vram")).read_bytes()[::2]
-        text = "\n".join(chars[i:i+80].decode("cp850") for i in range(0, 2000, 80))
+        text = "\n".join(chars[i:i+80].decode(self.codepage) for i in range(0, 2000, 80))
         (directory / (name+".txt")).write_text(text)
         return text
 
@@ -77,6 +79,8 @@ def main():
                         help="install directory release and test the downloaded packers")
     parser.add_argument("--licenses", action="store_true",
                         help="show all nine license dialogs and verify that declining aborts")
+    parser.add_argument("--help-language", choices=("en", "de", "ru", "pl", "sk"), default="en",
+                        help="exercise the generated guide in this DOS codepage")
     args = parser.parse_args()
     if args.licenses:
         args.full = True
@@ -111,18 +115,23 @@ def main():
             command("mcopy", "-s", "-o", "-i", image, str(p), "::/VCDIST/")
         installer = "C:\\VCDIST\\INSTALL /S"
     dosfile("CONFIG.SYS", "FILES=40\nBUFFERS=20\nLASTDRIVE=Z\nSHELL=C:\\COMMAND.COM C:\\ /P\n")
+    help_names = {"en": "VC.HLP", "de": "VC-GER.HLP", "ru": "VCR.HLP",
+                  "pl": "VC-PL.HLP", "sk": "VC-SK.HLP"}
+    help_drive = "C:\\VCDIST" if args.full else "A:"
+    select_help = f'COPY {help_drive}\\{help_names[args.help_language]} C:\\VC\\VC.HLP > NUL'
     autoexec = """@ECHO OFF
 SET PATH=C:\\
 SET TEMP=C:\\VCTEST
 SET TZ=UTC0
 A:\\INSTALL /S
 IF ERRORLEVEL 1 ECHO INSTALL FAILED > C:\\VCTEST\\FAIL.TXT
+SELECT_HELP
 C:
 CD \\VCTEST
 CALL TEST.BAT
 C:\\VC\\VC
 C:\\QEXIT.COM
-""".replace("A:\\INSTALL /S", installer)
+""".replace("A:\\INSTALL /S", installer).replace("SELECT_HELP", select_help)
     if args.licenses:
         autoexec = ("@ECHO OFF\nC:\\VCDIST\\INSTALL\n"
                     "IF EXIST C:\\VC\\VC.COM ECHO FILES COPIED > C:\\BAD.TXT\nC:\\QEXIT.COM\n")
@@ -218,7 +227,11 @@ IF ERRORLEVEL 1 ECHO HEX FAILED >> FAIL.TXT
         z.writestr("long name.txt", b"example" * 10)
         z.comment = b"x" * 1022
     command("mcopy", "-o", "-i", image, str(out / "SAMPLE.ZIP"), "::/VCTEST/")
+    if not args.full:
+        core_floppy = out / "install.img"
+        shutil.copyfile(ROOT / "build/vc49910a.img", core_floppy)
     sock = out / "qmp.sock"
+    sock.unlink(missing_ok=True)
     env = dict(os.environ, SDL_AUDIODRIVER="dummy")
     with (out / "qemu.log").open("wb") as log:
         proc = subprocess.Popen([
@@ -226,7 +239,7 @@ IF ERRORLEVEL 1 ECHO HEX FAILED >> FAIL.TXT
             "-m", "64", "-display", "none", "-monitor", "none", "-serial", "none",
             "-drive", "if=ide,index=0,format=raw,file=" + str(disk),
             "-drive", "if=floppy,index=0,format=raw,file=" +
-            str(output_disk if args.full else ROOT / "build/vc49910a.img"),
+            str(output_disk if args.full else core_floppy),
             "-boot", "c", "-nic", "none", "-no-reboot",
             "-device", "isa-debug-exit,iobase=0xf4,iosize=1",
             "-qmp", "unix:" + str(sock) + ",server=on,wait=off"],
@@ -237,7 +250,8 @@ IF ERRORLEVEL 1 ECHO HEX FAILED >> FAIL.TXT
                 if proc.poll() is not None or time.monotonic() > deadline:
                     raise RuntimeError("QEMU did not start; see qemu.log")
                 time.sleep(0.1)
-            qmp = QMP(sock)
+            codepage = {"en": "cp437", "de": "cp850", "ru": "cp866", "pl": "cp852", "sk": "cp852"}[args.help_language]
+            qmp = QMP(sock, codepage)
             if args.licenses:
                 deadline = time.monotonic() + 30
                 while "Welcome" not in qmp.screen(out, "welcome"):
@@ -278,6 +292,44 @@ IF ERRORLEVEL 1 ECHO HEX FAILED >> FAIL.TXT
                 if time.monotonic() > deadline:
                     raise RuntimeError("DOS tests did not reach VC; see startup.txt")
                 time.sleep(1)
+            titles = {
+                "en": ("Current version and new features", "User menus and new macros"),
+                "de": ("Aktuelle Version und Neuerungen", "Benutzermenüs und neue Makros"),
+                "ru": ("Версия и новые функции", "Меню и новые макросы"),
+                "pl": ("Wersja i nowe funkcje", "Menu i nowe makra"),
+                "sk": ("Verzia a nové funkcie", "Menu a nové makrá")}
+            release_title, menu_title = titles[args.help_language]
+            qmp.key("f1")
+            time.sleep(0.5)
+            index_screen = qmp.screen(out, "help-index")
+            assert release_title in index_screen, index_screen
+            assert "Retro7Zip" in index_screen, index_screen
+            qmp.key("ret")
+            time.sleep(0.5)
+            topic_screen = qmp.screen(out, "help-release")
+            assert release_title in topic_screen, topic_screen
+            assert "4.99.10" in topic_screen, topic_screen
+            qmp.key("ret")
+            time.sleep(0.5)
+            assert menu_title in qmp.screen(out, "help-next")
+            qmp.key("esc")
+            qmp.key("f2", "f3", "f2", "f1")
+            time.sleep(0.5)
+            source = ET.parse(ROOT / f"help/src/{args.help_language}.xml").getroot()
+            user_title = source.find("topic[@id='legacy_17']/title").text.strip()
+            assert user_title in qmp.screen(out, "help-menu-context")
+            qmp.key("esc", "esc")
+            qmp.key("down", "f5", "f1")
+            time.sleep(0.5)
+            source = ET.parse(ROOT / f"help/src/{args.help_language}.xml").getroot()
+            copy_title = source.find("topic[@id='legacy_20']/title").text.strip()
+            assert copy_title in qmp.screen(out, "help-copy-context")
+            qmp.key("esc", "esc", "home")
+            qmp.key("f9", "o", "g", "f1")
+            time.sleep(0.5)
+            general_title = source.find("topic[@id='legacy_40']/title").text.strip()
+            assert general_title in qmp.screen(out, "help-general-context")
+            qmp.key("esc", "esc")
             qmp.key("f2")
             time.sleep(0.5)
             assert "Erweiterungen" in qmp.screen(out, "main-menu")
@@ -344,6 +396,9 @@ IF ERRORLEVEL 1 ECHO HEX FAILED >> FAIL.TXT
     assert b"50 4B 03 04" in read("HEX.TXT")
     home = command("mtype", "-i", image, "::/VCTEST/HOMECHK/HOME.TXT")
     assert b"ZIP archive" in home, home
+    installed_help = command("mtype", "-i", image, "::/VC/VC.HLP")
+    assert installed_help == (ROOT / "build/help" / help_names[args.help_language]).read_bytes()
+    print("PASS: generated F1 index, release, Next, user-menu, Copy and General contexts:", args.help_language)
     if args.full:
         for folder in ("AROUT", "ZOUT", "COUT", "ROUT", "SOUT", "LHOUT", "ARCOUT", "PKOUT"):
             assert b"Archive test payload" in read(folder + "/ORIG.TXT"), folder

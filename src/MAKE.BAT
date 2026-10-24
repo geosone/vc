@@ -1,3 +1,4 @@
+@ REM Generate build/help with make help on the host first.
 @ JWASM -q -c -DOFFICIAL %1.ASM
 @ IF errorlevel==1 GOTO End
 @ IF "%1"=="vcovl" GOTO Ovl

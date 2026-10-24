@@ -1,0 +1,14 @@
+<!-- Copyright 2026 Mario Fetka. SPDX-License-Identifier: BSD-2-Clause -->
+<!ELEMENT help-project (languages, contexts, historical)>
+<!ATTLIST help-project format CDATA #FIXED "vc-norton-guides-v1"
+          definitions CDATA #REQUIRED>
+<!ELEMENT languages (language+)>
+<!ELEMENT language EMPTY>
+<!ATTLIST language code CDATA #REQUIRED source CDATA #REQUIRED
+          output CDATA #REQUIRED historical-notice CDATA #REQUIRED>
+<!ELEMENT contexts (context+)>
+<!ELEMENT context EMPTY>
+<!ATTLIST context name CDATA #REQUIRED topic CDATA #IMPLIED>
+<!ELEMENT historical (topic-ref*)>
+<!ELEMENT topic-ref EMPTY>
+<!ATTLIST topic-ref id CDATA #REQUIRED>

@@ -1,0 +1,18 @@
+<!-- Copyright 2026 Mario Fetka. SPDX-License-Identifier: BSD-2-Clause -->
+<!ELEMENT guide (credits, topic+)>
+<!ATTLIST guide language CDATA #REQUIRED codepage CDATA #REQUIRED
+          original CDATA #IMPLIED original-sha256 CDATA #IMPLIED>
+<!ELEMENT credits (credit*)>
+<!ELEMENT credit (#PCDATA)>
+<!ELEMENT topic (title, (p | heading | pre | line)*)>
+<!ATTLIST topic id ID #REQUIRED layout (prose | ng) "prose">
+<!ELEMENT title (#PCDATA | char)*>
+<!ELEMENT p (#PCDATA | b | u | code | char)*>
+<!ELEMENT heading (#PCDATA | b | u | code | char)*>
+<!ELEMENT b (#PCDATA | u | code | char)*>
+<!ELEMENT u (#PCDATA | b | code | char)*>
+<!ELEMENT code (#PCDATA | char)*>
+<!ELEMENT pre (#PCDATA | char)*>
+<!ELEMENT line (#PCDATA | char)*>
+<!ELEMENT char EMPTY>
+<!ATTLIST char code CDATA #REQUIRED>

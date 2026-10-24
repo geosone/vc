@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE help-project SYSTEM "project.dtd">
+<help-project format="vc-norton-guides-v1" definitions="../src/VCDATA.INC">
+  <languages>
+    <language code="en" source="src/en.xml" output="VC.HLP" historical-notice="Historical VC 4.05 reference; use current Options in F9." />
+    <language code="de" source="src/de.xml" output="VC-GER.HLP" historical-notice="Historische Hilfe zu VC 4.05; aktuelle Optionen: F9." />
+    <language code="ru" source="src/ru.xml" output="VCR.HLP" historical-notice="Старая справка VC 4.05; текущие настройки: F9, Options." />
+    <language code="pl" source="src/pl.xml" output="VC-PL.HLP" historical-notice="Dawna pomoc VC 4.05; aktualne ustawienia: F9, Options." />
+    <language code="sk" source="src/sk.xml" output="VC-SK.HLP" historical-notice="Stará pomoc VC 4.05; aktuálne nastavenia: F9, Options." />
+  </languages>
+  <contexts>
+    <context name="Default_H" />
+    <context name="Index_H" />
+    <context name="Main_H" topic="release" />
+    <context name="Keys_H" topic="legacy_02" />
+    <context name="ViewKeys_H" topic="legacy_03" />
+    <context name="ViewStat_H" topic="legacy_04" />
+    <context name="EditKeys_H" topic="legacy_05" />
+    <context name="EditStat_H" topic="legacy_06" />
+    <context name="LeftRight_H" topic="legacy_07" />
+    <context name="BriefFull_H" topic="legacy_08" />
+    <context name="Info_H" topic="legacy_09" />
+    <context name="Tree_H" topic="legacy_10" />
+    <context name="QuickView_H" topic="panels" />
+    <context name="OnOff_H" topic="legacy_11" />
+    <context name="LongNames_H" topic="names" />
+    <context name="Sort_H" topic="legacy_12" />
+    <context name="ReRead_H" topic="legacy_13" />
+    <context name="Filter_H" topic="legacy_14" />
+    <context name="Drive_H" topic="legacy_15" />
+    <context name="Files_H" topic="legacy_16" />
+    <context name="Menu_H" topic="legacy_17" />
+    <context name="View_H" topic="legacy_18" />
+    <context name="Edit_H" topic="legacy_19" />
+    <context name="Copy_H" topic="legacy_20" />
+    <context name="Move_H" topic="legacy_21" />
+    <context name="MkDir_H" topic="legacy_22" />
+    <context name="Delete_H" topic="legacy_23" />
+    <context name="Attrib_H" topic="legacy_24" />
+    <context name="Select_H" topic="legacy_25" />
+    <context name="Quit_H" topic="legacy_26" />
+    <context name="Commands_H" topic="legacy_27" />
+    <context name="ChgTree_H" topic="legacy_28" />
+    <context name="Label_H" topic="legacy_29" />
+    <context name="Memory_H" topic="legacy_30" />
+    <context name="DirSize_H" topic="legacy_31" />
+    <context name="FileFind_H" topic="legacy_32" />
+    <context name="History_H" topic="legacy_33" />
+    <context name="EgaLines_H" topic="legacy_34" />
+    <context name="Mode_H" topic="legacy_34" />
+    <context name="SwapPan_H" topic="legacy_35" />
+    <context name="OnOffPan_H" topic="legacy_36" />
+    <context name="CompDirs_H" topic="legacy_37" />
+    <context name="EditMenu_H" topic="legacy_38" />
+    <context name="Options_H" topic="legacy_39" />
+    <context name="General_H" topic="legacy_40" />
+    <context name="Interface_H" topic="legacy_41" />
+    <context name="Chars_H" topic="legacy_56" />
+    <context name="PanelOpt_H" topic="legacy_57" />
+    <context name="Descript_H" topic="legacy_54" />
+    <context name="ScrSavOpt_H" topic="legacy_55" />
+    <context name="CopyOpt_H" topic="legacy_59" />
+    <context name="EditExt_H" topic="legacy_42" />
+    <context name="EditView_H" topic="legacy_43" />
+    <context name="EditEdit_H" topic="legacy_44" />
+    <context name="AutoMenu_H" topic="legacy_45" />
+    <context name="KeyBar_H" topic="legacy_47" />
+    <context name="FullScr_H" topic="legacy_48" />
+    <context name="Status_H" topic="legacy_50" />
+    <context name="Alloc_H" topic="legacy_52" />
+    <context name="SaveSet_H" topic="legacy_53" />
+  </contexts>
+  <historical />
+</help-project>

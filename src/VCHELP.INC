@@ -29,7 +29,6 @@ HlpData		STRUC
 HlpData		ENDS
 
 HlpHead		EQU	1Ah		; Size of entry header
-MaxHelp		EQU	59		; Number of help pages
 ListSave	EQU	(SIZEOF ListData - ListCurFlag + 1) / 2
 
 		.CONST
@@ -41,13 +40,8 @@ HlpMn1_S	DB	'[ Help ]',0FFh,3,'[ Cancel ]',0
 HlpMn2_S	DB	'[ Next ]',0FFh,3,'[ Previous ]',0FFh,3,'[ Index ]',0FFh,3,'[ Cancel ]',0
 
 		.DATA
-; the line of the 4.05 index for the help pages of VCDATA.INC
-HelpMap		DB	 0,  1,  2,  3,  4,  5,  6,  7,  8,  9	;  0
-		DB	10,  7, 11,  7, 12, 13, 14, 15, 16, 17	; 10
-		DB	18, 19, 20, 21, 22, 23, 24, 25, 26, 27	; 20
-		DB	28, 29, 30, 31, 32, 33, 34, 34, 35, 36	; 30
-		DB	37, 38, 39, 40, 41, 40, 57, 41, 40, 41	; 40
-		DB	42, 43, 44, 45, 47, 48, 50, 52, 53	; 50
+; Generated from stable topic IDs; rebuild together with VC.HLP.
+		INCLUDE ../build/help/VCHELPMAP.INC
 HlpCurs_P	DB	HlpRe_C, HlpRe_C, HlpRe_C, HlpRe_C
 HlpIdx_P	DB	Help_C, HlpRe_C, HlpBo_C, HlpUn_C
 		DW	Help_S

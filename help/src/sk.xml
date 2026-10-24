@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="../guide.css"?>
+<!DOCTYPE guide SYSTEM "../guide.dtd">
+<guide language="sk" codepage="cp852" original="VC-SK.HLP" original-sha256="e619f01b3bb202c1b36b9c7f84b2c1d35c3be7c6f44cffceb6b0a112a736e068">
+  <credits>
+    <credit>Copyright (C) 1991-2000 by Vsevolod V. Volkov</credit>
+    <credit />
+    <credit />
+    <credit />
+    <credit />
+  </credits>
+  <topic id="release" layout="prose">
+    <title>Verzia a nové funkcie</title>
+    <p>Pomoc opisuje Volkov Commander {{version}}. Program vychádza zo zverejnených zdrojov 4.99.09 a pridáva pomoc F1, nový systém zostavenia a malé rozšírenia. Konečné vydanie 5.0 sa pripravuje; táto vývojová verzia ešte nie je finálnym vydaním 5.0.</p>
+    <p>F1 otvorí pomoc aktuálneho okna. V súborových paneloch otvorí zoznam tém. Enter vyberá tému, Next a Previous menia tému, Index vracia zoznam, Escape zatvára pomoc.</p>
+    <p>F2 a potom F3 otvorí rozšírenia: archívy, zoznamy súborov, hromadné príkazy, rozpoznanie formátu a hexadecimálny náhľad. Úplné ZIP vydanie obsahuje stiahnuté archivátory; disketa 1,44 MB len VC a vlastné nástroje. Referenčné kapitoly boli aktualizované pre menu, klávesy a nastavenia 4.99.10.</p>
+  </topic>
+  <topic id="menus" layout="prose">
+    <title>Menu a nové makrá</title>
+    <p>F2 otvorí používateľské menu, v ňom F3 rozšírenia a F1 archívne menu. Shift-F2 otvorí hlavné menu aj pri miestnom VC.MNU. Escape zatvára menu, F10 vracia nadradené menu uvedené pri príslušnej položke.</p>
+    <p>Súbory .MNU sú textové: kláves a názov položky, potom odsadené príkazy alebo názov ďalšieho menu. Aktualizácia zachováva existujúce menu. Do staršieho VC.MNU môže byť potrebné doplniť položku addons.mnu.</p>
+    <p>! a !.! označujú aktuálny názov bez prípony a s príponou. !@ označuje dočasný zoznam označených súborov; bez označenia sa použije aktuálny súbor. Tvary s % sa týkajú druhého panela. !~.! a !~@ používajú krátke názvy DOS. ![Otázka] vyžiada text, !0...!9 znovu použijú zadané odpovede.</p>
+    <p>Nové !$ a %$ poskytujú inštalačný adresár VC s koncovým spätným lomítkom. Nástroje sa tak nájdu aj bez VC v PATH:</p>
+    <pre>"!$VCTOOLS.EXE" type "!~.!"</pre>
+  </topic>
+  <topic id="archives" layout="prose">
+    <title>Priložené archivátory</title>
+    <p>make release stiahne DOS archivátory a nainštaluje ich vedľa VC. Menu používa inštalačný adresár; netreba samostatne nastavovať PATH. ZIP.EXE a UNZIP.EXE sú 16-bitový Info-ZIP. Samostatné menu PKZIP používa pôvodné shareware programy PKZIP/PKUNZIP 2.50.</p>
+    <p>ARJ 2.78 Open-Source vytvára, zobrazuje, testuje a rozbaľuje ARJ. ACE 1.2b je shareware s 30-dňovou skúšobnou lehotou. RAR 2.06 vytvára staré RAR2, skúšobná lehota je 40 dní. UNRAR 3.80 beta číta staršie RAR; na RAR5 použite Retro7Zip. LHA 2.13 spracúva LZH, ARC 6.02 a PKARC/PKXARC ARC.</p>
+    <p>Vytvorenie zabalí označené súbory. Zobrazenie a test pracujú s aktuálnym archívom, rozbalenie zapisuje do adresára druhého panela. Otázky pri prepisovaní naďalej riadi archivátor.</p>
+    <p>PACKDOC obsahuje licencie, návody, pôvodné balíky a potrebné zdroje. PACKERS.TXT uvádza verzie a pôvod. Cudzie programy si zachovávajú vlastné licencie; nevzťahuje sa na ne BSD licencia Commandera.</p>
+  </topic>
+  <topic id="retro7zip" layout="prose">
+    <title>Retro7Zip a archívne panely</title>
+    <p>Retro7Zip 24.09+5 beží pod DOS na procesore 386 alebo novšom. 7ZA má najviac formátov, 7ZR je menší, 7ZM je na jednoduché 7z a málo pamäte, 7ZDEC je minimálny rozbaľovač 7z. Nároky na pamäť závisia od archívu, kompresného slovníka a variantu programu.</p>
+    <p>Menu vytvára 7z, ZIP, TAR a WIM. gzip, BZip2 a XZ komprimujú jeden vstupný súbor: označte iba tento súbor. Retro7Zip číta RAR5, ale nevytvára RAR. VCARCH.EXT spája archívne panely s programami. Enter otvorí archív ako adresár, F3 zobrazí súbor, F5 rozbalí označené súbory. Kopírovanie do zapisovateľného archívu pridá súbory. TAR.GZ má dve vrstvy: kompresiu a následne vnútorný súbor TAR.</p>
+    <p>VC7Z prekladá technické zoznamy pre VC, aj pri solid archívoch. Chýbajúca samostatná zabalená veľkosť sa zobrazí ako 0. Chýbajúci dátum používa 01.01.1980. Polia veľkosti súborov vo VC sú 32-bitové. VC7Z rozbaľuje do existujúceho adresára a podľa potreby mení jednotku, čím obchádza chybu DOS verzie Retro7Zip. Príkaz 7ZA i ukáže formáty.</p>
+  </topic>
+  <topic id="lists" layout="prose">
+    <title>Zoznamy a hromadné príkazy</title>
+    <p>F2, F3, F4 otvorí zoznamy a príkazy pre označené súbory. N zapíše krátke názvy do VC.LST, L dlhé do VCLONG.LST, P úplné krátke cesty do VCPATH.LST. B vytvorí VCLIST.BAT s ECHO pre každý súbor. Existujúce výstupné súbory sa prepíšu.</p>
+    <p>D ukáže náhľad príkazu, R ho vykoná. {} znamená názov súboru; každá náhrada sa vloží v úvodzovkách. Príklad: ATTRIB +R {}. Náhľad nič nevykoná. Prvá chyba zastaví spracovanie; skoršie príkazy sa nevrátia späť. Rozvinutý príkaz môže mať najviac 126 bajtov. Názvy s riadiacimi znakmi príkazového interpretera sa odmietnu.</p>
+    <p>Zoznamy sa čítajú po riadkoch bez dodatočného prehľadávania podadresárov. Relatívne názvy vychádzajú z aktuálneho adresára. Na prístup DOS použite krátke názvy; zoznam dlhých názvov je textový výstup.</p>
+    <pre>VCTOOLS list FILES.LST --full
+VCTOOLS run FILES.LST "ECHO {}" --dry-run</pre>
+  </topic>
+  <topic id="helpers" layout="prose">
+    <title>Formát súboru a hex náhľad</title>
+    <p>T v menu rozšírení určí formát podľa úvodných bajtov, nielen prípony. Rozpoznáva bežné archívy, programy DOS/Windows a ELF, PDF, niektoré obrázky a WAV, prázdne súbory a jednoduchým odhadom text. Nejde o test neporušenosti súboru.</p>
+    <p>H zobrazí prvých 256 bajtov ako hex a ASCII. V príkazovom riadku možno zadať začiatok a dĺžku. Je to iba čítanie, nie binárny editor ani úplná náhrada Hiew:</p>
+    <pre>VCTOOLS hex PROGRAM.EXE 0x100 64</pre>
+    <p>Z zobrazí obsah bežného ZIP bez archivátora. Číta adresár, nerozbaľuje a nekontroluje CRC. Malý prehliadač nepodporuje ZIP64 ani viacdielny ZIP. Viac formátov ponúka menu Retro7Zip. Znak &gt; presmeruje výstup do súboru. ADDONS.TXT obsahuje podrobnejší nemecký návod k rozšíreniam.</p>
+  </topic>
+  <topic id="os2" layout="prose">
+    <title>Nástroje relácie DOS v OS/2</title>
+    <p>Úplné vydanie obsahuje pôvodný AUTOINS.COM zo stránky VC. Zapína opakovanie klávesu Insert v relácii DOS pod OS/2. Spustite ho raz za reláciu z menu OS/2; inštalátor ho nepridáva do automatického spúšťania.</p>
+    <p>Adresár OS2 obsahuje pôvodné ikony VC-WN.ICO pre okno, VC-FS.ICO pre celú obrazovku a ďalšie ikony VC. ZIP balíky sú v PACKDOC/OS2. Sú to pomôcky pre DOS verziu VC, nie natívne archivátory OS/2. Existujúca podpora rozšírených atribútov OS/2 zostáva zachovaná. Binárne opravy pre VC 4.00/4.01 nie sú určené pre túto verziu.</p>
+  </topic>
+  <topic id="install" layout="prose">
+    <title>Inštalácia a licencie</title>
+    <p>Spustite INSTALL v adresári vydania, vyberte cieľ a jazyk pomoci. Navrhnutý jazyk vychádza z COUNTRY= v CONFIG.SYS. Zvolená pomoc sa uloží vedľa programu ako VC.HLP.</p>
+    <p>Pred kopírovaním úplné vydanie vyžaduje prijatie všetkých licencií archivátorov. Deväť dialógov pokrýva VC a cudzie programy; súvisiace texty sú spojené. Odmietnutie zruší inštaláciu. Pôvodné podmienky, návody a zdroje zostávajú v PACKDOC.</p>
+    <p>INSTALL /S použije automatické odpovede GDI a prijme licencie automaticky. Bez /S sa zobrazia otázky. Zápis PATH a ikona Správcu programov Windows sú voliteľné.</p>
+    <p>Aktualizácie zachovajú VC.INI a vlastné .MNU/.EXT. Staršie menu môže potrebovať položku addons.mnu. INSTALL /U z inštalovaného adresára spustí odinštalovanie. Disketa obsahuje iba základ; archivátory a pomôcky OS/2 sú v úplnom ZIP vydaní.</p>
+  </topic>
+  <topic id="panels" layout="prose">
+    <title>Panely a nastavenia</title>
+    <p>Program používa panely verzie 4.99. Quick View ukazuje súbor druhého panela a odlišuje sa od úplného prehliadača F3. Aktuálne režimy zobrazenia a nastavenia sú priamo v menu F9 programu VC.</p>
+    <p>Popisy súborov spracúva VC, samostatné TSR FILES_NC alebo RESINFO nie sú potrebné. Farby sa tiež nastavujú vo VC bez programu VC-COLOR. F9, Options otvorí nastavenia, Shift-F9 ich uloží. Referenčné kapitoly opisujú funkčné nastavenia a označujú nedokončené body menu. Preložené referenčné stránky ku klávesom, kopírovaniu, hľadaniu, prehliadaču a editoru zostali za novými.</p>
+  </topic>
+  <topic id="names" layout="prose">
+    <title>Dlhé názvy a cesty DOS</title>
+    <p>VC používa dlhé názvy, ak systém alebo nainštalovaný ovládač poskytuje rozhranie LFN. V čistom DOS použite existujúci DOSLFN. Nový ovládač LFN ani NTFS nie je súčasťou balíka.</p>
+    <p>Menu odovzdáva malým DOS nástrojom krátke názvy: !~.! je názov súboru, !~@ zoznam označených krátkych názvov. !@ môže vytvoriť textový zoznam dlhých názvov známych VC. Retro7Zip používa dostupné rozhranie LFN. Obmedzenia archivátora, súborového systému, veľkosti a pamäte DOS platia naďalej.</p>
+  </topic>
+  <topic id="helpbuild" layout="prose">
+    <title>Ako zostaviť vlastnú pomoc</title>
+    <p>Zdroje UTF-8: help/src/sk.xml. XMLmind používa guide.dtd a guide.css. Originály: help/original.</p>
+    <pre>make help
+make release</pre>
+    <p>make help vytvorí päť jazykových súborov a mapu kontextu v build/help. Verzia pochádza z VcVersion v src/VCDATA.INC. Náhľad pripravovanej 5.0:</p>
+    <pre>python3 tools/hlp.py build --version 5.0 --output build/help50</pre>
+    <p>Elementy: topic s id, title, p, heading, pre; formátovanie: b, u, code. Poradie ID musí byť rovnaké vo všetkých jazykoch. Kontexty: help/project.xml. Kompilátor kontroluje kódovanie DOS, šírku 64 a veľkosti. Po zmene poradia tém zostavte VC aj pomoc znova.</p>
+  </topic>
+  <topic id="legacy_01" layout="prose">
+    <title>O Volkov Commander</title>
+    <p>Volkov Commander {{version}} vychádza zo zverejnených zdrojov 4.99.09 Vsevoloda Volkova. Pridáva F1, XML pomoc, archívne menu, nástroje a zostavenie vydania. Plánovaná finálna verzia: 5.0.</p>
+    <p>VC a naše zmeny: BSD-2-Clause. Archivátory majú vlastné licencie; pozri PACKERS.TXT a PACKDOC. Údaje o autoroch pôvodnej pomoci sú zachované.</p>
+    <p>Projekt: https://github.com/geosone/vc</p>
+  </topic>
+  <topic id="legacy_02" layout="prose">
+    <title>Klávesy</title>
+    <p>Tab mení panel, Ins označuje súbor. Gray + / - / *: označiť / zrušiť / obrátiť; Ctrl-M obnoví výber. Shift so skupinovými klávesmi zahŕňa adresáre.</p>
+    <p>Ctrl-O: panely; Ctrl-P: druhý panel; Ctrl-U: výmena; Ctrl-L: Info; Ctrl-Z: Tree; Ctrl-Q: Quick View; Ctrl-N: dlhé názvy; Ctrl-R: načítať; Ctrl-F: filter; Ctrl-A: atribúty; Ctrl-B: lišta klávesov.</p>
+    <p>F1 pomoc, F2 menu, F3 prezeranie, F4 editor, F5 kopírovať, F6 presunúť, F7 adresár, F8 zmazať, F9 menu, F10 koniec. Alt-F1/F2: disk; Alt-F7: hľadať; Alt-F8: história.</p>
+    <p>Ctrl-I vloží názvy, Ctrl-[ / Ctrl-] vložia cesty. Ctrl-E / Ctrl-X: história príkazov; Ctrl-Enter: doplnenie z histórie.</p>
+  </topic>
+  <topic id="legacy_03" layout="prose">
+    <title>Prezeranie: klávesy</title>
+    <p>Šípky posúvajú, PgUp/PgDn mení stranu, Home/End prejde na začiatok/koniec, Ctrl-Left/Right posúva vodorovne väčším krokom.</p>
+    <p>F2: zalamovanie; F4 alebo Enter: text/hex; F5: hexadecimálny offset v hex. F7: hľadať; Shift-F7: ďalší; Ctrl-F7: predošlý nález.</p>
+    <p>F8: tabuľka znakov. Shift-F8 alebo Tab v plnom prezeraní: hranica DBCS. Esc/F3/F10: zavrieť. F1: pomoc. Quick View zobrazuje súbor v paneli.</p>
+  </topic>
+  <topic id="legacy_04" layout="prose">
+    <title>Prezeranie: stav</title>
+    <p>Stavový riadok ukazuje súbor, stĺpec, pozíciu bajtu a percento. F5 v hex prijíma hexadecimálny offset.</p>
+    <p>F8 mení zobrazenie znakov, nie obsah súboru. Prehliadač len číta; editor: F4 v paneli.</p>
+  </topic>
+  <topic id="legacy_05" layout="prose">
+    <title>Editor: klávesy</title>
+    <p>Šípky posúvajú kurzor, Ctrl-Left/Right: slovo. Home/End: kraje riadka; Ctrl-Home/End alebo Ctrl-PgUp/PgDn: kraje súboru. PgUp/PgDn: strana.</p>
+    <p>Backspace/Del zmaže znak. Ctrl-Backspace: slovo vľavo; Ctrl-T: slovo vpravo; Ctrl-K: po koniec riadka; Ctrl-Y: riadok; Ctrl-U: obnoviť zmazané. Ctrl-Q: doslovný znak.</p>
+    <p>F2: uložiť; Shift-F2: iný názov; F4: text/hex; Tab v hex: pole hex/ASCII. F7: hľadať; Shift-F7: ďalej. F10/Esc: koniec s otázkou na zmeny. Shift-F10: uložiť a skončiť. F1: pomoc.</p>
+  </topic>
+  <topic id="legacy_06" layout="ng">
+    <title> Edit -- Stavový riadok</title>
+    <line>^bEdit (2/2) -- Stavový riadok^b</line>
+    <line>^uStavový riadok^u</line>
+    <line />
+    <line>      Indikátor zmien ──┐      ┌───────┬── poloha kurzora</line>
+    <line>                        <char code="1F" />      <char code="1F" />       <char code="1F" /></line>
+    <line>  ^rEdit: filename.ext    *" Line 2   Col 3   449,268 Free   ^r</line>
+    <line>                         <char code="1E" />                     <char code="1E" /></line>
+    <line>  Nasledujúci riadiaci ──┘      Voľná pamäť ───┘</line>
+    <line>  znak nebude  chápaný</line>
+    <line>  ako príkaz, ale vlo-</line>
+    <line>  žený do textu</line>
+  </topic>
+  <topic id="legacy_07" layout="prose">
+    <title>Menu Left a Right</title>
+    <p>F9 otvára menu. Left/Right nastavuje príslušný panel. Brief, Full, Description: súbory; Info: disk; Tree: adresáre; Quick view: náhľad.</p>
+    <p>Long names (Ctrl-N): dlhé názvy pri dostupnom LFN. Triedenie: Name, Extension, Time, Size, Unsorted; Reverse obráti poradie. Re-read, Filter, Drive platia pre tento panel. Ctrl-F1/F2 zapína ľavý/pravý panel.</p>
+  </topic>
+  <topic id="legacy_08" layout="prose">
+    <title>Brief, Full a Description</title>
+    <p>Brief: stĺpce názvov; Full: veľkosť, dátum, čas; Description: popisy z nastavených súborov. Rozloženie závisí od panela a LFN.</p>
+    <p>Alt a začiatok názvu otvorí rýchle hľadanie; Ctrl-Enter: ďalší, Esc: zavrieť. Ctrl-N mení dlhé názvy pri dostupnom LFN.</p>
+    <p>Veľkosť písmen krátkych názvov: Options, General, Show short names in lower case. Samotné písmená nerozlišujú súbory a adresáre.</p>
+  </topic>
+  <topic id="legacy_09" layout="prose">
+    <title>Panel Info</title>
+    <p>Ctrl-L prepne druhý panel na Info: pamäť, kapacita a voľné miesto disku, údaje o adresári druhého súborového panela.</p>
+    <p>Text adresára: Options, Descriptions, Directory information files; predvolene dirinfo, file_id.diz, varianty readme. F4 v oblasti informácií upraví text. Ctrl-R obnoví panel.</p>
+  </topic>
+  <topic id="legacy_10" layout="prose">
+    <title>Panel Tree</title>
+    <p>Ctrl-Z zapína strom v druhom paneli. Šípky vyberú adresár, Enter doň prejde. Alt a začiatok názvu: rýchle hľadanie.</p>
+    <p>Options, Panels: automatický prechod a oneskorenie, skryté adresáre, zápis TREEINFO v koreni alebo domovskom adresári. Ctrl-R načíta strom po vonkajších zmenách.</p>
+  </topic>
+  <topic id="legacy_11" layout="ng">
+    <title>      On/Off - zapnúť/vypnúť panel</title>
+    <line>^bOn/Off -- Zapnúť/vypnúť panel^b                 ^uCtrl-F1^u, ^uCtrl-F2^u</line>
+    <line> ^uCtrl-F1^u -- ľavý panel                 ^uCtrl-F2^u -- pravý panel</line>
+    <line />
+    <line> Zapína/vypína ľavý alebo pravý panel:</line>
+    <line />
+    <line> ┌──────────────────────┐           ┌──────────────────────┐</line>
+    <line> │ ╔═ Tree ═╗╔═^r C:\ ^r══╗ │           │           ╔═^r C:\ ^r══╗ │</line>
+    <line> │ ║        ║║        ║ │           │           ║        ║ │</line>
+    <line> │ ║        ║║        ║ │  Ctrl-F1  │           ║        ║ │</line>
+    <line> │ ║        ║║        ║ │   <char code="11" />───<char code="10" />   │           ║        ║ │</line>
+    <line> │ ║        ║║        ║ │           │           ║        ║ │</line>
+    <line> │ ║────────║║────────║ │           │           ║────────║ │</line>
+    <line> │ ╚════════╝╚════════╝ │           │           ╚════════╝ │</line>
+    <line> │ C&gt;_                  │           │ C&gt;_                  │</line>
+    <line> └──────────────────────┘           └──────────────────────┘</line>
+  </topic>
+  <topic id="legacy_12" layout="prose">
+    <title>Triedenie</title>
+    <p>Left/Right: Name, Extension, Time, Size alebo Unsorted. Reverse mení smer pre tento panel.</p>
+    <p>Options, General môže zobrazovať krátke názvy malými písmenami. Veľkosť písmen dlhých názvov pochádza zo súborového systému a neurčuje typ položky.</p>
+  </topic>
+  <topic id="legacy_13" layout="prose">
+    <title>Načítať panel</title>
+    <p>Ctrl-R obnoví aktívny panel: súbory, informácie Info alebo strom Tree.</p>
+    <p>Použite po zmene média alebo vonkajších zmenách. Zápis TREEINFO v koreni alebo domovskom adresári: Options, Panels.</p>
+  </topic>
+  <topic id="legacy_14" layout="prose">
+    <title>Filter</title>
+    <p>Ctrl-F: hotový filter alebo maska Custom. Attributes: Archive, System, Hidden, Directory, Absent. Space mení voľbu; Ok použije, Cancel zavrie.</p>
+    <p>Filter mení zoznam, nemaže súbory. Masky: VCFILTER.EXT. Dlhé názvy vyžadujú LFN; pozri príslušnú kapitolu.</p>
+  </topic>
+  <topic id="legacy_15" layout="prose">
+    <title>Výber disku</title>
+    <p>Alt-F1 otvorí zoznam vľavo, Alt-F2 vpravo. Písmeno vyberte klávesnicou alebo myšou. Pri chybe opakujte, zmeňte disk alebo zrušte.</p>
+    <p>Show logical drive B: je v Options, General a riadi logickú druhú mechaniku. VCSETUP netreba.</p>
+  </topic>
+  <topic id="legacy_16" layout="ng">
+    <title> Menu Files</title>
+    <line>^bMenu Files^b</line>
+    <line> Menu ^uFiles^u otvára prístup k príkazom lišty funkčných  kláves</line>
+    <line> (lišta sa dá vypnúť ^uCtrl-B^u),  a tiež k niektorým ďalším prí-</line>
+    <line> kazom, pracujúcim so súbormi a adresármi,  alebo umožňujúcim</line>
+    <line> vyberať skupiny súborov a adresárov.</line>
+    <line />
+    <line>   ^bPoznámky:^b</line>
+    <line>     <char code="07" />  Niektoré príkazy (View, Edit, Copy, Rename/Move a De-</line>
+    <line>        lete) majú "zovšeobecnené" verzie, ktoré sa vyvoláva-</line>
+    <line>        jú stlačením Shift spolu s funkčnými  klávesami.  Po-</line>
+    <line>        drobnosti nájdete v popise príslušných príkazov.</line>
+    <line />
+    <line>     <char code="07" />  "Shift"-verziu príkazu môžete vyvolať z menu,  držiac</line>
+    <line>        stlačenú klávesu ^uShift^u pri výbere položky menu z klá-</line>
+    <line>        vesnice, pravou klávesou myši, alebo  stlačením  prí-</line>
+    <line>        slušnej funkčnej klávesy spolu so Shift.</line>
+  </topic>
+  <topic id="legacy_17" layout="prose">
+    <title>Používateľské menu</title>
+    <p>F2 otvorí lokálny VC.MNU, ak existuje; Shift-F2 hlavný. Bod vyberte klávesom, Enter alebo myšou. Príkazy spúšťajú programy alebo podmenu .MNU.</p>
+    <p>V hlavnom menu F1: archívy; F3: rozšírenia. Ak je F1 priradený, vykoná bod; inak otvorí pomoc. Rozšírenia: archivátory, zoznamy, analýza súborov.</p>
+    <p>Menu upravujte ako text. Commands, Menu file edit zatiaľ nefunguje. Makrá !$ / %$ opisuje kapitola o nových menu.</p>
+  </topic>
+  <topic id="legacy_18" layout="prose">
+    <title>Prezeranie súboru</title>
+    <p>F3 zobrazuje aktuálny súbor; Shift-F3 sa pýta na názov. F3/Alt-F3 závisí od Alternative viewer v Options, General. Priradenia sú vo VCVIEW.EXT, upravovanom ako text.</p>
+    <p>Vstavané prezeranie: text/hex, zalamovanie, tabuľky, offsety, hľadanie. Esc/F3/F10 zatvára. Klávesy sú opísané osobitne. Ctrl-Q: Quick View súboru druhého panela.</p>
+  </topic>
+  <topic id="legacy_19" layout="prose">
+    <title>Úprava súboru</title>
+    <p>F4 upravuje súbor; Shift-F4 sa pýta na názov a môže po potvrdení vytvoriť nový. F4/Alt-F4 závisí od Alternative editor v Options, General. Externé editory: VCEDIT.EXT.</p>
+    <p>F2 uloží, Shift-F2 uloží ako, F4 mení text/hex, Shift-F10 uloží a skončí. F10/Esc sa pýta na neuložené zmeny. Veľkosť obmedzuje pamäť DOS; klávesy sú opísané osobitne.</p>
+  </topic>
+  <topic id="legacy_20" layout="ng">
+    <title>      Copy</title>
+    <line>^bCopy -- kopírovanie^b                               ^uF5^u, ^uShift-F5^u</line>
+    <line> Príkaz Copy Vám umožňuje kopírovať súbory a podadresáre.</line>
+    <line />
+    <line>     <char code="07" />  Môžete kopírovať súbor/adresár, na ktorom je nastave-</line>
+    <line>        ný kurzor v súborovom paneli.</line>
+    <line />
+    <line>     <char code="07" />  Môžete kopírovať skupinu súborov a  adresárov,  ktoré</line>
+    <line>        boli označené klávesou  ^uIns^u,  príkazmi  ^uSelect group^u,</line>
+    <line>        ^uUnselect group^u a ^uInvert group^u.</line>
+    <line />
+    <line>     <char code="07" />  Môžete zadať názov kopírovaného súboru (alebo skupiny</line>
+    <line>        súborov,  ak sú  v názve  zámenné  znaky)  -  stlačte</line>
+    <line>        ^uShift-F5^u alebo držte stlačený ^uShift^u,  vyberajúc  ^uCopy^u</line>
+    <line>        z menu ^uFiles^u.</line>
+    <line />
+    <line>     <char code="07" />  Môžete skopírovať jeden súbor alebo adresár,  na kto-</line>
+    <line>        rom stojí kurzor v súborovom paneli,  dokonca aj  keď</line>
+    <line>        sú v paneli  označené  súbory  a adresáre  -  stlačte</line>
+    <line>        ^uCtrl-F5^u alebo držte stlačený ^uCtrl^u,  keď vyberáte ^uCopy^u</line>
+    <line>        z menu ^uFiles^u.</line>
+    <line />
+    <line> Stlačenie ^uF5^u (alebo výber ^uCopy^u) vyvolá nasledujúce okno:</line>
+    <line />
+    <line>      ╔═════════════════════ Copy ═════════════════════╗</line>
+    <line>      ║ Copy "filename.ext" to                         ║</line>
+    <line>      ║ ^r_                                             ^r ║</line>
+    <line>      ║────────────────────────────────────────────────║</line>
+    <line>      ║       [ Copy ]  [ F10-Tree ]  [ Cancel ]       ║</line>
+    <line>      ╚════════════════════════════════════════════════╝</line>
+    <line />
+    <line> Miesto, kam sa má súbor skopírovať, môžete určiť 3 spôsobmi:</line>
+    <line />
+    <line>     <char code="07" />  Zadajte názov adresára,  kam chcete skopírovať  súbor</line>
+    <line>        (alebo názov nového súboru pre kópiu s iným názvom).</line>
+    <line />
+    <line>     <char code="07" />  Stlačte ^uF10^u - objaví sa  okno  so  stromom  adresárov</line>
+    <line>        cieľového disku (disku z opačného panelu), môžete vy-</line>
+    <line>        brať adresár z tohoto stromu.  ^uAlt-F10^u vyvolá adresá-</line>
+    <line>        rový strom aktuálneho disku.</line>
+    <line />
+    <line>     <char code="07" />  Nastavte v Commander-e dva súborové panely  tak,  aby</line>
+    <line>        neaktívny panel ukazoval adresár,  do ktorého  chcete</line>
+    <line>        skopírovať súbory.</line>
+    <line />
+    <line>   ^bZrušenie kopírovania:^b</line>
+    <line>        Kedykoľvek môžete stlačením ^uEsc^u kopírovanie zastaviť.</line>
+    <line />
+    <line>   ^bPrepisovanie a spájanie súborov:^b</line>
+    <line>        Ak cieľový súbor už existuje,  objaví sa okno  s upo-</line>
+    <line>        zornením a môžete tento  súbor  prepísať  (Overwrite)</line>
+    <line>        alebo pripojiť kopírovaný súbor ku koncu existujúceho</line>
+    <line>        (Append).</line>
+    <line />
+    <line>   ^bPoznámka:^b</line>
+    <line>        Po kopírovaní adresárov sa automaticky  obnoví  súbor</line>
+    <line>        TREEINFO.</line>
+  </topic>
+  <topic id="legacy_21" layout="ng">
+    <title>      Rename or move</title>
+    <line>^bRename or Move -- premenovanie a presun^b           ^uF6^u, ^uShift-F6^u</line>
+    <line> Tento príkaz Vám umožňuje  premenovávať  súbory  a  adresáre</line>
+    <line> alebo presúvať súbory a adresáre do iných adresárov alebo na</line>
+    <line> iné disky.</line>
+    <line />
+    <line>     <char code="07" />  Môžete premenovať/presunúť súbor  alebo  adresár,  na</line>
+    <line>        ktorom stojí kurzor v súborovom paneli,  alebo preme-</line>
+    <line>        novať adresár v paneli s adresárovým stromom.</line>
+    <line />
+    <line>     <char code="07" />  Môžete premenovať/presunúť skupinu súborov a  adresá-</line>
+    <line>        rov, označených klávesou ^uIns^u a príkazmi ^uSelect group^u,</line>
+    <line>        ^uUnselect group^u a ^uInvert group^u.</line>
+    <line />
+    <line>     <char code="07" />  Môžete zadať názov súboru, ktorý sa premenováva alebo</line>
+    <line>        presúva (alebo skupinu súborov, ak sú v názve zámenné</line>
+    <line>        znaky) - stlačte ^uShift-F6^u alebo držte stlačený ^uShift^u,</line>
+    <line>        keď vyberáte ^uRename or move^u z menu ^uFiles^u.</line>
+    <line />
+    <line>     <char code="07" />  Môžete premenovať/presunúť jeden súbor alebo adresár,</line>
+    <line>        na ktorom stojí kurzor v súborovom paneli,  aj keď sú</line>
+    <line>        v  paneli  označené  súbory  a  adresáre  -   stlačte</line>
+    <line>        ^uCtrl-F6^u  alebo  držte  stlačený  ^uCtrl^u,  keď  vyberáte</line>
+    <line>        ^uRename or move^u z menu ^uFiles^u.</line>
+    <line />
+    <line> Stlačenie ^uF6^u (alebo výber ^uRename or move^u) vyvolá nasledujúce</line>
+    <line> okno:</line>
+    <line />
+    <line>      ╔════════════════════ Rename ════════════════════╗</line>
+    <line>      ║ Rename or move "somefile.ext" to               ║</line>
+    <line>      ║ ^r_                                             ^r ║</line>
+    <line>      ║────────────────────────────────────────────────║</line>
+    <line>      ║       [ Move ]  [ F10-Tree ]  [ Cancel ]       ║</line>
+    <line>      ╚════════════════════════════════════════════════╝</line>
+    <line />
+    <line> Miesto, kam sa má súbor presunúť, môžete určiť 3 spôsobmi:</line>
+    <line />
+    <line>     <char code="07" />  Zadajte názov adresára,  kam  chcete  presunúť  súbor</line>
+    <line>        alebo adresár (alebo nový názov, ak súbor alebo adre-</line>
+    <line>        sár premenovávate).</line>
+    <line />
+    <line>     <char code="07" />  Stlačte ^uF10^u - objaví sa  okno  so  stromom  adresárov</line>
+    <line>        cieľového disku (disku z opačného panelu), môžete vy-</line>
+    <line>        brať adresár z tohoto stromu.  ^uAlt-F10^u vyvolá adresá-</line>
+    <line>        rový strom aktuálneho disku.</line>
+    <line />
+    <line>     <char code="07" />  Nastavte v Commander-e dva súborové panely  tak,  aby</line>
+    <line>        neaktívny panel ukazoval adresár,  do ktorého  chcete</line>
+    <line>        presunúť súbory.</line>
+    <line />
+    <line>   ^bZrušenie premenovania:^b</line>
+    <line>        Kedykoľvek môžete stlačením ^uEsc^u  premenovávanie alebo</line>
+    <line>        presun súborov/adresárov zastaviť.</line>
+    <line />
+    <line>   ^bPrepisovanie a spájanie súborov:^b</line>
+    <line>        Ak cieľový súbor už existuje,  objaví sa okno  s upo-</line>
+    <line>        zornením a môžete tento  súbor  prepísať  (Overwrite)</line>
+    <line>        alebo pripojiť presúvaný súbor ku koncu  existujúceho</line>
+    <line>        (Append).</line>
+    <line />
+    <line>   ^bPoznámka:^b</line>
+    <line>        Po premenovaní alebo presunutí adresára sa automatic-</line>
+    <line>        ky obnoví súbor TREEINFO.</line>
+  </topic>
+  <topic id="legacy_22" layout="prose">
+    <title>Vytvorenie adresára</title>
+    <p>F7 vytvorí podadresár na aktuálnom mieste alebo zadanú cestu. Písmeno disku a úplná cesta vyberú iné miesto.</p>
+    <p>Bežné názvy DOS majú limit 8.3. Dlhé vyžadujú LFN a podporu súborového systému. VC aktualizuje strom po vytvorení.</p>
+  </topic>
+  <topic id="legacy_23" layout="ng">
+    <title>      Delete</title>
+    <line>^bDelete -- mazanie^b                                 ^uF8^u, ^uShift-F8^u</line>
+    <line> Tento príkaz umožňuje vymazávať súbory a podadresáre (nielen</line>
+    <line> prázdne).</line>
+    <line />
+    <line>     <char code="07" />  Môžete vymazať súbor/adresár,  na ktorom stojí kurzor</line>
+    <line>        v súborovom paneli alebo adresár v paneli s adresáro-</line>
+    <line>        vým stromom.</line>
+    <line />
+    <line>     <char code="07" />  Môžete vymazať skupinu súborov a adresárov, ktoré bo-</line>
+    <line>        li označené  klávesou   ^uIns^u,  príkazmi  ^uSelect group^u,</line>
+    <line>        ^uUnselect group^u a ^uInvert group^u.</line>
+    <line />
+    <line>     <char code="07" />  Môžete zadať názov mazaného súboru (alebo skupiny sú-</line>
+    <line>        borov,  ak  sú  v  názve  zámenné  znaky)  -  stlačte</line>
+    <line>        ^uShift-F8^u alebo držte  stlačený  ^uShift^u,  keď  vyberáte</line>
+    <line>        ^uDelete^u z menu ^uFiles^u. Používajúc zámenné znaky, môžete</line>
+    <line>        rýchlo zmazať veľmi veľa súborov - nevymažte si  tie,</line>
+    <line>        ktoré ešte budete potrebovať!</line>
+    <line />
+    <line>     <char code="07" />  Môžete vymazať jeden súbor alebo adresár,  na  ktorom</line>
+    <line>        stojí kurzor v súborovom paneli,  aj keď sú  v paneli</line>
+    <line>        označené súbory a adresáre -  stlačte  ^uCtrl-F8^u  alebo</line>
+    <line>        držte stlačený ^uCtrl^u, keď vyberáte ^uDelete^u z menu ^uFiles^u.</line>
+    <line />
+    <line>   ^bRead-only súbory:^b</line>
+    <line>        Ak má súbor atribút read-only, pred jeho zmazaním bu-</line>
+    <line>        dete požiadaní o súhlas.  ^bDobrá rada:^b ak chcete vyma-</line>
+    <line>        zať väčšiu  skupinu  súborov  s atribútom  read-only,</line>
+    <line>        najprv použite príkaz ^uFile attributes^u v menu ^uFiles^u na</line>
+    <line>        zrušenie tohto atribútu.</line>
+    <line />
+    <line>   ^bNeprázdne adresáre:^b</line>
+    <line>        Ak adresár nie je prázdny,  bude vyžiadaný Váš súhlas</line>
+    <line>        na jeho zmazanie. Nezabúdajte - pri vymazaní adresára</line>
+    <line>        budú vymazané aj všetky súbory  a podadresáre,  ktoré</line>
+    <line>        sa v ňom nachádzajú.</line>
+    <line />
+    <line>   ^bPoznámka:^b</line>
+    <line>        Po vymazaní adresárov  sa  automaticky  obnoví  súbor</line>
+    <line>        TREEINFO.</line>
+  </topic>
+  <topic id="legacy_24" layout="prose">
+    <title>Atribúty súborov</title>
+    <p>Ctrl-A mení Read only, Archive, Hidden, System, dátum a čas. Pre jeden súbor Space prepína atribút. Pre skupinu Set nastaví bit, Clear zruší; obe prázdne zachovajú hodnotu.</p>
+    <p>Dátum/čas zadajte len pri zmene. Pre adresáre môže operácia zasiahnuť obsah. Formát určuje DOS COUNTRY. Hidden/System ovplyvňujú viditeľnosť cez filter.</p>
+  </topic>
+  <topic id="legacy_25" layout="prose">
+    <title>Výber skupín</title>
+    <p>Ins prepína položku; Gray +: podľa masky; Gray -: zrušiť výber; Gray *: obrátiť; Ctrl-M: obnoviť. Účinok závisí od stavu príkazového riadka.</p>
+    <p>Shift so skupinovými klávesmi zahŕňa adresáre. Maska *.TXT obmedzí skupinu. Pravidlá závisia od krátkych/dlhých názvov; pri LFN neplatí všeobecný limit 8.3.</p>
+    <p>Unselect during group operations v Options, Panels ruší označenie spracovaných súborov.</p>
+  </topic>
+  <topic id="legacy_26" layout="prose">
+    <title>Koniec</title>
+    <p>F10 ukončí VC. Options, Interface, Confirmation on quit riadi otázku. Shift-F9 uloží ručne; Auto save setup v Options, General zapína automatický zápis.</p>
+    <p>Esc zatvára dialóg/prezeranie. V paneloch závisí od Esc toggles screen on/off v Interface. Osobitný príkaz konca VCSETUP sa nepoužíva.</p>
+  </topic>
+  <topic id="legacy_27" layout="prose">
+    <title>Menu Commands</title>
+    <p>Tree: Alt-F10; Volume label: Ctrl-F4; Memory info: Alt-F5; Directory sizes: Alt-F6; Find file: Alt-F7; History: Alt-F8; EGA lines: Alt-F9; Video mode: Ctrl-F9.</p>
+    <p>Ctrl-U: výmena panelov; Ctrl-O: zapnutie; Ctrl-C: porovnanie adresárov. Menu file edit zatiaľ nefunguje. VC.MNU a podmenu upravujte ako text cez F4.</p>
+  </topic>
+  <topic id="legacy_28" layout="prose">
+    <title>Prechod cez strom</title>
+    <p>Alt-F10 otvorí strom. Šípky, Home, End, PgUp/PgDn posúvajú; písanie hľadá adresár. Enter vyberie, Esc zruší. F2 načíta znova.</p>
+    <p>Options, Panels určuje miesto TREEINFO a skryté adresáre. Po vonkajších zmenách strom načítajte znova.</p>
+  </topic>
+  <topic id="legacy_29" layout="ng">
+    <title>      Volume label</title>
+    <line>^bVolume label -- návestie disku^b                         ^uCtrl-F4^u</line>
+    <line> Tento príkaz umožňuje meniť návestie disku.  Návestie  disku</line>
+    <line> sa zobrazuje v paneli ^uInfo^u a príkazom dir.</line>
+    <line />
+    <line> Návestie môže obsahovať do 11 znakov.  Môžu to byť aj medze-</line>
+    <line> ry alebo znaky z hornej polovice tabuľky ASCII  (písmená ná-</line>
+    <line> rodných abecied). Napríklad</line>
+    <line />
+    <line>                  ^bSTARTUP 1^b alebo ^bHARD DISK^b</line>
+    <line />
+    <line> Stlačte ^uEnter^u pre zmenu návestia alebo ^uEsc^u pre zrušenie prí-</line>
+    <line> kazu. Ak chcete návestie vymazať, vyplňte ho medzerami.</line>
+  </topic>
+  <topic id="legacy_30" layout="ng">
+    <title>      Memory info</title>
+    <line>^bMemory info -- informácia o pamäti^b                      ^uAlt-F5^u</line>
+    <line> Tento príkaz poskytuje informáciu o programoch,  nachádzajú-</line>
+    <line> cich sa v danom momente v operačnej pamäti.</line>
+    <line />
+    <line> Stĺpec ^uAddress^u obsahuje segmentovú adresu začiatku bloku pa-</line>
+    <line> mäti programu  (v hexadekadickom formáte).  ^uBlocks^u  ukazuje,</line>
+    <line> koľko blokov pamäti patrí programu. Stĺpec ^uSize^u obsahuje sú-</line>
+    <line> čet veľkostí všetkých blokov pamäti,  pridelených  programu.</line>
+    <line> V stĺpci ^uProgram^u je názov programu (ak je prístupný),  alebo</line>
+    <line> jedno z označení: systémová oblasť DOS-u, neznámy blok  (Un-</line>
+    <line> known owner),  voľný blok pamäti  (Free  memory).  V  stĺpci</line>
+    <line> ^uHooked Vectors^u sú vymenované vektory prerušení,  ktoré obsa-</line>
+    <line> dil daný program. Rezidentné programy,  ktoré Commander môže</line>
+    <line> odinštalovať z pamäti, sú označené znakom '<char code="07" />'.</line>
+    <line />
+    <line>    ^bKlávesa       Funkcia^b</line>
+    <line>    ───────       ───────────────────────────────────────────</line>
+    <line>    ^uŠípky^u         Pohyb po zozname pogramov (tiež Home,  End,</line>
+    <line>                  PgUp, PgDn).</line>
+    <line />
+    <line>    ^uIns^u           Označenie/odznačenie programu na odinštalo-</line>
+    <line>                  vanie.</line>
+    <line />
+    <line>    ^uŠedé +, -^u     Označenie/odznačenie  všetkých   programov,</line>
+    <line>                  ktoré sa dajú odinštalovať z pamäti.</line>
+    <line />
+    <line>    ^uEnter^u         Odinštalovanie  označených programov  alebo</line>
+    <line>                  programu, na ktorom stojí kurzor.</line>
+    <line />
+    <line>    ─────────────────────────────────────────────────────────</line>
+    <line />
+    <line>   ^bPoznámky:^b</line>
+    <line>     <char code="07" />  Rezidentné programy (TSR) sú programy, ktoré čiastoč-</line>
+    <line>        ne alebo úplne zostávajú v pamäti, aj keď vrátia ria-</line>
+    <line>        denie DOSu.</line>
+    <line />
+    <line>     <char code="07" />  Niekoľko rezidentných programov môže postupne obsadiť</line>
+    <line>        ten istý vektor prerušenia,  vtedy sa v zozname obsa-</line>
+    <line>        dených vektorov tento vektor obyčajne zobrazí len pre</line>
+    <line>        posledný z týchto programov.</line>
+    <line />
+    <line>     <char code="07" />  Ked je odinštalovaný  z  pamäti  rezidentný  program,</line>
+    <line>        ktorý nebol spustený ako  posledný,  zostáva  po  ňom</line>
+    <line>        "diera" - blok voľnej pamäti uprostred obsadenej. Bo-</line>
+    <line>        hužiaľ, DOS nedokáže presúvať  programy  v  operačnej</line>
+    <line>        pamäti a odstraňovať tak jej fragmentáciu.  Do  tejto</line>
+    <line>        "diery" sa dá umiestniť menší program alebo ju systém</line>
+    <line>        môže poskytnúť programu,  ktorý si pri práci  vyžiada</line>
+    <line>        takýto alebo menší blok pamäti. Najčastejšie však tá-</line>
+    <line>        to pamäť zostáva nevyužitá. Na to je len jedna  rada:</line>
+    <line>        premyslite  si   postupnosť   zavádzania   rezidentov</line>
+    <line>        a snažte sa často odinštalovávané  rezidenty  spúšťať</line>
+    <line>        ako posledné.</line>
+    <line />
+    <line>     <char code="07" />  Môžete vyhodiť z pamäti rezidentné programy,  spuste-</line>
+    <line>        né po Commander-i.  Aby ste ich nemuseli spúšťať ruč-</line>
+    <line>        ne, vytvorte dávkový súbor (ako AUTOEXEC.BAT),  obsa-</line>
+    <line>        hujúci potrebné  rezidentné programy  a zadajte  jeho</line>
+    <line>        názov v príkazovom riadku  pri spustení  Commander-a.</line>
+    <line>        Napríklad:</line>
+    <line />
+    <line>                           VC auto.bat</line>
+  </topic>
+  <topic id="legacy_31" layout="prose">
+    <title>Veľkosti adresárov</title>
+    <p>Alt-F6 sčíta veľkosti súborov v podadresároch aktuálneho panela vrátane vnorených. Výpočet môže trvať.</p>
+    <p>Načítanie panela môže zrušiť výsledky. Options, Panels: Auto directory sizes pre automatiku, Ins calculates size of directory pre výpočet pri označení. To je logická veľkosť, nie obsadené miesto.</p>
+  </topic>
+  <topic id="legacy_32" layout="prose">
+    <title>Hľadanie súborov</title>
+    <p>Alt-F7: názov a voliteľný text Containing. Zadajte počiatočnú cestu a masku, zvoľte Find. Table vyberá tabuľku znakov pre hľadanie textu.</p>
+    <p>Stop: zastaviť; New search: nové; Go to: prejsť na výsledok; View: prezeranie; Quit: koniec. Prefix *: hľadá na pevných diskoch. LFN závisí od systému; obsah archívov sa neprehľadáva.</p>
+  </topic>
+  <topic id="legacy_33" layout="ng">
+    <title>      History</title>
+    <line>^bHistory -- história príkazov^b                            ^uAlt-F8^u</line>
+    <line> Tento príkaz vyvoláva zoznam príkazov,  ktoré už boli zadané</line>
+    <line> od spustenia programu VC.  Ak chcete  znovu  zadať  niektorý</line>
+    <line> z týchto príkazov,  použite  šípky  a Enter  (alebo  dvojité</line>
+    <line> kliknutie myšou).</line>
+    <line />
+    <line>   ^bSkrátená forma:^b</line>
+    <line>        Môžete vyvolať  skôr  vykonaný  príkaz  na editovanie</line>
+    <line>        zadaním  niekoľkých  začiatočných písmen  a stlačením</line>
+    <line>        ^uCtrl-Enter^u.  Napríklad ak chcete znova vyvolať príkaz</line>
+    <line>        "t602 textsub", zadajte "t6" a stlačte ^uCtrl-Enter^u.</line>
+    <line />
+    <line>        Táto skrátená forma vyvolá posledný z príkazov, začí-</line>
+    <line>        najúcich zadanými písmenami.</line>
+  </topic>
+  <topic id="legacy_34" layout="prose">
+    <title>Riadky EGA a video režim</title>
+    <p>Alt-F9 prepína 25 riadkov a vyšší počet EGA/VGA. Ctrl-F9 otvára Video Mode s dostupnými textovými režimami.</p>
+    <p>Zoznam závisí od BIOS a adaptéra. VESA vyžaduje podporu BIOS a pamäť; nepodporovaný režim sa nemusí zapnúť.</p>
+  </topic>
+  <topic id="legacy_35" layout="ng">
+    <title>      Swap panels</title>
+    <line>^bSwap panels -- prehodenie panelov^b                       ^uCtrl-U^u</line>
+    <line> Tento príkaz mení rozloženie panelov tak,  že ľavý sa objaví</line>
+    <line> vpravo a pravý vľavo:</line>
+    <line />
+    <line>    ╔═^r Tree ^r═╗╔═ C:\ ══╗              ╔═ C:\ ══╗╔═^r Tree ^r═╗</line>
+    <line>    ║        ║║        ║              ║        ║║        ║</line>
+    <line>    ║        ║║        ║    Ctrl+U    ║        ║║        ║</line>
+    <line>    ║        ║║        ║    <char code="11" />────<char code="10" />    ║        ║║        ║</line>
+    <line>    ║        ║║        ║              ║        ║║        ║</line>
+    <line>    ║────────║║────────║              ║────────║║────────║</line>
+    <line>    ╚════════╝╚════════╝              ╚════════╝╚════════╝</line>
+    <line>    C&gt;_                               C&gt;_</line>
+  </topic>
+  <topic id="legacy_36" layout="ng">
+    <title>      Panels on/off</title>
+    <line>^bPanels on/off -- zapnutie/vypnutie panelov              ^uCtrl-O^u</line>
+    <line> Tento príkaz zapína/vypína zobrazenie panelov. Keď sú obidva</line>
+    <line> panely vypnuté, je viditeľná obrazovka DOS-u.</line>
+    <line />
+    <line>  ┌──────────────────────┐          ┌──────────────────────┐</line>
+    <line>  │ ╔═^r Tree ^r═╗╔═ C:\ ══╗ │          │                      │</line>
+    <line>  │ ║        ║║        ║ │          │                      │</line>
+    <line>  │ ║        ║║        ║ │  Ctrl+O  │                      │</line>
+    <line>  │ ║        ║║        ║ │  <char code="11" />────<char code="10" />  │                      │</line>
+    <line>  │ ║        ║║        ║ │          │                      │</line>
+    <line>  │ ║────────║║────────║ │          │                      │</line>
+    <line>  │ ╚════════╝╚════════╝ │          │                      │</line>
+    <line>  │ C&gt;_                  │          │ C&gt;_                  │</line>
+    <line>  └──────────────────────┘          └──────────────────────┘</line>
+  </topic>
+  <topic id="legacy_37" layout="ng">
+    <title>      Compare directories</title>
+    <line>^bCompare directories -- porovnanie adresárov^b             ^uCtrl-C^u</line>
+    <line> Tento príkaz porovnáva obsah dvoch adresárov,  na  ktoré  sú</line>
+    <line> nastavené panely.  Súbory, nájdené len v jednom z adresárov,</line>
+    <line> budú označené.  Súbory s "čerstvejším" dátumom vzniku  alebo</line>
+    <line> modifikácie budú označené tiež.  Ak  sú adresáre  identické,</line>
+    <line> Commander zobrazí okno s oznamom.</line>
+    <line />
+    <line> Ak chcete zosynchronizovať obsahy dvoch  adresárov,  použite</line>
+    <line> príkaz ^uCompare directories^u a potom stlačte ^uF5^u a ^uEnter^u v kaž-</line>
+    <line> dom z adresárov,  aby sa čerstvejšie alebo chýbajúce  súbory</line>
+    <line> skopírovali do opačného adresára.</line>
+    <line />
+    <line>   ^bOznačujú sa:^b</line>
+    <line />
+    <line>     1. Súbory s neskorším dátumom  a časom,  ako  rovnomenné</line>
+    <line>        súbory z druhého panelu.</line>
+    <line />
+    <line>     2. Súbory, ktoré nie sú v druhom paneli.</line>
+  </topic>
+  <topic id="legacy_38" layout="prose">
+    <title>Úprava menu</title>
+    <p>Commands, Menu file edit zatiaľ nefunguje. Otvorte VC.MNU alebo iný .MNU cez F4 alebo externý editor. Pod nadpisom vložte príkazy s odsadením. Pre podmenu zadajte súbor .MNU.</p>
+    <p>Nadpis môže začínať klávesom a dvojbodkou: T: Detect format. Príklad príkazu: "!$VCTOOLS.EXE" type "!~.!". Apostrof na začiatku: komentár; @ skryje výpis príkazu.</p>
+    <p>F2 použije lokálny VC.MNU; Shift-F2 otvorí hlavné menu. V dodanom menu F1 otvára archívy. Makrá opisuje kapitola o nových menu.</p>
+  </topic>
+  <topic id="legacy_39" layout="prose">
+    <title>Menu Options</title>
+    <p>F9, Options nastavuje VC: General - spúšťanie a editory; Interface - rozhranie; Characters - znaky; Panels - panely a strom; Descriptions - popisy; Copy and Move - kopírovanie.</p>
+    <p>Screen saver a akcie Extension file edit, Viewers, Editors ešte nie sú implementované. Súbory .EXT upravujte cez F4 alebo externý editor.</p>
+    <p>Auto menus, Key bar, Full screen, Mini status, Memory allocation sú prepínače menu. Shift-F9 uloží VC.INI. Samostatný VCSETUP sa nedodáva.</p>
+  </topic>
+  <topic id="legacy_40" layout="prose">
+    <title>General: všeobecné voľby</title>
+    <p>F9, Options, General: Quick execute commands - priamy štart; Command shell options - argumenty shellu. Pri problémoch vypnite rýchly štart.</p>
+    <p>Alternative viewer/editor vymení F3/Alt-F3 a F4/Alt-F4. Externé programy určuje VCVIEW.EXT a VCEDIT.EXT; inštalujú sa osobitne.</p>
+    <p>Auto save setup: automatický zápis; Show logical drive B:: logická mechanika; Show short names in lower case: malé písmená krátkych názvov. Space mení, Ok použije, Shift-F9 uloží.</p>
+  </topic>
+  <topic id="legacy_41" layout="prose">
+    <title>Interface: rozhranie</title>
+    <p>F9, Options, Interface: hodiny, cesta v prompte, viditeľnosť menu, Alt, Esc, čistenie klávesnice, potvrdenie konca a zvuk chýb.</p>
+    <p>Screen colors: Black &amp; White, Color, Laptop. Screen output: synchrónny, asynchrónny, auto. Left-handed mouse vymení tlačidlá; Fast mouse reset mení inicializáciu myši.</p>
+    <p>Zooming boxes: animácia; Zoom stages: od 2 do 10. Space mení, Ok použije, Cancel zruší dialóg. Shift-F9 uloží.</p>
+  </topic>
+  <topic id="legacy_42" layout="prose">
+    <title>Priradenia súborov</title>
+    <p>Options, Extension file edit zatiaľ nefunguje. Upravte VC.EXT cez F4 alebo iný editor. Priradenia sa naďalej čítajú. Zachovajte syntax príkladov: maska, dvojbodka, program alebo odsadené príkazy; apostrof začína komentár.</p>
+    <p>!.!: názov; !~.!: krátky názov; !$: adresár VC; tvary %: druhý panel. Externé programy treba nainštalovať. Podrobnosti makier sú v kapitole o menu.</p>
+  </topic>
+  <topic id="legacy_43" layout="prose">
+    <title>Externé prehliadače</title>
+    <p>Options, Viewers zatiaľ nefunguje. Upravte VCVIEW.EXT cez F4 alebo iný editor. Priradenia sa naďalej čítajú. Zachovajte syntax príkladov: maska, dvojbodka, program alebo odsadené príkazy; apostrof začína komentár.</p>
+    <p>!.!: názov; !~.!: krátky názov; !$: adresár VC; tvary %: druhý panel. Externé programy treba nainštalovať. Podrobnosti makier sú v kapitole o menu.</p>
+    <p>F3 a Alt-F3: interný/externý režim podľa Alternative viewer/editor v Options, General. Príklady obsahujú voliteľné externé programy.</p>
+  </topic>
+  <topic id="legacy_44" layout="prose">
+    <title>Externé editory</title>
+    <p>Options, Editors zatiaľ nefunguje. Upravte VCEDIT.EXT cez F4 alebo iný editor. Priradenia sa naďalej čítajú. Zachovajte syntax príkladov: maska, dvojbodka, program alebo odsadené príkazy; apostrof začína komentár.</p>
+    <p>!.!: názov; !~.!: krátky názov; !$: adresár VC; tvary %: druhý panel. Externé programy treba nainštalovať. Podrobnosti makier sú v kapitole o menu.</p>
+    <p>F4 a Alt-F4: interný/externý režim podľa Alternative viewer/editor v Options, General. Príklady obsahujú voliteľné externé programy.</p>
+  </topic>
+  <topic id="legacy_45" layout="ng">
+    <title>      Auto menus</title>
+    <line>^bAuto menus -- automatické vyvolávanie užívateľského menu^b</line>
+    <line> Ak je táto funkcia zapnutá,  užívateľské menu sa objaví hneď</line>
+    <line> po spustení Commander-a  a bude sa automaticky znovu objavo-</line>
+    <line> vať po ukončení programu, ktorý bol z neho spustený.</line>
+  </topic>
+  <topic id="legacy_46" layout="prose">
+    <title>Cesta v prompte</title>
+    <p>Path prompt je vo F9, Options, Interface. Zapnuté: prompt s aktuálnym adresárom; inak len disk. Shift-F9 uloží.</p>
+  </topic>
+  <topic id="legacy_47" layout="ng">
+    <title>      Key bar</title>
+    <line>^bKey bar -- lišta funkčných kláves^b                       ^uCtrl-B^u</line>
+    <line> Táto  funkcia  riadi  zobrazovanie  lišty  funkčných  kláves</line>
+    <line> v spodnej časti obrazovky.</line>
+    <line />
+    <line>       V ^uK^uey bar     ────<char code="10" />     1^rHelp  ^r 2^rMenu  ^r 3^rView  ^r ...</line>
+    <line />
+    <line>         ^uK^uey bar     ────<char code="10" /></line>
+    <line />
+    <line>   ^bPoznámka:^b</line>
+    <line>        Keď sú panely aj lišta funkčných kláves vypnuté,  ob-</line>
+    <line>        razovka Commander-a sa na pohľad nelíši od DOS-u.</line>
+  </topic>
+  <topic id="legacy_48" layout="ng">
+    <title>      Full screen</title>
+    <line>^bFull screen -- výška panelov^b</line>
+    <line> Tento parameter určuje výšku panelov. Ak je nastavený, pane-</line>
+    <line> ly budú zaberať celú výšku obrazovky:</line>
+    <line />
+    <line>         V ^uF^uull screen                  ^uF^uull screen</line>
+    <line />
+    <line>       ┌────────────────            ┌────────────────</line>
+    <line>       │ ╔════ C:\ ════╗            │ ╔════ C:\ ════╗</line>
+    <line>       │ ║             ║            │ ║             ║</line>
+    <line>       │ ║             ║            │ ║             ║</line>
+    <line>       │ ║             ║            │ ║─────────────║</line>
+    <line>       │ ║             ║            │ ╚═════════════╝</line>
+    <line>       │ ║             ║            │</line>
+    <line>       │ ║─────────────║            │</line>
+    <line>       │ ╚═════════════╝            │</line>
+    <line>       │ C&gt;_                        │ C&gt;_</line>
+    <line>       │1^r  ^r2^r  ^r3^r  ^r4^r  ^r5^r  ^r             │1^r  ^r2^r  ^r3^r  ^r4^r  ^r5^r  ^r</line>
+    <line>       └────────────────            └────────────────</line>
+  </topic>
+  <topic id="legacy_49" layout="prose">
+    <title>Veľkosti adresárov</title>
+    <p>F9, Options, Panels: Auto directory sizes a Ins calculates size of directory. Veľké stromy vyžadujú čas.</p>
+    <p>Alt-F6 alebo Commands, Directory sizes počíta ručne. Veľkosť obsahu sa líši od obsadeného miesta súborového systému.</p>
+  </topic>
+  <topic id="legacy_50" layout="ng">
+    <title>      Mini status</title>
+    <line>^bMini status -- stavový riadok panelu^b</line>
+    <line> Tento parameter zapína riadok "mini status" v spodnej  časti</line>
+    <line> každého panelu. Riadok "mini status" zobrazuje kompletnú in-</line>
+    <line> formáciu o súbore, na ktorom stojí kurzor:</line>
+    <line />
+    <line>V ^uM^uini status</line>
+    <line />
+    <line>           ║^rfilename ext^r│filename ext│filename ext║</line>
+    <line>           ║────────────┴────────────┴────────────║</line>
+    <line>           ║filename.ext      5728 07-03-91  19:24║</line>
+    <line>           ╚══════════════════════════════════════╝</line>
+    <line />
+    <line>  ^uM^uini status</line>
+    <line />
+    <line>           ║^rfilename ext^r│filename ext│filename ext║</line>
+    <line>           ║filename ext│filename ext│filename ext║</line>
+    <line>           ║filename ext│filename ext│filename ext║</line>
+    <line>           ╚══════════════════════════════════════╝</line>
+    <line />
+    <line>^bOznačené súbory^b</line>
+    <line> Ak ste označili jeden alebo niekoľko súborov,  riadok  "mini</line>
+    <line> status" zobrazuje počet označených  súborov  a  ich  súhrnnú</line>
+    <line> veľkosť:</line>
+    <line />
+    <line>           ║──────────────────────────────────────║</line>
+    <line>           ║    ^b5,728 bytes in 3 selected files^b   ║</line>
+    <line>           ╚══════════════════════════════════════╝</line>
+  </topic>
+  <topic id="legacy_51" layout="prose">
+    <title>Hodiny</title>
+    <p>Clock vo F9, Options, Interface zapína hodiny. Čas pochádza z DOS; podľa potreby opravte systémový čas. Shift-F9 uloží voľbu.</p>
+  </topic>
+  <topic id="legacy_52" layout="ng">
+    <title>      Memory allocation</title>
+    <line>^bMemory allocation -- spôsob obsadenia pamäti^b</line>
+    <line> Môžete sa rozhodnúť medzi plne rezidentným  alebo  "minimál-</line>
+    <line> nym" režimom práce programu VC.</line>
+    <line />
+    <line> Ak je táto funkcia zapnutá,  Commander uvoľňuje pred spuste-</line>
+    <line> ním aplikačného programu takmer celú pamäť,  a po jeho ukon-</line>
+    <line> čení sa znovu načítava z disku. V pamäti zostáva len ^umaličké^u</line>
+    <line> jadro Commander-a, nevyhnutné pre obnovenie celého zvyšku.</line>
+    <line />
+    <line> Vypnite túto funkciu,  ak  chcete  pracovať  s  Commander-om</line>
+    <line> v ^urezidentnom^u režime.  V takom prípade zostane menej  pamäti</line>
+    <line> pre aplikačné programy,  ale nebudete musieť zakaždým  čakať</line>
+    <line> na znovuzavedenie Commander-a (to je výhodné, ak ste spúšťa-</line>
+    <line> li Commander z pomalého disku alebo z diskety).</line>
+    <line />
+    <line>   ^bPoznámka:^b</line>
+    <line>        Pri práci  v rezidentnom  režime  ^uShift-Enter^u  spúšťa</line>
+    <line>        programy v "minimálnom" režime.  Pri výbere  príkazov</line>
+    <line>        zo zoznamu vykonaných príkazov alebo  z užívateľského</line>
+    <line>        menu tiež môžete držať stlačený ^uShift^u.</line>
+  </topic>
+  <topic id="legacy_53" layout="prose">
+    <title>Uloženie nastavení</title>
+    <p>Shift-F9 alebo Options, Save setup zapisuje VC.INI. Options, General, Auto save setup zapína automatický zápis.</p>
+    <p>Ukladajú sa panely a voľby programu. Menu a priradenia sú osobitné textové súbory. Premenná VC môže určiť domovský adresár. Aktualizácia zachováva VC.INI; netreba ho mazať.</p>
+  </topic>
+  <topic id="legacy_54" layout="prose">
+    <title>Nastavenia popisov</title>
+    <p>F9, Options, Descriptions: neaktualizovať, len pri zobrazení alebo vždy. Description files a Directory information files určujú názvy súborov.</p>
+    <p>Predvolene descript.ion, files.bbs; pre adresáre dirinfo, file_id.diz, varianty readme. Left/Right, Description zobrazuje popisy. Copy and Move nastavuje tvorbu a mazanie záznamov.</p>
+  </topic>
+  <topic id="legacy_55" layout="prose">
+    <title>Šetrič obrazovky: stav</title>
+    <p>Options, Screen saver je viditeľný, ale nemá obsluhu dialógu. Staré voľby oneskorenia a znakov z VC 4.05 nie sú dostupným dialógom 4.99.10.</p>
+    <p>Funkčné voľby obrazovky a myši: Options, Interface. Aktualizácia pomoci nezapína chýbajúci dialóg.</p>
+  </topic>
+  <topic id="legacy_56" layout="prose">
+    <title>Znaky rozhrania</title>
+    <p>F9, Options, Characters mení rámy panelov, dialógov a menu; šípky, posuvníky, ukazovatele myši, priebeh a značky súborov.</p>
+    <p>Znaky vyberte podľa písma a kódovej stránky DOS. Ok použije, Cancel zruší, Shift-F9 uloží. Nemení to kódovanie názvov ani jazyk pomoci.</p>
+  </topic>
+  <topic id="legacy_57" layout="prose">
+    <title>Nastavenia panelov</title>
+    <p>F9, Options, Panels: posun po Ins, veľkosť adresára cez Ins, automatické veľkosti, zrušenie výberu počas operácií, zvýraznenie podadresárov.</p>
+    <p>Strom: skryté adresáre, zápis TREEINFO v koreni alebo doma, automatický prechod a oneskorenie. Bez automatického prechodu stlačte Enter.</p>
+    <p>Space mení, Ok použije, Shift-F9 uloží. Mini status je osobitný bod Options. Ctrl-R obnoví strom po vonkajších zmenách.</p>
+  </topic>
+  <topic id="legacy_58" layout="prose">
+    <title>Výber farieb</title>
+    <p>F9, Options, Interface, Screen colors: Black &amp; White, Color alebo Laptop. Vyberte čitateľný režim; Ok použije, Shift-F9 uloží.</p>
+    <p>Starý editor palety VCSETUP 4.05 sa nedodáva. Súčasný dialóg vyberá schému, neupravuje každú farbu.</p>
+  </topic>
+  <topic id="legacy_59" layout="prose">
+    <title>Kopírovanie a presun: voľby</title>
+    <p>F9, Options, Copy and Move: tvorba popisov, zmazanie popisu cieľa pri chýbajúcom zdrojovom, mazanie prázdnych súborov popisov. Všeobecný režim je v Descriptions.</p>
+    <p>Copy extended attributes: atribúty OS/2 pri podpore. Check target file and free space before copying: kontrola vopred. Clear read-only attribute when copy from CD-ROM: zrušiť ochranu kópie.</p>
+    <p>To sú voľby operácií VC. Externé archivátory a VCTOOLS majú vlastné pravidlá. Ok použije; Shift-F9 uloží.</p>
+  </topic>
+  <topic id="legacy_60" layout="prose">
+    <title>Krajina a kódové stránky</title>
+    <p>VC berie formát dátumu, času a čísel z DOS. COUNTRY v CONFIG.SYS a kódové stránky klávesnice/obrazovky nastavte nástrojmi vlastného DOS.</p>
+    <p>Inštalátor navrhne jazyk podľa COUNTRY. Kódovanie HLP: angličtina CP437, nemčina CP850, ruština CP866, poľština/slovenčina CP852. Potrebné je vhodné písmo obrazovky.</p>
+    <p>Tabuľka prezerania mení len zobrazenie, nie nastavenia DOS ani súbor.</p>
+  </topic>
+  <topic id="legacy_61" layout="prose">
+    <title>Koniec a uloženie</title>
+    <p>F10 ukončí VC. Options, Interface, Confirmation on quit riadi otázku. Shift-F9 uloží ručne; Auto save setup v Options, General zapína automatický zápis.</p>
+    <p>Esc zatvára dialóg/prezeranie. V paneloch závisí od Esc toggles screen on/off v Interface. Osobitný príkaz konca VCSETUP sa nepoužíva.</p>
+  </topic>
+  <topic id="legacy_62" layout="ng">
+    <title> Premenná prostredia VC</title>
+    <line>^bPremenná prostredia VC^b</line>
+    <line> Pri spúšťaní Volkov Commander-a z virtuálneho  disku  vzniká</line>
+    <line> osobitný problém:  ak ukladáte nastavenie  parametrov  alebo</line>
+    <line> editujete súbor menu alebo súbory prípon, tieto zmeny sa bu-</line>
+    <line> dú týkať súborov na virtuálnom disku. A to znamená, ze stra-</line>
+    <line> títe tieto zmeny, len čo vypnete počítač.</line>
+    <line />
+    <line> Commander poskytuje prostriedok na riešenie tohto  problému:</line>
+    <line> môžete umiestniť do súboru ^uautoexec.bat^u riadok,  ktorý ozna-</line>
+    <line> muje Commander-u,  kde má hľadať tieto súbory  (aj  prípadné</line>
+    <line> ďalšie potrebné súbory, ktoré ste neskopírovali na virtuálny</line>
+    <line> disk). Vložte do súboru autoexec.bat nasledujúci riadok:</line>
+    <line />
+    <line>               set vc=c:\progs\vc</line>
+    <line>                      └────┬────┘</line>
+    <line>                           │</line>
+    <line>            Adresár na pevnom disku, v ktorom</line>
+    <line>            sú uložené súbory Commander-a.</line>
+  </topic>
+</guide>

@@ -11,6 +11,9 @@ Changes in version 4.99.10 alpha (24-Oct-2026)
 
 + Built from the published 4.99.09 sources with JWasm and JWlink
 + F1 help viewer and installation with five help languages
++ Own help compiler: editable XML, DTD/CSS for XMLmind, make help
++ Updated help on packers, helpers, OS/2, options and installation
++ Revised 4.99 reference in all languages; current dialogs replace VCSETUP
 + Independent ZIP, ARJ and ACE user menus (external DOS packers)
 + VCTOOLS: file lists, batch commands, format detection, ZIP listing,
   and a read-only hex dump; source included in the repository
