@@ -99,6 +99,11 @@ Tested in QEMU under MS-DOS 7.1: setup from the disk (`INSTALL /S`), start
 (only 1.9 KB stay resident), the pull-down menus, Memory Info, the viewer
 (F3), copying a file (F5) and quitting (F10, `VC.INI` is written).
 
+The [MAXTEXT API and integration review](docs/maxtext-integration.md)
+describes optional Open386MAX text-mode support and includes a reproducible
+DOS compatibility probe for 80x25, 80x43 and 80x50. VC currently uses its
+existing BIOS display path; no MAXTEXT driver is bundled.
+
 ## Help (F1)
 
 4.99.09 has the help pages, the buffer and the calls of the help, but no
