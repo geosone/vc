@@ -1,0 +1,6 @@
+<!ELEMENT codepages (codepage+)>
+<!ATTLIST codepages format CDATA #FIXED "unicode-repertoires-v1">
+<!ELEMENT codepage (character*)>
+<!ATTLIST codepage id ID #REQUIRED codec CDATA #IMPLIED base IDREF #IMPLIED reference CDATA #REQUIRED>
+<!ELEMENT character EMPTY>
+<!ATTLIST character byte CDATA #REQUIRED unicode CDATA #REQUIRED glyph CDATA #IMPLIED name CDATA #REQUIRED>

@@ -1,0 +1,14 @@
+/* XMLmind view for character repertoires and conversion recipes. BSD-2-Clause. */
+charsets, codepages { display: block; margin: 1em; font-family: sans-serif; }
+table, codepage { display: block; border-top: 1px solid #bbbbbb; margin-top: 1em; padding-top: 0.5em; }
+table:before { display: block; content: attr(file) " - " attr(title); font-size: 15pt; font-weight: bold; }
+codepage:before { display: block; content: attr(id) " - codec: " attr(codec) " base: " attr(base); font-size: 14pt; font-weight: bold; }
+conversion, unicode { display: block; margin-left: 1em; }
+conversion:before { display: block; content: "External character set: " attr(external); color: #173d68; }
+character, replace, omit, undefined, passthrough, override { display: block; margin: 0.3em 0; }
+character:before { content: attr(byte) " = " attr(glyph) " U+" attr(unicode) " - " attr(name); }
+replace:before { content: attr(direction) ": " attr(glyph) " U+" attr(from) " -> " attr(replacement) " U+" attr(to) " - " attr(name); }
+omit:before { content: attr(direction) ": omit U+" attr(from) " - " attr(name); color: #8a3300; }
+undefined:before { content: attr(direction) ": undefined byte " attr(byte) " -> U+" attr(to); color: #8a3300; }
+passthrough:before { content: "Legacy passthrough " attr(first) ".." attr(last) " - " attr(reason); color: #8a3300; }
+override:before { content: "Legacy byte " attr(byte) " -> U+" attr(codepoint) " - " attr(reason); color: #8a3300; }

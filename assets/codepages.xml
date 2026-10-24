@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="charsets.css"?>
+<!DOCTYPE codepages SYSTEM "codepages.dtd">
+<codepages format="unicode-repertoires-v1">
+  <codepage id="cp437" codec="cp437" reference="https://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/PC/CP437.TXT" />
+  <codepage id="cp850" codec="cp850" reference="https://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/PC/CP850.TXT" />
+  <codepage id="cp852" codec="cp852" reference="https://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/PC/CP852.TXT" />
+  <codepage id="cp866" codec="cp866" reference="https://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/PC/CP866.TXT" />
+  <codepage id="cp1250" codec="cp1250" reference="https://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WINDOWS/CP1250.TXT" />
+  <codepage id="cp1251" codec="cp1251" reference="https://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WINDOWS/CP1251.TXT" />
+  <codepage id="iso8859_2" codec="iso8859_2" reference="https://www.unicode.org/Public/MAPPINGS/ISO8859/8859-2.TXT" />
+  <codepage id="iso8859_5" codec="iso8859_5" reference="https://www.unicode.org/Public/MAPPINGS/ISO8859/8859-5.TXT" />
+  <codepage id="koi8_r" codec="koi8_r" reference="https://www.unicode.org/Public/MAPPINGS/VENDORS/MISC/KOI8-R.TXT" />
+  <codepage id="mac_cyrillic" codec="mac_cyrillic" reference="https://www.unicode.org/Public/MAPPINGS/VENDORS/APPLE/CYRILLIC.TXT" />
+  <codepage id="cp1125" codec="cp1125" reference="https://github.com/dosemu2/dosemu2/blob/12966165cad849b11c2fed3e99c40baaf3504235/src/plugin/extra_charsets/cp1125.c" />
+  <codepage id="kamenicky" base="cp437" reference="https://github.com/dosemu2/dosemu2/blob/12966165cad849b11c2fed3e99c40baaf3504235/src/plugin/extra_charsets/cp895.c">
+    <character byte="80" unicode="010C" glyph="Č" name="LATIN CAPITAL LETTER C WITH CARON" />
+    <character byte="83" unicode="010F" glyph="ď" name="LATIN SMALL LETTER D WITH CARON" />
+    <character byte="85" unicode="010E" glyph="Ď" name="LATIN CAPITAL LETTER D WITH CARON" />
+    <character byte="86" unicode="0164" glyph="Ť" name="LATIN CAPITAL LETTER T WITH CARON" />
+    <character byte="87" unicode="010D" glyph="č" name="LATIN SMALL LETTER C WITH CARON" />
+    <character byte="88" unicode="011B" glyph="ě" name="LATIN SMALL LETTER E WITH CARON" />
+    <character byte="89" unicode="011A" glyph="Ě" name="LATIN CAPITAL LETTER E WITH CARON" />
+    <character byte="8A" unicode="0139" glyph="Ĺ" name="LATIN CAPITAL LETTER L WITH ACUTE" />
+    <character byte="8B" unicode="00CD" glyph="Í" name="LATIN CAPITAL LETTER I WITH ACUTE" />
+    <character byte="8C" unicode="013E" glyph="ľ" name="LATIN SMALL LETTER L WITH CARON" />
+    <character byte="8D" unicode="013A" glyph="ĺ" name="LATIN SMALL LETTER L WITH ACUTE" />
+    <character byte="8F" unicode="00C1" glyph="Á" name="LATIN CAPITAL LETTER A WITH ACUTE" />
+    <character byte="91" unicode="017E" glyph="ž" name="LATIN SMALL LETTER Z WITH CARON" />
+    <character byte="92" unicode="017D" glyph="Ž" name="LATIN CAPITAL LETTER Z WITH CARON" />
+    <character byte="95" unicode="00D3" glyph="Ó" name="LATIN CAPITAL LETTER O WITH ACUTE" />
+    <character byte="96" unicode="016F" glyph="ů" name="LATIN SMALL LETTER U WITH RING ABOVE" />
+    <character byte="97" unicode="00DA" glyph="Ú" name="LATIN CAPITAL LETTER U WITH ACUTE" />
+    <character byte="98" unicode="00FD" glyph="ý" name="LATIN SMALL LETTER Y WITH ACUTE" />
+    <character byte="9B" unicode="0160" glyph="Š" name="LATIN CAPITAL LETTER S WITH CARON" />
+    <character byte="9C" unicode="013D" glyph="Ľ" name="LATIN CAPITAL LETTER L WITH CARON" />
+    <character byte="9D" unicode="00DD" glyph="Ý" name="LATIN CAPITAL LETTER Y WITH ACUTE" />
+    <character byte="9E" unicode="0158" glyph="Ř" name="LATIN CAPITAL LETTER R WITH CARON" />
+    <character byte="9F" unicode="0165" glyph="ť" name="LATIN SMALL LETTER T WITH CARON" />
+    <character byte="A4" unicode="0148" glyph="ň" name="LATIN SMALL LETTER N WITH CARON" />
+    <character byte="A5" unicode="0147" glyph="Ň" name="LATIN CAPITAL LETTER N WITH CARON" />
+    <character byte="A6" unicode="016E" glyph="Ů" name="LATIN CAPITAL LETTER U WITH RING ABOVE" />
+    <character byte="A7" unicode="00D4" glyph="Ô" name="LATIN CAPITAL LETTER O WITH CIRCUMFLEX" />
+    <character byte="A8" unicode="0161" glyph="š" name="LATIN SMALL LETTER S WITH CARON" />
+    <character byte="A9" unicode="0159" glyph="ř" name="LATIN SMALL LETTER R WITH CARON" />
+    <character byte="AA" unicode="0155" glyph="ŕ" name="LATIN SMALL LETTER R WITH ACUTE" />
+    <character byte="AB" unicode="0154" glyph="Ŕ" name="LATIN CAPITAL LETTER R WITH ACUTE" />
+    <character byte="AD" unicode="00A7" glyph="§" name="SECTION SIGN" />
+  </codepage>
+  <codepage id="mazovia" base="cp437" reference="https://www.columbia.edu/kermit/mazovia.html">
+    <character byte="86" unicode="0105" glyph="ą" name="LATIN SMALL LETTER A WITH OGONEK" />
+    <character byte="8D" unicode="0107" glyph="ć" name="LATIN SMALL LETTER C WITH ACUTE" />
+    <character byte="8F" unicode="0104" glyph="Ą" name="LATIN CAPITAL LETTER A WITH OGONEK" />
+    <character byte="90" unicode="0118" glyph="Ę" name="LATIN CAPITAL LETTER E WITH OGONEK" />
+    <character byte="91" unicode="0119" glyph="ę" name="LATIN SMALL LETTER E WITH OGONEK" />
+    <character byte="92" unicode="0142" glyph="ł" name="LATIN SMALL LETTER L WITH STROKE" />
+    <character byte="95" unicode="0106" glyph="Ć" name="LATIN CAPITAL LETTER C WITH ACUTE" />
+    <character byte="98" unicode="015A" glyph="Ś" name="LATIN CAPITAL LETTER S WITH ACUTE" />
+    <character byte="9C" unicode="0141" glyph="Ł" name="LATIN CAPITAL LETTER L WITH STROKE" />
+    <character byte="9E" unicode="015B" glyph="ś" name="LATIN SMALL LETTER S WITH ACUTE" />
+    <character byte="A0" unicode="0179" glyph="Ź" name="LATIN CAPITAL LETTER Z WITH ACUTE" />
+    <character byte="A1" unicode="017B" glyph="Ż" name="LATIN CAPITAL LETTER Z WITH DOT ABOVE" />
+    <character byte="A3" unicode="00D3" glyph="Ó" name="LATIN CAPITAL LETTER O WITH ACUTE" />
+    <character byte="A4" unicode="0144" glyph="ń" name="LATIN SMALL LETTER N WITH ACUTE" />
+    <character byte="A5" unicode="0143" glyph="Ń" name="LATIN CAPITAL LETTER N WITH ACUTE" />
+    <character byte="A6" unicode="017A" glyph="ź" name="LATIN SMALL LETTER Z WITH ACUTE" />
+    <character byte="A7" unicode="017C" glyph="ż" name="LATIN SMALL LETTER Z WITH DOT ABOVE" />
+  </codepage>
+  <codepage id="cwi2" base="cp437" reference="https://github.com/dosbox-staging/dosbox-staging/blob/d8669d56a156be670362b4b0247f26bf0d86ed42/resources/mapping/MAIN.TXT">
+    <character byte="8D" unicode="00CD" glyph="Í" name="LATIN CAPITAL LETTER I WITH ACUTE" />
+    <character byte="8F" unicode="00C1" glyph="Á" name="LATIN CAPITAL LETTER A WITH ACUTE" />
+    <character byte="93" unicode="0151" glyph="ő" name="LATIN SMALL LETTER O WITH DOUBLE ACUTE" />
+    <character byte="95" unicode="00D3" glyph="Ó" name="LATIN CAPITAL LETTER O WITH ACUTE" />
+    <character byte="96" unicode="0171" glyph="ű" name="LATIN SMALL LETTER U WITH DOUBLE ACUTE" />
+    <character byte="97" unicode="00DA" glyph="Ú" name="LATIN CAPITAL LETTER U WITH ACUTE" />
+    <character byte="98" unicode="0170" glyph="Ű" name="LATIN CAPITAL LETTER U WITH DOUBLE ACUTE" />
+    <character byte="A7" unicode="0150" glyph="Ő" name="LATIN CAPITAL LETTER O WITH DOUBLE ACUTE" />
+  </codepage>
+</codepages>

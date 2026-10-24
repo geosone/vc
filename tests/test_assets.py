@@ -54,15 +54,49 @@ class AssetCompiler(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'outside canvas'):
             assets.compile_icon(changed)
 
-    def test_rejects_incomplete_and_misordered_byte_maps(self):
-        node = ET.parse(ROOT / 'assets/charsets.xml').getroot().find("table[@kind='single-byte']")
+    def test_conversion_is_computed_from_repertoires_not_saved_byte_rows(self):
+        node = ET.parse(ROOT / 'assets/charsets.xml').getroot().find("table[@file='CP866/CP1251.TBL']")
+        self.assertEqual(assets.compile_table(node, profile='standard')[-256], 0xC0)
+        changed = copy.deepcopy(node)
+        recipe = changed.find('conversion')
+        recipe.set('external', 'koi8_r')
+        self.assertEqual(assets.compile_table(changed, profile='standard')[-256], 0xE1)
+        self.assertIsNone(node.find('.//row'))
+
+    def test_standard_profile_omits_legacy_approximations(self):
+        standard = assets.sources(ROOT / 'assets', 'standard')
+        compatible = assets.sources(ROOT / 'assets')
+        # Copyright cannot be represented in CP866; the old approximation was c.
+        position = 128 + 0xBF-128
+        self.assertEqual(standard['CP866/KOI8R.TBL'][0][-256:][position], 0)
+        self.assertEqual(compatible['CP866/KOI8R.TBL'][0][-256:][position], ord('c'))
+        # Real CP850 has dotless i here; the legacy VC table had the Euro sign.
+        value = struct.unpack_from('<H', standard['CP850/CP850UNI.TBL'][0][-256:], 2*(0xD5-128))[0]
+        self.assertEqual(value, 0x0131)
+
+    def test_national_encodings_have_explicit_unicode_repertoires(self):
+        pages = assets.codepages(ROOT / 'assets/codepages.xml')
+        self.assertEqual(pages['kamenicky'][0x80], ord('Č'))
+        self.assertEqual(pages['mazovia'][0x86], ord('ą'))
+        self.assertEqual(pages['cwi2'][0x93], ord('ő'))
+        self.assertEqual(pages['cp1125'][0xF6], ord('І'))
+        for page in ('kamenicky', 'mazovia', 'cwi2'):
+            self.assertEqual(pages[page][0xC4], ord('─'))
+        strict = assets.sources(ROOT / 'assets', 'standard')
+        # The old KAMENICT file is a VC variant; the standard aliases agree.
+        self.assertEqual(strict['CP852/KAMENICT.TBL'][0][-256:],
+                         strict['CP852/CP895.TBL'][0][-256:])
+
+    def test_rejects_unresolvable_or_duplicate_compatibility_rules(self):
+        node = ET.parse(ROOT / 'assets/charsets.xml').getroot().find("table[@file='CP866/CP1251.TBL']")
         bad = copy.deepcopy(node)
-        bad.find('to-dos').remove(bad.find('to-dos/row'))
-        with self.assertRaisesRegex(ValueError, 'eight rows'):
+        bad.find('conversion/replace').set('from', '10FFFF')
+        with self.assertRaisesRegex(ValueError, 'absent from source'):
             assets.compile_table(bad)
         bad = copy.deepcopy(node)
-        bad.find('to-dos/row').set('first', '90')
-        with self.assertRaisesRegex(ValueError, 'in order'):
+        recipe = bad.find('conversion')
+        recipe.append(copy.deepcopy(recipe.find('replace')))
+        with self.assertRaisesRegex(ValueError, 'duplicate compatibility'):
             assets.compile_table(bad)
         with self.assertRaises(ValueError):
             assets.output_name('../VC.ICO')

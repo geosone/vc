@@ -1,7 +1,7 @@
 <!ELEMENT charsets (table+)>
-<!ATTLIST charsets format CDATA #FIXED "vc-tbl-v1" origin CDATA #REQUIRED
+<!ATTLIST charsets format CDATA #FIXED "vc-tbl-v2" origin CDATA #REQUIRED
           archive-url CDATA #REQUIRED archive-sha256 CDATA #REQUIRED>
-<!ELEMENT table (unicode | (to-external, to-dos))>
+<!ELEMENT table (unicode | conversion)>
 <!ATTLIST table file CDATA #REQUIRED title CDATA #REQUIRED
           kind (unicode | single-byte) #REQUIRED dos-codepage CDATA #REQUIRED
           original-sha256 CDATA #REQUIRED>
@@ -9,7 +9,14 @@
 <!ATTLIST unicode codec CDATA #REQUIRED>
 <!ELEMENT override EMPTY>
 <!ATTLIST override byte CDATA #REQUIRED codepoint CDATA #REQUIRED reason CDATA #REQUIRED>
-<!ELEMENT to-external (row+)>
-<!ELEMENT to-dos (row+)>
-<!ELEMENT row (#PCDATA)>
-<!ATTLIST row first CDATA #REQUIRED>
+<!ELEMENT conversion (passthrough | replace | omit | undefined)*>
+<!ATTLIST conversion external CDATA #REQUIRED>
+<!ELEMENT passthrough EMPTY>
+<!ATTLIST passthrough direction (both | to-dos | to-external) #REQUIRED first CDATA #REQUIRED last CDATA #REQUIRED reason CDATA #REQUIRED>
+<!ELEMENT replace EMPTY>
+<!ATTLIST replace direction (to-dos | to-external) #REQUIRED from CDATA #REQUIRED to CDATA #REQUIRED
+          name CDATA #REQUIRED replacement-name CDATA #REQUIRED glyph CDATA #IMPLIED replacement CDATA #IMPLIED reason CDATA #REQUIRED>
+<!ELEMENT omit EMPTY>
+<!ATTLIST omit direction (to-dos | to-external) #REQUIRED from CDATA #REQUIRED name CDATA #REQUIRED reason CDATA #REQUIRED>
+<!ELEMENT undefined EMPTY>
+<!ATTLIST undefined direction (to-dos | to-external) #REQUIRED byte CDATA #REQUIRED to CDATA #REQUIRED reason CDATA #REQUIRED>

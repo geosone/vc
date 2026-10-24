@@ -20,21 +20,112 @@ def output_name(value):
     return value
 
 
-def mapping(node):
-    if node is None or len(node) != 8:
-        raise ValueError("a byte mapping needs eight rows of sixteen values")
-    result = bytearray()
-    for first, row in zip(range(128, 256, 16), node):
-        if row.tag != "row" or row.get("first") != f"{first:02X}":
-            raise ValueError("byte mapping rows must cover 80..FF in order")
-        values = (row.text or "").split()
-        if len(values) != 16 or any(not re.fullmatch(r"[0-9A-F]{2}", v) for v in values):
-            raise ValueError("each byte mapping row needs sixteen hexadecimal bytes")
-        result.extend(int(v, 16) for v in values)
-    return bytes(result)
+def unicode_point(value):
+    if not re.fullmatch(r"[0-9A-F]{4,6}", value):
+        raise ValueError("expected a hexadecimal Unicode codepoint")
+    point = int(value, 16)
+    if point > 0x10ffff or 0xd800 <= point <= 0xdfff:
+        raise ValueError("invalid Unicode scalar value")
+    return point
 
 
-def compile_table(node):
+def codepages(path):
+    root = ET.parse(path).getroot()
+    if root.tag != "codepages" or root.get("format") != "unicode-repertoires-v1":
+        raise ValueError("unsupported Unicode repertoire source")
+    result = {}
+    for node in root:
+        name = node.attrib["id"]
+        if node.tag != "codepage" or name in result:
+            raise ValueError("invalid or duplicate codepage definition")
+        if bool(node.get("codec")) == bool(node.get("base")):
+            raise ValueError("codepage needs exactly one codec or base")
+        if node.get("codec"):
+            values = []
+            for byte in range(256):
+                try:
+                    values.append(ord(bytes([byte]).decode(node.get("codec"))))
+                except UnicodeDecodeError:
+                    values.append(None)
+        else:
+            if node.get("base") not in result:
+                raise ValueError("base codepage must be defined first")
+            values = list(result[node.get("base")])
+        seen = set()
+        for char in node:
+            byte = int(char.attrib["byte"], 16)
+            if char.tag != "character" or not 128 <= byte <= 255 or byte in seen:
+                raise ValueError("invalid or duplicate national character override")
+            point = unicode_point(char.attrib["unicode"])
+            if char.get("glyph") and char.get("glyph") != chr(point):
+                raise ValueError("character glyph does not match its Unicode value")
+            seen.add(byte)
+            values[byte] = point
+        result[name] = values
+    return result
+
+
+def inverse(points):
+    result = {}
+    for byte, point in enumerate(points):
+        if point is not None:
+            result.setdefault(point, byte)
+    return result
+
+
+def conversion(recipe, dos, external, profile):
+    """Compute both directions through Unicode, independently of legacy TBLs."""
+    out = {}
+    contexts = {"to-external": (dos, external), "to-dos": (external, dos)}
+    for direction, (source, target) in contexts.items():
+        lookup = inverse(target)
+        out[direction] = bytearray(lookup.get(point, 0) for point in source[128:])
+    if profile == "standard":
+        return bytes(out["to-external"] + out["to-dos"])
+    seen = set()
+    for rule in recipe:
+        direction = rule.get("direction")
+        if rule.tag == "passthrough":
+            directions = contexts if direction == "both" else [direction]
+            first, last = (int(rule.attrib[key], 16) for key in ("first", "last"))
+            if not 128 <= first <= last <= 255 or any(d not in contexts for d in directions):
+                raise ValueError("invalid legacy passthrough range")
+            for d in directions:
+                out[d][first-128:last-127] = bytes(range(first, last+1))
+            continue
+        if direction not in contexts:
+            raise ValueError("invalid conversion direction")
+        source, target = contexts[direction]
+        lookup = inverse(target)
+        if rule.tag == "undefined":
+            byte = int(rule.attrib["byte"], 16)
+            if not 128 <= byte <= 255 or source[byte] is not None:
+                raise ValueError("undefined-slot rule requires an undefined input byte")
+            inputs = [byte]
+        elif rule.tag in ("replace", "omit"):
+            point = unicode_point(rule.attrib["from"])
+            inputs = [b for b in range(128, 256) if source[b] == point]
+            if not inputs:
+                raise ValueError("compatibility rule references a character absent from source")
+        else:
+            raise ValueError("unknown compatibility rule")
+        value = 0
+        if rule.tag != "omit":
+            replacement = unicode_point(rule.attrib["to"])
+            if replacement not in lookup:
+                raise ValueError("replacement character absent from target codepage")
+            value = lookup[replacement]
+        for byte in inputs:
+            if (direction, byte) in seen:
+                raise ValueError("duplicate compatibility rule")
+            seen.add((direction, byte))
+            out[direction][byte-128] = value
+    return bytes(out["to-external"] + out["to-dos"])
+
+
+def compile_table(node, repertoires=None, profile="compat"):
+    if profile not in ("compat", "standard"):
+        raise ValueError("unknown charset generation profile")
     title = node.attrib["title"].encode("ascii")
     if not title or len(title) > 60 or any(c < 32 or c == 127 for c in title):
         raise ValueError("table title must fit the viewer's 60-character title field")
@@ -48,7 +139,7 @@ def compile_table(node):
             raise ValueError("unsupported DOS Unicode codec")
         points = [ord(bytes([b]).decode(codec)) for b in range(128, 256)]
         overrides = set()
-        for override in definition:
+        for override in definition if profile == "compat" else ():
             if override.tag != "override":
                 raise ValueError("unknown Unicode mapping element")
             key, value = override.attrib["byte"], override.attrib["codepoint"]
@@ -62,9 +153,14 @@ def compile_table(node):
         payload = struct.pack("<128H", *points)
         flag = 1
     elif kind == "single-byte":
-        if [child.tag for child in node] != ["to-external", "to-dos"]:
-            raise ValueError("single-byte table needs both mapping directions")
-        payload = mapping(node.find("to-external")) + mapping(node.find("to-dos"))
+        if [child.tag for child in node] != ["conversion"]:
+            raise ValueError("single-byte table needs one conversion recipe")
+        if repertoires is None:
+            repertoires = codepages(ROOT / "assets/codepages.xml")
+        recipe = node.find("conversion")
+        dos = repertoires[node.attrib["dos-codepage"]]
+        external = repertoires[recipe.attrib["external"]]
+        payload = conversion(recipe, dos, external, profile)
         flag = 0
     else:
         raise ValueError(f"unknown table kind: {kind}")
@@ -120,9 +216,10 @@ def compile_icon(root):
     return struct.pack("<HHH", 0, 1, 1) + directory + bitmap
 
 
-def sources(directory):
+def sources(directory, profile="compat"):
+    repertoires = codepages(directory / "codepages.xml")
     root = ET.parse(directory / "charsets.xml").getroot()
-    if root.tag != "charsets" or root.get("format") != "vc-tbl-v1":
+    if root.tag != "charsets" or root.get("format") != "vc-tbl-v2":
         raise ValueError("unsupported translation table source")
     result = {}
     for node in root:
@@ -131,15 +228,15 @@ def sources(directory):
         name = output_name(node.attrib["file"])
         if name in result:
             raise ValueError("duplicate output table path")
-        result[name] = (compile_table(node), node.attrib["original-sha256"])
+        result[name] = (compile_table(node, repertoires, profile), node.attrib["original-sha256"])
     icon = ET.parse(directory / "vc-icon.svg").getroot()
     result["VC.ICO"] = (compile_icon(icon), icon.attrib["data-original-sha256"])
     return result
 
 
-def build(directory, output):
-    result = sources(directory)
-    manifest = ET.Element("assets-build")
+def build(directory, output, profile="compat"):
+    result = sources(directory, profile)
+    manifest = ET.Element("assets-build", profile=profile)
     for name, (data, original) in sorted(result.items()):
         path = output / name
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -156,14 +253,15 @@ def main():
     parser.add_argument("command", choices=("build", "list"))
     parser.add_argument("--sources", type=Path, default=ROOT / "assets")
     parser.add_argument("--output", type=Path, default=ROOT / "build/assets")
+    parser.add_argument("--profile", choices=("compat", "standard"), default="compat")
     args = parser.parse_args()
     try:
         if args.command == "list":
-            print(" ".join(sorted(sources(args.sources))))
+            print(" ".join(sorted(sources(args.sources, args.profile))))
         else:
-            result = build(args.sources, args.output)
+            result = build(args.sources, args.output, args.profile)
             print(f"Generated {len(result)-1} translation tables and VC.ICO from XML/SVG")
-    except (ValueError, KeyError, OSError, ET.ParseError, UnicodeError, struct.error) as exc:
+    except (ValueError, KeyError, LookupError, OSError, ET.ParseError, UnicodeError, struct.error) as exc:
         parser.exit(1, f"assets: {exc}\n")
 
 
