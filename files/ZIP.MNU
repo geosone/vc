@@ -1,0 +1,11 @@
+' Requires DOS PKZIP/PKUNZIP in PATH. The list command needs no packer.
+C: ZIP aus markierten Dateien erstellen
+	PKZIP -Pex -whs "![ZIP-Archiv (8.3-Name)]" @!~@
+L: ZIP-Inhalt anzeigen (eigener Betrachter)
+	"!$VCTOOLS.EXE" zip "!~.!"
+T: ZIP-Archiv pruefen
+	PKUNZIP -t "!~.!"
+X: ZIP ins andere Fenster entpacken
+	PKUNZIP -d "!~.!" "%:%~\"
+F10: Erweiterungen
+	addons.mnu

@@ -1,0 +1,20 @@
+' Independent extensions; !$ is the VC installation directory.
+' DOS helpers deliberately receive 8.3 names (!~.! and !~@).
+F1: ZIP-Archive...
+	zip.mnu
+F2: ARJ-Archive...
+	arj.mnu
+F3: ACE-Archive...
+	ace.mnu
+F4: Dateilisten und Stapelbefehle...
+	list.mnu
+T: Dateiformat erkennen
+	"!$VCTOOLS.EXE" type "!~.!"
+Z: ZIP-Inhalt ohne Packprogramm zeigen
+	"!$VCTOOLS.EXE" zip "!~.!"
+H: Hexansicht (erste 256 Bytes)
+	"!$VCTOOLS.EXE" hex "!~.!"
+D: Deutsche Anleitung
+	MORE < "!$ADDONS.TXT"
+F10: Hauptmenue
+	vc.mnu

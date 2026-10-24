@@ -1,0 +1,11 @@
+' Requires DOS ARJ in PATH. Existing files retain the packer's prompts.
+C: ARJ aus markierten Dateien erstellen
+	ARJ a "![ARJ-Archiv (8.3-Name)]" !!!~@
+L: ARJ-Inhalt anzeigen
+	ARJ l "!~.!"
+T: ARJ-Archiv pruefen
+	ARJ t "!~.!"
+X: ARJ ins andere Fenster entpacken
+	ARJ x "!~.!" "%:%~\"
+F10: Erweiterungen
+	addons.mnu

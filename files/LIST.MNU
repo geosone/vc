@@ -1,0 +1,15 @@
+' Output names are fixed and overwrite existing files in the active directory.
+N: Kurze Dateinamen nach VC.LST
+	"!$VCTOOLS.EXE" list "!~@" > VC.LST
+L: Lange Dateinamen nach VCLONG.LST
+	"!$VCTOOLS.EXE" list "!@" > VCLONG.LST
+P: Volle kurze Pfade nach VCPATH.LST
+	"!$VCTOOLS.EXE" list "!~@" --full > VCPATH.LST
+B: ECHO-Batchbeispiel nach VCLIST.BAT
+	"!$VCTOOLS.EXE" list "!~@" "ECHO " > VCLIST.BAT
+D: Befehl je markierter Datei: Vorschau
+	"!$VCTOOLS.EXE" run "!~@" "![Befehl mit {} fuer Dateiname]" --dry-run
+R: Befehl je markierter Datei ausfuehren
+	"!$VCTOOLS.EXE" run "!~@" "![Befehl mit {} fuer Dateiname]"
+F10: Erweiterungen
+	addons.mnu
