@@ -50,6 +50,7 @@ VCTOOLS run FILES.LST "ECHO {}" --dry-run</pre>
     <p>H pokazuje pierwsze 256 bajtów jako hex i ASCII. W wierszu poleceń można podać przesunięcie i długość. Jest to odczyt, nie edytor binarny ani pełny zamiennik Hiew:</p>
     <pre>VCTOOLS hex PROGRAM.EXE 0x100 64</pre>
     <p>Z pokazuje zawartość zwykłego ZIP bez archiwizera. Czyta katalog, nie rozpakowuje i nie sprawdza CRC. Mały podgląd nie obsługuje ZIP64 ani wieloczęściowego ZIP. Więcej formatów oferuje menu Retro7Zip. Znak &gt; kieruje wynik do pliku. ADDONS.TXT zawiera dłuższą instrukcję rozszerzeń w języku niemieckim.</p>
+    <p>Czcionki ekranowe: F2, F3, S otwiera menu czcionek. VCFONT 437, 850, 852 lub 866 wczytuje Unscii dla bieżącego trybu tekstowego VGA (8x8 lub 8x16). AUTO używa aktywnej strony kodowej DOS; ROM przywraca czcionkę BIOS. FONTS musi być obok VCFONT.EXE. Zmieniają się tylko kształty znaków, nie strona kodowa DOS ani klawiatura. MAXTEXT jest opcjonalny. Windows, grafika i 8x14 są odrzucane. Po zmianie trybu w razie potrzeby ponownie wczytaj czcionkę.</p>
   </topic>
   <topic id="os2" layout="prose">
     <title>Narzędzia sesji DOS w OS/2</title>

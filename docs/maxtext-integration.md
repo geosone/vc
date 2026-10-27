@@ -14,8 +14,9 @@ automatisch dessen höchsten angebotenen Textmodus:
 
 Unbekannte Bitmap-Bits werden nicht als zusätzliche Modi interpretiert.
 Ist die gewünschte Zeilenzahl bereits aktiv, wird kein löschender
-Moduswechsel ausgeführt. MAXTEXT bietet derzeit keine 132 Spalten,
-60 Zeilen oder VBE/SVGA-Modi an.
+Moduswechsel ausgeführt. Die hier geprüfte MAXTEXT-Referenz mit API 1.1 bot keine 132 Spalten
+oder 60 Zeilen an. Neuere API-1.x-Treiber können zusätzliche Modi melden;
+der VC-Startclient beschränkt seine Auswahl weiterhin auf diese drei Modi.
 
 **MAXTEXT ist optional.** Ohne Gerät, bei inkompatibler API, fehlerhafter
 Antwort, fehlendem Start-Arbeitsbereich oder abgelehntem Wechsel läuft
@@ -168,3 +169,24 @@ GPL-3.0-only. Der neue VC-Client ist eigener BSD-2-Clause-Code gegen die
 Treibers wäre eine zusätzliche Release-/Quellpaketaufgabe.
 
 Primärquelle: [Open386MAX MAXTEXT-Dokumentation](https://github.com/geosone/Open386MAX/blob/05fe77dde1b21d8cef4ecf20403daf0816f82343/docs/maxtext.md).
+
+## Schriftarten getrennt auswählen
+
+Seit 27. Oktober 2026 enthält VC zusätzlich VCFONT.EXE und aus lesbaren
+Unscii-Quellen erzeugte Fonts. F2, F3, S lädt CP437/850/852/866 für die
+aktuelle Zeichenhöhe 8 oder 16. Der Lader verwendet das VGA-BIOS und
+funktioniert ohne MAXTEXT. Er ändert weder Zeilenzahl noch DOS-Codepage.
+8x14 wird ausdrücklich abgewiesen. Ein späterer MAXTEXT-/BIOS-Moduswechsel
+kann einen anderen Font laden; danach VCFONT erneut aufrufen.
+
+`tests/dos_fonts.py` prüft die 256 Glyphen jedes Fonts direkt im VGA-Speicher,
+Geometrie, AUTO, ROM-Rückkehr und Fehlerpfade, mit oder ohne externen Treiber.
+Die Herkunft der Glyphen steht in `assets/fonts/README.txt`.
+
+Font-Probe vom 27. Oktober 2026: jeweils 2048 von 2048 Glyphen in
+8x8/8x16 mit und ohne Treiber bytegleich, AUTO und ROM-Rückkehr korrekt;
+fehlende/defekte Dateien sowie Grafik/8x14 ohne Font-/Moduswechsel abgewiesen.
+Dabei verwendete externe Treiberdateien (SHA-256):
+
+- MAXTEXT.SYS: `9834e9de92477dece36f63be3e4270be1ac17e81e1e075f6b126a13bf3958458`
+- MAXTEXT.COM: `9cdbc94acba14f0833424ce2cd327b98657400bc4f9f240510d495d69176d132`

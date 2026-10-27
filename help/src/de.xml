@@ -57,6 +57,7 @@ VCTOOLS run DATEIEN.LST "ECHO {}" --dry-run</pre>
     <pre>VCTOOLS hex PROGRAMM.EXE 0x100 64</pre>
     <p>Z im Erweiterungsmenü zeigt klassische ZIP-Inhalte ohne externen Packer. Es liest das Inhaltsverzeichnis und entpackt nichts; CRCs werden nicht geprüft. ZIP64 und mehrteilige ZIPs weist dieser kleine Betrachter ab. Für die größere Formatauswahl steht das Retro7Zip-Menü zur Verfügung.</p>
     <p>Ausgaben lassen sich mit &gt; in eine Datei umleiten. ADDONS.TXT enthält die ausführlichere deutsche Anleitung zu den Erweiterungen.</p>
+    <p>Bildschirmschriften: F2, F3, S öffnet das Schriftmenü. VCFONT 437, 850, 852 oder 866 lädt Unscii für den aktuellen VGA-Textmodus (8x8 oder 8x16). AUTO verwendet die aktive DOS-Codepage; ROM stellt die BIOS-Schrift wieder her. FONTS muss neben VCFONT.EXE bleiben. Geändert werden nur Zeichenformen, weder DOS-Codepage noch Tastatur. MAXTEXT ist optional. Windows, Grafik und 8x14 werden abgewiesen. Nach einem Moduswechsel die Schrift bei Bedarf erneut laden.</p>
   </topic>
   <topic id="os2" layout="prose">
     <title>Helfer für OS/2-DOS-Sitzungen</title>

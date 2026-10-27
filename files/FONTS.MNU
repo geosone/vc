@@ -1,0 +1,14 @@
+1: US / CP437
+	"!$VCFONT.EXE" 437
+2: Westeuropa / CP850
+	"!$VCFONT.EXE" 850
+3: Mitteleuropa / CP852
+	"!$VCFONT.EXE" 852
+4: Kyrillisch / CP866
+	"!$VCFONT.EXE" 866
+A: Aktive DOS-Codepage
+	"!$VCFONT.EXE" AUTO
+R: BIOS-ROM-Schrift wiederherstellen
+	"!$VCFONT.EXE" ROM
+F10: Erweiterungen
+	addons.mnu

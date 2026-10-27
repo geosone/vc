@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='utf-8'?>
+<font-supplements license="CC0-1.0">
+  <!-- Copyright 2026 Mario Fetka. Original supplemental glyphs dedicated to CC0. -->
+  <glyph unicode="263C" name="SUN">
+    <row>..#..#..</row>
+    <row>#..##..#</row>
+    <row>.#.##.#.</row>
+    <row>..####..</row>
+    <row>..####..</row>
+    <row>.#.##.#.</row>
+    <row>#..##..#</row>
+    <row>..#..#..</row>
+  </glyph>
+  <glyph unicode="2302" name="HOUSE">
+    <row>........</row>
+    <row>...##...</row>
+    <row>..####..</row>
+    <row>.##..##.</row>
+    <row>.######.</row>
+    <row>.##..##.</row>
+    <row>.##..##.</row>
+    <row>........</row>
+  </glyph>
+  <glyph unicode="2310" name="REVERSED NOT SIGN">
+    <row>........</row>
+    <row>........</row>
+    <row>.######.</row>
+    <row>.....##.</row>
+    <row>.....##.</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+  </glyph>
+  <glyph unicode="2219" name="BULLET OPERATOR">
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>...##...</row>
+    <row>...##...</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+  </glyph>
+  <glyph unicode="02DD" name="DOUBLE ACUTE ACCENT">
+    <row>..##.##.</row>
+    <row>.##.##..</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+  </glyph>
+  <glyph unicode="02DB" name="OGONEK">
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>...##...</row>
+    <row>..##....</row>
+    <row>...###..</row>
+  </glyph>
+  <glyph unicode="02C7" name="CARON">
+    <row>.##..##.</row>
+    <row>..####..</row>
+    <row>...##...</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+  </glyph>
+  <glyph unicode="02D8" name="BREVE">
+    <row>.##..##.</row>
+    <row>..####..</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+  </glyph>
+  <glyph unicode="02D9" name="DOT ABOVE">
+    <row>...##...</row>
+    <row>...##...</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+    <row>........</row>
+  </glyph>
+  <glyph unicode="0404" name="CYRILLIC CAPITAL UKRAINIAN IE">
+    <row>..####..</row>
+    <row>.##..##.</row>
+    <row>.##.....</row>
+    <row>.#####..</row>
+    <row>.##.....</row>
+    <row>.##..##.</row>
+    <row>..####..</row>
+    <row>........</row>
+  </glyph>
+  <glyph unicode="0454" name="CYRILLIC SMALL UKRAINIAN IE">
+    <row>........</row>
+    <row>........</row>
+    <row>..####..</row>
+    <row>.##..##.</row>
+    <row>.#####..</row>
+    <row>.##.....</row>
+    <row>..####..</row>
+    <row>........</row>
+  </glyph>
+  <glyph unicode="040E" name="CYRILLIC CAPITAL SHORT U">
+    <row>..####..</row>
+    <row>........</row>
+    <row>.##..##.</row>
+    <row>.##..##.</row>
+    <row>..#####.</row>
+    <row>.....##.</row>
+    <row>.##.##..</row>
+    <row>..###...</row>
+  </glyph>
+  <glyph unicode="045E" name="CYRILLIC SMALL SHORT U">
+    <row>..####..</row>
+    <row>........</row>
+    <row>........</row>
+    <row>.##..##.</row>
+    <row>.##..##.</row>
+    <row>..#####.</row>
+    <row>.....##.</row>
+    <row>..####..</row>
+  </glyph>
+  <glyph unicode="2116" name="NUMERO SIGN">
+    <row>##...##.</row>
+    <row>###..##.</row>
+    <row>####.##.</row>
+    <row>##.####.</row>
+    <row>##..###.</row>
+    <row>##..#.#.</row>
+    <row>.....##.</row>
+    <row>........</row>
+  </glyph>
+</font-supplements>

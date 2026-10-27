@@ -199,3 +199,25 @@ Dateilisten, Befehlsersetzung, Fehlerfälle, Formaterkennung, ZIP-Parser und
 Hexausgabe. Der native DOS-Test läuft separat mit einer lokal vorhandenen,
 DOS-bootfähigen Festplattenabbildung; siehe `tests/dos_smoke.py --help`.
 Ein DOS-Abbild wird nicht mitgeliefert.
+
+## Bildschirm-Schriftarten
+
+F2, F3, S öffnet das Schriftmenü für CP437 (US), CP850 (Westeuropa),
+CP852 (Mitteleuropa) und CP866 (Kyrillisch). `VCFONT AUTO` verwendet die
+aktive DOS-Codepage, `VCFONT ROM` stellt die BIOS-Schrift wieder her.
+Die Auswahl ändert nur die sichtbaren Zeichenformen. DOS-Codepage und
+Tastaturbelegung müssen zur gewünschten Sprache passen.
+
+Der eigene 8086-Helfer VCFONT.EXE lädt die zugehörige 8x8- oder
+8x16-Schrift passend zum aktuellen VGA-Textmodus. Er braucht keinen
+MAXTEXT-Treiber. 8x14, Grafikmodi und Windows-Sitzungen werden abgewiesen.
+Ein späterer Moduswechsel oder ein anderes Programm kann die Schrift
+ersetzen; dann erneut laden. VC lädt beim Start keine Schrift automatisch.
+
+`make fonts` erzeugt alle acht Fonts und die gemeinsame `FONTS/VC.CPI`
+aus den eingecheckten Unscii-HEX-Textquellen und eigenen ergänzenden
+XML-Pixelvorlagen. Die Basisfonts sind Public Domain/CC0; die Ergänzungen
+CC0-1.0. Herkunft und Lizenz stehen in `FONTS/README.TXT` und `UNSCII.TXT`.
+Diese Fonts gehören auch zur Kerndiskette. Der Ordner FONTS muss neben
+VCFONT.EXE bleiben. Die CPI-Datei ist zusätzlich für passende DOS-
+DISPLAY/MODE-Werkzeuge gedacht; VC verwendet die rohen F08-/F16-Dateien.

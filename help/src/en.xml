@@ -57,6 +57,7 @@ VCTOOLS run FILES.LST "ECHO {}" --dry-run</pre>
     <pre>VCTOOLS hex PROGRAM.EXE 0x100 64</pre>
     <p>Z in the extensions menu lists a classic ZIP without an external packer. It reads the central directory; it neither extracts nor checks CRCs. ZIP64 and split ZIP files are rejected by this small reader. The Retro7Zip menu is available for its wider format support.</p>
     <p>Command output can be redirected to a file with &gt;. ADDONS.TXT contains the longer German guide to the extensions.</p>
+    <p>Screen fonts: F2, F3, S opens the font menu. VCFONT 437, 850, 852 or 866 loads Unscii for the current VGA text mode (8x8 or 8x16). AUTO uses the active DOS codepage; ROM restores the BIOS font. Keep FONTS beside VCFONT.EXE. This changes glyphs only, not DOS codepage or keyboard settings. MAXTEXT is optional. Windows, graphics and 8x14 modes are rejected. A later mode change may replace the font; load it again afterward.</p>
   </topic>
   <topic id="os2" layout="prose">
     <title>OS/2 DOS-session helpers</title>

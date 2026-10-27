@@ -13,7 +13,7 @@ alpha.
 |---|---|
 | `src/` | the sources of `vc49909.zip`, changed so that [JWasm](https://github.com/Baron-von-Riedesel/JWasm) and JWlink build them (the author used Borland TASM and LINK) |
 | `files/` | text files: menus, extension associations and documentation |
-| `assets/` | XML character mappings and the SVG icon, compiled by `make assets` |
+| `assets/` | XML character mappings, SVG icon and readable Unscii font sources; `make assets fonts` |
 | `help/` | editable XML help in five languages, DTD/CSS for XMLmind, and provenance for the imported VC 4.05 text; [editing instructions](help/README.md) |
 | `install/` | `INSTALL.INI` for the [GeosOne Dual Installer](https://github.com/geosone/gdi) |
 | `tools/` | source converter, DOS help compiler and pinned packer downloads |
@@ -24,6 +24,7 @@ alpha.
 
     make                    # build/VC.COM, build/VC.OVL
     make assets             # generate TBL files and VC.ICO from XML/SVG
+    make fonts              # generate VGA fonts and VC.CPI from Unscii HEX/XML
     make help               # compile XML sources to five DOS HLP guides
     make release            # build/release/ and build/vc49910a.zip
     make disk               # build/vc49910a.img, a 1.44 MB disk
@@ -68,6 +69,20 @@ The repository contains text sources for its own binary assets. `make assets`
 builds 15 character translation tables and the icon without binary inputs or
 network access. HLP files are built from XML. See [assets/README.md](assets/README.md)
 for formats, provenance and the three historical Unicode mapping overrides.
+
+`make fonts` builds complete CP437/850/852/866 fonts at 8x8 and 8x16, plus
+`FONTS/VC.CPI`, from pinned Public Domain/CC0 Unscii HEX sources and readable
+XML supplements. Fonts and the 8086 DOS loader `VCFONT.EXE` are included in
+both release packages. F2 → F3 → S opens the font menu. Use `VCFONT AUTO`
+for the active DOS codepage, `VCFONT 850` for an explicit choice, or
+`VCFONT ROM` to restore the BIOS font. MAXTEXT is optional. Loading changes
+glyphs only; a later mode switch may replace them. Windows, graphics and
+8x14 modes are rejected. See [font sources and usage](assets/fonts/README.txt).
+
+`tests/dos_fonts.py --image /path/to/dos.img --output build/font-test`
+checks all 256 glyphs of each font by reading VGA plane 2 in a disposable
+DOS/QEMU image, plus geometry, AUTO, ROM restore and error handling. Add
+`--maxtext /path/to/MAXTEXT` to repeat with the external driver.
 
 ## From TASM to JWasm
 

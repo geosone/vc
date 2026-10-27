@@ -104,6 +104,14 @@ def main():
         return command("mtype", "-i", image, "::/VCTEST/" + name).replace(b"\r\n", b"\n")
 
     command("mmd", "-i", image, "::/VCTEST", "::/VCTEST/HOMECHK")
+    # Read the actual VGA font plane after returning from the VC font menu.
+    watcom = Path(os.environ.get("WATCOM", "/opt/watcom"))
+    env = dict(os.environ, WATCOM=str(watcom), INCLUDE=str(watcom / "h"))
+    env["PATH"] = str(watcom / "binl64") + ":" + env["PATH"]
+    subprocess.run([os.environ.get("WCL", str(watcom / "binl64/wcl")), "-q", "-bt=dos", "-0", "-ms", "-os", "-w4", "-we",
+                    "-fe=" + str(out / "PROBE.EXE"), "-fo=" + str(out / "probe.obj"),
+                    str(ROOT / "tests/dos/fontprobe.c")], check=True, env=env, capture_output=True)
+    command("mcopy", "-o", "-i", image, str(out / "PROBE.EXE"), "::/VCTEST/")
     (out / "QEXIT.COM").write_bytes(bytes.fromhex("baf400b000eecd20"))
     command("mcopy", "-o", "-i", image, str(out / "QEXIT.COM"), "::/")
     installer = "A:\\INSTALL /S"
@@ -336,9 +344,24 @@ IF ERRORLEVEL 1 ECHO HEX FAILED >> FAIL.TXT
             qmp.key("f3")
             time.sleep(0.5)
             assert "ARJ-Archive" in qmp.screen(out, "addons-menu")
-            qmp.key("f2")
+            qmp.key("s")
+            time.sleep(0.5)
+            assert "BIOS-ROM-Schrift" in qmp.screen(out, "fonts-menu")
+            qmp.key("f10", "f2")
             time.sleep(0.5)
             assert "ARJ-Archiv pruefen" in qmp.screen(out, "arj-menu")
+            qmp.key("esc")
+            qmp.key("f2", "f3", "s", "2")
+            time.sleep(1)
+            assert "Unscii CP850" in qmp.screen(out, "font-loaded")
+            qmp.key("esc")
+            qmp.text("c:\\vctest\\probe c:\\vctest\\fontmenu.bin")
+            qmp.key("ret")
+            time.sleep(1)
+            qmp.key("esc")
+            qmp.key("f2", "f3", "s", "r")
+            time.sleep(1)
+            assert "BIOS ROM font restored" in qmp.screen(out, "font-restored")
             qmp.key("esc")
             if args.full:
                 qmp.text("cd c:\\vctest\\a7")
@@ -403,7 +426,16 @@ IF ERRORLEVEL 1 ECHO HEX FAILED >> FAIL.TXT
         name = asset.attrib["name"]
         installed = command("mtype", "-i", image, "::/VC/" + name)
         assert installed == (ROOT / "build/assets" / name).read_bytes(), name
-    print("PASS: all generated XML/SVG assets installed byte for byte")
+    for font in ET.parse(ROOT / "build/fonts/manifest.xml").getroot().findall("file"):
+        name = font.attrib["path"]
+        assert command("mtype", "-i", image, "::/VC/" + name) == (ROOT / "build/fonts" / name).read_bytes(), name
+    print("PASS: generated tables, icon, fonts and CPI installed byte for byte")
+    plane = command("mtype", "-i", image, "::/VCTEST/FONTMENU.BIN")
+    height = int.from_bytes(plane[1:3], "little")
+    assert height in (8, 16) and len(plane) == 8200
+    glyphs = b"".join(plane[8+i*32:8+i*32+height] for i in range(256))
+    assert glyphs == (ROOT / f"build/fonts/FONTS/CP850.F{height:02}").read_bytes()
+    print("PASS: CP850 menu command kept all 256 VGA glyphs after returning to VC")
     print("PASS: generated F1 index, release, Next, user-menu, Copy and General contexts:", args.help_language)
     if args.full:
         for folder in ("AROUT", "ZOUT", "COUT", "ROUT", "SOUT", "LHOUT", "ARCOUT", "PKOUT"):

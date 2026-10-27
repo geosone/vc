@@ -32,6 +32,9 @@ HELP_MAP := $(B)/help/VCHELPMAP.INC
 HELP_SOURCES := help/project.xml help/project.dtd help/guide.dtd $(wildcard help/src/*.xml)
 ASSET_NAMES := $(shell $(PYTHON) tools/assets.py list)
 ASSETS := $(addprefix $(B)/assets/,$(ASSET_NAMES))
+FONT_NAMES := $(shell $(PYTHON) tools/fonts.py list)
+FONTS := $(addprefix $(B)/fonts/,$(FONT_NAMES))
+FONT_SOURCES := $(wildcard assets/fonts/*) assets/codepages.xml tools/fonts.py tools/assets.py
 ASSET_SOURCES := $(wildcard assets/*.xml assets/*.svg assets/*.dtd) tools/assets.py
 
 # the published sources (the converter's input) and the LOOP/JCXZ lines
@@ -41,9 +44,9 @@ SRCSHA  := b70fda9f9c94a321681dc49828f99ff4abe2c2f741e85c5bffab7ab6310b9f93
 FAR     := VCARC2.INC:1188 VCDIALOG.INC:1921 VCMEM.INC:536 VCMENU.INC:631 \
            VCPANELS.INC:1601 VCPANELS.INC:1865 VCPANELS.INC:2123 VCVIEW.INC:1728
 
-.PHONY: all release disk check test help assets addons packers port clean
+.PHONY: all release disk check test help assets fonts addons packers port clean
 
-all: $(B)/VC.COM $(B)/VC.OVL addons assets
+all: $(B)/VC.COM $(B)/VC.OVL addons assets fonts
 
 help: $(HELPS) $(HELP_MAP) $(B)/help/manifest.xml
 
@@ -57,7 +60,15 @@ assets: $(ASSETS) $(B)/assets/manifest.xml
 $(ASSETS) $(B)/assets/manifest.xml &: $(ASSET_SOURCES) | $(B)
 	$(PYTHON) tools/assets.py build --output $(B)/assets
 
-addons: $(B)/VCTOOLS.EXE $(B)/VC7Z.EXE
+fonts: $(FONTS) $(B)/fonts/manifest.xml
+
+$(FONTS) $(B)/fonts/manifest.xml &: $(FONT_SOURCES) | $(B)
+	$(PYTHON) tools/fonts.py build --output $(B)/fonts
+
+addons: $(B)/VCTOOLS.EXE $(B)/VC7Z.EXE $(B)/VCFONT.EXE
+
+$(B)/VCFONT.EXE: addons/vcfont.c | $(B)
+	WATCOM="$(WATCOM)" INCLUDE="$(WATCOM)/h" PATH="$(WATCOM)/binl64:$$PATH" $(WCL) -q -bt=dos -0 -ms -os -w4 -we -fe=$@ -fo=$(B)/vcfont.obj $<
 
 $(B)/VCTOOLS.EXE: addons/vctools.c | $(B)
 	WATCOM="$(WATCOM)" INCLUDE="$(WATCOM)/h" PATH="$(WATCOM)/binl64:$$PATH" $(WCL) -q -bt=dos -0 -ms -os -w4 -we -fe=$@ -fo=$(B)/vctools.obj $<
@@ -74,7 +85,7 @@ $(B)/vc7z-host: addons/vc7z.c | $(B)
 $(B)/ADDONS.TXT: addons/README.de.md | $(B)
 	$(PYTHON) -c 'from pathlib import Path; p=Path("$<"); s=p.read_text().replace("„", "\"").replace("“", "\"").replace("…", "..."); Path("$@").write_bytes(s.replace("\n", "\r\n").encode("cp850"))'
 
-test: help assets $(B)/vctools-host $(B)/vc7z-host
+test: help assets fonts $(B)/vctools-host $(B)/vc7z-host
 	VCTOOLS=$(CURDIR)/$(B)/vctools-host VC7Z=$(CURDIR)/$(B)/vc7z-host $(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
 
 $(B):
@@ -100,11 +111,12 @@ define stage_core
 	mkdir -p $(1)
 	cp -r files/. $(1)/
 	cd $(B)/assets && cp --parents $(ASSET_NAMES) $(abspath $(1))/
+	cd $(B)/fonts && cp --parents $(FONT_NAMES) $(abspath $(1))/
 	cp $(HELPS) $(1)/
-	cp $(B)/VC.COM $(B)/VC.OVL $(B)/VCTOOLS.EXE $(B)/VC7Z.EXE $(B)/ADDONS.TXT src/LICENSE.TXT install/INSTALL.INI $(GDI)/INSTALL.EXE $(1)/
+	cp $(B)/VC.COM $(B)/VC.OVL $(B)/VCTOOLS.EXE $(B)/VC7Z.EXE $(B)/VCFONT.EXE $(B)/ADDONS.TXT src/LICENSE.TXT install/INSTALL.INI $(GDI)/INSTALL.EXE $(1)/
 endef
 
-$(B)/$(NAME).zip: all packers $(B)/ADDONS.TXT install/INSTALL.INI src/LICENSE.TXT $(addprefix files/,$(FILES)) $(HELPS) $(ASSETS)
+$(B)/$(NAME).zip: all packers $(B)/ADDONS.TXT install/INSTALL.INI src/LICENSE.TXT $(addprefix files/,$(FILES)) $(HELPS) $(ASSETS) $(FONTS)
 	rm -rf $(REL) $@
 	$(call stage_core,$(REL))
 	cp -r $(B)/packers/. $(REL)/
@@ -117,7 +129,7 @@ disk: $(B)/$(NAME).img
 
 # Keep the 1.44 MB floppy usable on older machines; the full download bundle
 # (including Retro7Zip source) belongs to the ZIP/directory release.
-$(B)/$(NAME).img: all $(B)/ADDONS.TXT install/INSTALL.INI src/LICENSE.TXT $(addprefix files/,$(FILES)) $(HELPS) $(ASSETS)
+$(B)/$(NAME).img: all $(B)/ADDONS.TXT install/INSTALL.INI src/LICENSE.TXT $(addprefix files/,$(FILES)) $(HELPS) $(ASSETS) $(FONTS)
 	rm -rf $(B)/floppy
 	$(call stage_core,$(B)/floppy)
 	rm -f $@

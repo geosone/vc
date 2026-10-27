@@ -50,6 +50,7 @@ VCTOOLS run FILES.LST "ECHO {}" --dry-run</pre>
     <p>H zobrazí prvých 256 bajtov ako hex a ASCII. V príkazovom riadku možno zadať začiatok a dĺžku. Je to iba čítanie, nie binárny editor ani úplná náhrada Hiew:</p>
     <pre>VCTOOLS hex PROGRAM.EXE 0x100 64</pre>
     <p>Z zobrazí obsah bežného ZIP bez archivátora. Číta adresár, nerozbaľuje a nekontroluje CRC. Malý prehliadač nepodporuje ZIP64 ani viacdielny ZIP. Viac formátov ponúka menu Retro7Zip. Znak &gt; presmeruje výstup do súboru. ADDONS.TXT obsahuje podrobnejší nemecký návod k rozšíreniam.</p>
+    <p>Obrazovkové písma: F2, F3, S otvorí menu písiem. VCFONT 437, 850, 852 alebo 866 načíta Unscii pre aktuálny textový režim VGA (8x8 alebo 8x16). AUTO používa aktívnu kódovú stránku DOS; ROM obnoví písmo BIOS. FONTS musí byť vedľa VCFONT.EXE. Menia sa iba tvary znakov, nie kódová stránka DOS ani klávesnica. MAXTEXT je voliteľný. Windows, grafika a 8x14 sa odmietnu. Po zmene režimu podľa potreby načítajte písmo znova.</p>
   </topic>
   <topic id="os2" layout="prose">
     <title>Nástroje relácie DOS v OS/2</title>

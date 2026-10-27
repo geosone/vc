@@ -1,4 +1,4 @@
-# Zeichentabellen und Icon aus Textquellen
+# Zeichentabellen, Icon und Schriftarten aus Textquellen
 
 `make assets` erzeugt die 15 `.TBL`-Dateien und `VC.ICO` unter
 `build/assets/`. `make release` und `make disk` übernehmen diese Ausgaben.
@@ -160,3 +160,18 @@ xmllint --noout assets/vc-icon.svg
 Das Repository enthält für seine eigenen Artefakte nur Textquellen:
 ASM/C, XML, SVG und die bisherigen Textdateien. Externe DOS-Packer und der
 Installer bleiben separate, nachvollziehbare Build-/Download-Abhängigkeiten.
+
+## Echte VGA-Schriftarten
+
+`make fonts` erzeugt zusätzlich acht vollständige VGA-Fonts für
+CP437/850/852/866 in 8x8 und 8x16 sowie eine gemeinsame FONT-CPI-Datei.
+Die Quellen sind lesbare, fest geprüfte Unscii-HEX-Dateien und 14 eigene
+XML-Pixelvorlagen für fehlende DOS-Zeichen. Fehlende Glyphen brechen den
+Build ab; es gibt keinen stillen Fragezeichen-Ersatz. Die TBL-Konvertierung
+und ihre historischen Kompatibilitätsregeln verändern die Fontbelegung nicht.
+
+Herkunft, Lizenz, Dateiformate und Bedienung stehen in
+[fonts/README.txt](fonts/README.txt). Die Ausgaben liegen in `build/fonts/`;
+das dortige Manifest nennt Dateigrößen und SHA-256-Summen. `VCFONT.EXE`
+lädt die Rohfonts über das VGA-BIOS, auch ohne MAXTEXT. F2, F3, S öffnet
+das zugehörige Menü. CPI ist ein zusätzliches Exportformat für DOS-Werkzeuge.

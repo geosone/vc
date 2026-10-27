@@ -7,7 +7,7 @@
 * Changes
 
 
-Changes in version 4.99.10 alpha (24-Oct-2026)
+Changes in version 4.99.10 alpha (27-Oct-2026)
 
 + Built from the published 4.99.09 sources with JWasm and JWlink
 + F1 help viewer and installation with five help languages
@@ -15,6 +15,9 @@ Changes in version 4.99.10 alpha (24-Oct-2026)
 + Updated help on packers, helpers, OS/2, options and installation
 + Revised 4.99 reference in all languages; current dialogs replace VCSETUP
 + Optional MAXTEXT API: automatically choose the best mode at startup
++ Complete Unscii VGA fonts (CP437/850/852/866), generated from HEX/XML
++ VCFONT: choose screen fonts via F2, F3, S, with or without MAXTEXT
++ make fonts creates eight raw VGA fonts and a standard FONT-format CPI
 + Character tables generated from XML and Windows icon generated from SVG
 + Independent ZIP, ARJ and ACE user menus (external DOS packers)
 + VCTOOLS: file lists, batch commands, format detection, ZIP listing,
