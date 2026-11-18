@@ -21,6 +21,15 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def qemu_cpu(accel):
+    """QEMU acceleration and CPU options: a 486 under TCG, the host CPU under KVM.
+
+    Since QEMU 11.1 TCG faults in the CauseWay extender of 7ZA.EXE (exception
+    0D, error code 0464) on every CPU model; under KVM the same disk works.
+    """
+    return ["-accel", accel, "-cpu", "host" if accel == "kvm" else "486"]
+
+
 class QMP:
     def __init__(self, path, codepage="cp850"):
         self.codepage = codepage
@@ -81,6 +90,8 @@ def main():
                         help="show all nine license dialogs and verify that declining aborts")
     parser.add_argument("--help-language", choices=("en", "de", "ru", "pl", "sk"), default="en",
                         help="exercise the generated guide in this DOS codepage")
+    parser.add_argument("--accel", choices=("tcg", "kvm"), default="tcg",
+                        help="kvm runs 7ZA.EXE, whose extender QEMU 11.1 TCG breaks")
     args = parser.parse_args()
     if args.licenses:
         args.full = True
@@ -243,7 +254,7 @@ IF ERRORLEVEL 1 ECHO HEX FAILED >> FAIL.TXT
     env = dict(os.environ, SDL_AUDIODRIVER="dummy")
     with (out / "qemu.log").open("wb") as log:
         proc = subprocess.Popen([
-            "qemu-system-i386", "-machine", "pc", "-accel", "tcg", "-cpu", "486",
+            "qemu-system-i386", "-machine", "pc", *qemu_cpu(args.accel),
             "-m", "64", "-display", "none", "-monitor", "none", "-serial", "none",
             "-drive", "if=ide,index=0,format=raw,file=" + str(disk),
             "-drive", "if=floppy,index=0,format=raw,file=" +
@@ -363,6 +374,12 @@ IF ERRORLEVEL 1 ECHO HEX FAILED >> FAIL.TXT
             time.sleep(1)
             assert "BIOS ROM font restored" in qmp.screen(out, "font-restored")
             qmp.key("esc")
+            time.sleep(0.5)
+            # Esc toggles the panels once VC is back; a fast (KVM) guest is
+            # back before the key arrives, so show the panels again.
+            if "Name" not in qmp.screen(out, "panels"):
+                qmp.key("esc")
+                time.sleep(0.5)
             if args.full:
                 qmp.text("cd c:\\vctest\\a7")
                 qmp.key("ret")

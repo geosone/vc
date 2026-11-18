@@ -79,6 +79,11 @@ for the active DOS codepage, `VCFONT 850` for an explicit choice, or
 glyphs only; a later mode switch may replace them. Windows, graphics and
 8x14 modes are rejected. See [font sources and usage](assets/fonts/README.txt).
 
+`tests/dos_smoke.py --image /path/to/dos.img --full` installs the release in
+a disposable copy of a DOS disk and tests it in QEMU. Add `--accel kvm` with
+QEMU 11.1 or newer: its TCG emulation faults in the CauseWay extender of
+`7ZA.EXE` (CauseWay error 09) on every CPU model; under KVM it works.
+
 `tests/dos_fonts.py --image /path/to/dos.img --output build/font-test`
 checks all 256 glyphs of each font by reading VGA plane 2 in a disposable
 DOS/QEMU image, plus geometry, AUTO, ROM restore and error handling. Add
